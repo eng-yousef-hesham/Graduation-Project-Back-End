@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "City_Admin")
-@PrimaryKeyJoinColumn(name = "Admin_ID")
+//@PrimaryKeyJoinColumn(name = "Admin_ID")
 public class CityAdmin  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +53,6 @@ public class CityAdmin  {
     @JoinColumn(name = "City_ID", nullable = false)
     private City city;
 
-    @OneToMany(mappedBy = "changedByCityAdmin")
-    private List<StatusHistory> StatusHistory;
+//    @OneToMany(mappedBy = "changedByCityAdmin")
+//    private List<StatusHistory> StatusHistory;
 }

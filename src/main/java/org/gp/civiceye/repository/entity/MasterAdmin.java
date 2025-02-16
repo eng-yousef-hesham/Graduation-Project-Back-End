@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "Master_Admin")
-@PrimaryKeyJoinColumn(name = "Master_ID")
+//@PrimaryKeyJoinColumn(name = "Master_ID")
 public class MasterAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

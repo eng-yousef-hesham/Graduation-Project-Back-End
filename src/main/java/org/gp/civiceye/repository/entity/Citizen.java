@@ -3,6 +3,7 @@ package org.gp.civiceye.repository.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,13 +14,14 @@ import java.util.List;
 @Entity
 @Table(name="citizen")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Citizen {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false,name = "Citizen_ID")
     private Long citizenId;
 
     @Column(nullable = false)
@@ -39,7 +41,6 @@ public class Citizen {
 
     private Integer age;
 
-    private Integer cityId;
 
     private LocalDateTime createdAt;
 
@@ -49,8 +50,8 @@ public class Citizen {
 
     private boolean isActive = true;
 
-    @OneToMany(mappedBy = "changedByCitizen")
-    private List<StatusHistory> statusHistory;
+//    @OneToMany(mappedBy = "changedByCitizen")
+//    private List<StatusHistory> statusHistory;
 
 
     @OneToMany(mappedBy = "citizen")

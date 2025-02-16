@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "Employee")
-@PrimaryKeyJoinColumn(name = "EMP_ID")
+//@PrimaryKeyJoinColumn(name = "EMP_ID")
 public class Employee  {
 
     @Id
