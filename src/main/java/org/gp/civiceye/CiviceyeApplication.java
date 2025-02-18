@@ -17,22 +17,24 @@ public class CiviceyeApplication {
     public static void main(String[] args) {
         SpringApplication.run(CiviceyeApplication.class, args);
     }
-    @Bean
-    public CommandLineRunner commandLineRunner(
-            GovernorateRepository governorateRepository
-            , CityRepository cityRepository
-            ) {
-        return (args) -> {
-            Governorate governorate = Governorate.builder().name("alex").isActive(true).cities(null)
-                    .createdAt(null).updatedAt(null).build();
-            governorateRepository.save(governorate);
 
-            City city = City.builder().governorate(governorate).createdAt(null).updatedAt(null).isActive(true).name("benha").Employees(null).build();
 
-            cityRepository.save(city);
-
-        };
-    }
+//    @Bean
+//    public CommandLineRunner commandLineRunner(
+//            GovernorateRepository governorateRepository
+//            , CityRepository cityRepository
+//            ) {
+//        return (args) -> {
+//            Governorate governorate = Governorate.builder().name("alex").isActive(true).cities(null)
+//                    .createdAt(null).updatedAt(null).build();
+//            governorateRepository.save(governorate);
+//
+//            City city = City.builder().governorate(governorate).createdAt(null).updatedAt(null).isActive(true).name("benha").Employees(null).build();
+//
+//            cityRepository.save(city);
+//
+//        };
+//    }
 
 
 }
