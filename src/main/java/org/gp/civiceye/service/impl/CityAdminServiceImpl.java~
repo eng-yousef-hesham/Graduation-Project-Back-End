@@ -28,11 +28,11 @@ public class CityAdminServiceImpl implements CityAdminService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public CityAdminDTO getCityAdminById(Integer id) {
-
-        return  new CityAdminDTO(cityAdminRepository.findByAdminId(id));
-
-
-    }
+//    @Override
+//    public CityAdminDTO getCityAdminById(Integer id) {
+//
+//        return  new CityAdminDTO(cityAdminRepository.findByAdminId(id));
+//
+//
+//    }
 }

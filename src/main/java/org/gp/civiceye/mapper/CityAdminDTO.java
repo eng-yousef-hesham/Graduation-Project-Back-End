@@ -12,6 +12,7 @@ import org.gp.civiceye.repository.entity.CityAdmin;
 public class CityAdminDTO {
     private Integer adminId;
     private String nationalId;
+    private String fullName;
     private String firstName;
     private String lastName;
     private String email;
@@ -21,6 +22,7 @@ public class CityAdminDTO {
     public CityAdminDTO(CityAdmin cityAdmin) {
         this.adminId = cityAdmin.getAdminId();
         this.nationalId = cityAdmin.getNationalId();
+        this.fullName = cityAdmin.getFirstName() + " " + cityAdmin.getLastName();
         this.firstName = cityAdmin.getFirstName();
         this.lastName = cityAdmin.getLastName();
         this.email = cityAdmin.getEmail();

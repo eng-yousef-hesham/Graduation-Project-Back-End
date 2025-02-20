@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CityAdminService {
     public List<CityAdminDTO> GetAllCityAdmins();
+
+    public CityAdminDTO getCityAdminById(Integer id);
 }
