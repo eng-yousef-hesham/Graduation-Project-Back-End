@@ -1,0 +1,32 @@
+package org.gp.civiceye.mapper;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.gp.civiceye.repository.entity.Citizen;
+import org.gp.civiceye.repository.entity.CityAdmin;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CityAdminDTO {
+    private Integer adminId;
+    private String nationalId;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String cityName;
+    private String governorateName;
+
+    public CityAdminDTO(CityAdmin cityAdmin) {
+        this.adminId = cityAdmin.getAdminId();
+        this.nationalId = cityAdmin.getNationalId();
+        this.firstName = cityAdmin.getFirstName();
+        this.lastName = cityAdmin.getLastName();
+        this.email = cityAdmin.getEmail();
+        this.cityName = cityAdmin.getCity().getName();
+        this.governorateName = cityAdmin.getCity().getGovernorate().getName();
+    }
+
+
+}
