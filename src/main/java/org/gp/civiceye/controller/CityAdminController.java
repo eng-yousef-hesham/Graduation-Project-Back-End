@@ -3,6 +3,7 @@ package org.gp.civiceye.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.gp.civiceye.mapper.CityAdminDTO;
+import org.gp.civiceye.mapper.CreateCityAdminDTO;
 import org.gp.civiceye.repository.CityAdminRepository;
 import org.gp.civiceye.repository.entity.CityAdmin;
 import org.gp.civiceye.service.CityAdminService;
@@ -11,12 +12,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
-
-import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.HashMap;
@@ -25,13 +23,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/V1")
-
 public class CityAdminController {
-    CityAdminService cityAdminService;
+    private CityAdminService cityAdminService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CityAdminController(CityAdminService Cityadminaervice) {
+    public CityAdminController(CityAdminService Cityadminaervice, PasswordEncoder passwordencoder) {
         this.cityAdminService = Cityadminaervice;
+        this.passwordEncoder = passwordencoder;
     }
 
     @GetMapping("/cityadmins")
@@ -58,6 +57,29 @@ public class CityAdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(cityAdminDTO, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/cityadmin")
+    public ResponseEntity<String> addCityAdmin(@RequestBody CreateCityAdminDTO createCityAdminDTO) {
+        try {
+            String password = createCityAdminDTO.getPassword();
+            String encodedPassword = passwordEncoder.encode(password);
+            createCityAdminDTO.setPassword(encodedPassword);
+            CreateCityAdminDTO savedCityAdmin = cityAdminService.addCityAdmin(createCityAdminDTO);
+
+            if (savedCityAdmin.getAdminId() > 0) {
+                return new ResponseEntity<>("City admin created successfully", HttpStatus.CREATED);
+            }else {
+                return new ResponseEntity<>("City admin creation failed", HttpStatus.BAD_REQUEST);
+            }
+
+
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 

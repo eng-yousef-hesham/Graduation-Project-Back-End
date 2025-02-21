@@ -9,5 +9,4 @@ public interface CityAdminRepository extends JpaRepository<CityAdmin, Integer> {
 
   public CityAdmin findByAdminId(Integer adminId);
 
-
 }

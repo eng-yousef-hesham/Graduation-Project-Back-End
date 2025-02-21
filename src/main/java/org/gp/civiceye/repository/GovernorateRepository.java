@@ -14,5 +14,5 @@ import java.util.Optional;
 
 public interface GovernorateRepository extends JpaRepository<Governorate, Integer> {
 //    List<Governorate> findByIsActiveTrue();
-//    Optional<Governorate> findByName(String name);
+    Optional<Governorate> findByGovernorateId(Integer id);
 }
