@@ -26,7 +26,7 @@ public class CitizenDTO {
         this.lastName = citizen.getLastName();
         this.email = citizen.getEmail();
         this.age = citizen.getAge();
-        this.cityName = citizen.getCity().getName();
-        this.governorateName = citizen.getCity().getGovernorate().getName();
+//        this.cityName = citizen.getCity().getName();
+//        this.governorateName = citizen.getCity().getGovernorate().getName();
     }
 }

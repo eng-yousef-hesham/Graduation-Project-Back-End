@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -52,6 +53,7 @@ public class Report {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Current_Status", nullable = false)
+    @Builder.Default
     private ReportStatus currentStatus = ReportStatus.Submitted;
 
     @ManyToOne
@@ -66,7 +68,7 @@ public class Report {
     @JoinColumn(name = "Assigned_EMP_ID")
     private Employee assignedEmployee;
 
-    @OneToMany(mappedBy = "report")
-    private List<StatusHistory> statusHistories;
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
+    private List<StatusHistory> statusHistoryList = new ArrayList<>();
 
 }

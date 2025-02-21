@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "Master_Admin")
-//@PrimaryKeyJoinColumn(name = "Master_ID")
 public class MasterAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,8 @@ public class MasterAdmin {
     @Column(name = "Password_Hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "Created_At")
+    @CreationTimestamp
+    @Column(name = "Created_At" ,updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "Updated_At")
@@ -46,7 +47,7 @@ public class MasterAdmin {
     @Column(name = "Last_Login")
     private LocalDateTime lastLogin;
 
-    @Column(name = "Is_Active")
+    @Column(name = "Is_Active", columnDefinition = "boolean default true")
     private Boolean isActive;
 
     // No additional fields for Master Admin

@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,20 +23,21 @@ public class Governorate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Governorate_ID")
-    private Integer governorateId;
+    private Long governorateId;
 
-    @Column(name = "Name", nullable = false, unique = true)
+    @Column(name = "Name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "Created_At")
+    @CreationTimestamp
+    @Column(name = "Created_At", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "Updated_At")
-    private LocalDateTime updatedAt;
+    @Column(name = "Is_Active", columnDefinition = "boolean default true")
+    private Boolean isActive = true;
 
-    @Column(name = "Is_Active")
-    private Boolean isActive;
+    @OneToMany(mappedBy = "governorate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<City> cities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "governorate")
-    private List<City> cities;
+
+
 }

@@ -7,15 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "City_Admin")
-public class CityAdmin {
+@Table(name = "Governrate_Admin")
+public class GovernrateAdmin {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Admin_ID")
@@ -37,8 +38,8 @@ public class CityAdmin {
     private String passwordHash;
 
     @ManyToOne
-    @JoinColumn(name = "City_ID", nullable = false)
-    private City city;
+    @JoinColumn(name = "Governorate_ID", nullable = false)
+    private Governorate governorate;
 
     @Column(name = "Created_At", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -48,8 +49,4 @@ public class CityAdmin {
 
     @Column(name = "Is_Active", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive;
-
-
-
 }
-

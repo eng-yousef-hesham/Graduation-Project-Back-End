@@ -8,58 +8,51 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
-@Table(name="citizen")
+@Table(name = "citizen")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Citizen {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false,name = "Citizen_ID")
+    @Column(nullable = false, name = "Citizen_ID")
     private Long citizenId;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false, name = "National_ID")
     private String nationalId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "First_Name")
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "Last_Name")
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false, name = "Email")
     private String email;
 
-    @Column(nullable = false)
-    private char[] passwordHash = new char[60];
+    @Column(nullable = false, name = "Password_Hash")
+    private String passwordHash;
 
+    @Column(name = "Age")
     private Integer age;
 
 
+    @Column(name = "Created_At", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    private  LocalDateTime updatedAt;
+    @Column(name = "Is_Active")
+    private Boolean isActive;
 
-    private LocalDateTime lastLogin;
+    @OneToMany(mappedBy = "citizen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Report> reports = new ArrayList<>();
 
-    private boolean isActive = true;
-
-//    @OneToMany(mappedBy = "changedByCitizen")
-//    private List<StatusHistory> statusHistory;
-
-
-    @OneToMany(mappedBy = "citizen")
-    private List<Report> citizen;
-
-    @ManyToOne
-    @JoinColumn(name = "City_ID")
-    private City city;
 
 }
 

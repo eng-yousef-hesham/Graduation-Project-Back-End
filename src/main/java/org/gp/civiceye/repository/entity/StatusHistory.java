@@ -38,15 +38,6 @@ public class StatusHistory {
     @JoinColumn(name = "changed_By", nullable = false)
     private Employee changedByEmployee;
 
-//    @ManyToOne
-//    @JoinColumn(name = "changed_By", nullable = false)
-//    private Citizen changedByCitizen;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "changed_By", nullable = false)
-//    private CityAdmin changedByCityAdmin;
-
-
     @Column(name = "Notes")
     private String notes;
 }
