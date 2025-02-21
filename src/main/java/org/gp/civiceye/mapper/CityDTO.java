@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class CityDTO {
-    private Integer cityId;
+    private Long cityId;
     private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -22,9 +22,9 @@ public class CityDTO {
         this.cityId = city.getCityId();
         this.name = city.getName();
         this.createdAt = city.getCreatedAt();
-        this.updatedAt = city.getUpdatedAt();
+//        this.updatedAt = city.getUpdatedAt();
         this.isActive = city.getIsActive();
-        this.governorateId = city.getGovernorate().getGovernorateId();
+//        this.governorateId = city.getGovernorate().getGovernorateId();
     }
 
 

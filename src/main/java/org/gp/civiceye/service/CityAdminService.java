@@ -10,7 +10,7 @@ import java.util.List;
 public interface CityAdminService {
     public List<CityAdminDTO> GetAllCityAdmins();
 
-    public CityAdminDTO getCityAdminById(Integer id);
+    public CityAdminDTO getCityAdminById(Long id);
 
     public CreateCityAdminDTO addCityAdmin(CreateCityAdminDTO createCityAdminDTO);
 }

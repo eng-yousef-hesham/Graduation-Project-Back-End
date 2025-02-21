@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCityAdminDTO {
-    private Integer adminId;
+    private Long adminId;
     private String nationalId;
     private String firstName;
     private String lastName;
     private String email;
-    private Integer cityId;
+    private Long cityId;
     private String password;
     private LocalDateTime createdAt;
 

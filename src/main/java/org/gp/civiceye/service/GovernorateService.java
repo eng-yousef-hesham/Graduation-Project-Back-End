@@ -1,8 +1,9 @@
 package org.gp.civiceye.service;
 
-import org.gp.civiceye.dto.GovernorateDTO;
+
+import org.gp.civiceye.mapper.GovernorateDTO;
 
 public interface GovernorateService {
 
-    GovernorateDTO getGovernorateByID(Integer id);
+    GovernorateDTO getGovernorateByID(Long id);
 }

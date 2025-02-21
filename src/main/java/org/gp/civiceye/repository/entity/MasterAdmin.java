@@ -20,7 +20,7 @@ public class MasterAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Master_ID")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "National_ID", nullable = false, unique = true)
     private String nationalId;

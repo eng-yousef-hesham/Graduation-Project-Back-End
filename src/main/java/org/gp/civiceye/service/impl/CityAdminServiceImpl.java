@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,10 +33,16 @@ public class CityAdminServiceImpl implements CityAdminService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public CityAdminDTO getCityAdminById(Integer id) {
 
-        return  new CityAdminDTO(cityAdminRepository.findByAdminId(id));
+
+    @Override
+    public CityAdminDTO getCityAdminById(Long id) {
+
+        Optional<CityAdmin> cityAdmin = cityAdminRepository.findById(id);
+        if (cityAdmin.isPresent()) {
+            return new CityAdminDTO(cityAdmin.get());
+        }
+        return null;
 
 
     }

@@ -1,9 +1,11 @@
 package org.gp.civiceye.service.impl;
 
-import org.gp.civiceye.dto.GovernorateDTO;
+import org.gp.civiceye.mapper.GovernorateDTO;
 import org.gp.civiceye.repository.GovernorateRepository;
 import org.gp.civiceye.repository.entity.Governorate;
 import org.gp.civiceye.service.GovernorateService;
+
+import java.util.Optional;
 
 public class GovernorateServiceImpl implements GovernorateService {
 
@@ -14,8 +16,12 @@ public class GovernorateServiceImpl implements GovernorateService {
     }
 
     @Override
-    public GovernorateDTO getGovernorateByID(Integer id) {
-       return new GovernorateDTO(governorateRepository.findByGovernorateId(id));
+    public GovernorateDTO getGovernorateByID(Long id) {
+        Optional<Governorate> governorateOptional =governorateRepository.findById(id);
+        if (governorateOptional.isPresent()) {
+            return new GovernorateDTO(governorateOptional.get());
+        }
+       return new GovernorateDTO();
 
     }
 }

@@ -18,7 +18,7 @@ public class StatusHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Status_ID")
-    private Integer statusId;
+    private Long statusId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status", nullable = false)

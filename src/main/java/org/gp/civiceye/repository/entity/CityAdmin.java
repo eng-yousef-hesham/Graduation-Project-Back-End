@@ -19,7 +19,7 @@ public class CityAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Admin_ID")
-    private Integer adminId;
+    private Long adminId;
 
     @Column(name = "National_ID", nullable = false, unique = true)
     private String nationalId;

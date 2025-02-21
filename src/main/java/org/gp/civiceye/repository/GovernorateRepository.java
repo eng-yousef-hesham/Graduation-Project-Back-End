@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface GovernorateRepository extends JpaRepository<Governorate, Integer> {
+public interface GovernorateRepository extends JpaRepository<Governorate, Long> {
 //    List<Governorate> findByIsActiveTrue();
-    Optional<Governorate> findByGovernorateId(Integer id);
+//    Optional<Governorate> findByGovernorateId(Long id);
 }

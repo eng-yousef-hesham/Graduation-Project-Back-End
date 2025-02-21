@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface CitizenRepository extends JpaRepository<Citizen, Integer> {
+public interface CitizenRepository extends JpaRepository<Citizen, Long> {
 
 
     Optional<Citizen> findByEmail(String email);

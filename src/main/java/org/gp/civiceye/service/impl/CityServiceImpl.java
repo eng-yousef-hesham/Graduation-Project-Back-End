@@ -6,6 +6,8 @@ import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.service.CityService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CityServiceImpl implements CityService {
 
@@ -16,14 +18,19 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public CityDTO getCityDTOByName(Integer id) {
-        return new CityDTO(cityRepository.findByCityId(id));
+    public CityDTO getCityDTOByName(Long id) {
 
+        Optional<City> optionalCity = cityRepository.findById(id);
+        if (optionalCity.isPresent()) {
+            return new CityDTO(optionalCity.get());
+        }
+        return null;
     }
 
     @Override
-    public City getCityById(Integer id) {
-        return cityRepository.findByCityId(id);
+    public City getCityById(Long id) {
+        Optional<City> city = cityRepository.findById(id);
+        return city.orElse(null);
 
     }
 }

@@ -51,7 +51,7 @@ public class CityAdminController {
 
 
     @GetMapping("/cityadmin/{id}")
-    public ResponseEntity<CityAdminDTO> getCityAdminById(@PathVariable(name = "id") Integer id) {
+    public ResponseEntity<CityAdminDTO> getCityAdminById(@PathVariable(name = "id") Long id) {
         CityAdminDTO cityAdminDTO = cityAdminService.getCityAdminById(id);
         if (cityAdminDTO == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

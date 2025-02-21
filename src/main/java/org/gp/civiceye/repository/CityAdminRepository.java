@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface CityAdminRepository extends JpaRepository<CityAdmin, Integer> {
+public interface CityAdminRepository extends JpaRepository<CityAdmin, Long> {
 
-  public CityAdmin findByAdminId(Integer adminId);
+//  public CityAdmin findByAdminId(Long adminId);
 
 }

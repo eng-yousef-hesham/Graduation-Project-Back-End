@@ -5,6 +5,6 @@ import org.gp.civiceye.repository.entity.City;
 
 
 public interface CityService {
-    CityDTO getCityDTOByName(Integer id);
-    City getCityById(Integer id);
+    CityDTO getCityDTOByName(Long id);
+    City getCityById(Long id);
 }

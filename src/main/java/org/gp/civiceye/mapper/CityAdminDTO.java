@@ -10,7 +10,7 @@ import org.gp.civiceye.repository.entity.CityAdmin;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CityAdminDTO {
-    private Integer adminId;
+    private Long adminId;
     private String nationalId;
     private String fullName;
     private String firstName;

@@ -36,7 +36,7 @@ public class CitizenController {
         HashMap<String, Object> response = new HashMap<>();
 
         response.put("statusText", HttpStatus.OK.getReasonPhrase());
-        response.put("statusCode",HttpStatus.OK.value());
+        response.put("statusCode", HttpStatus.OK.value());
         response.put("message", "Retrieved All Citizens ");
         response.put("data", citizenService.GetAllCitizens());
 
@@ -46,7 +46,6 @@ public class CitizenController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
 
 }

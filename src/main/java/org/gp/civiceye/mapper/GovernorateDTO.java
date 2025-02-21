@@ -1,4 +1,4 @@
-package org.gp.civiceye.dto;
+package org.gp.civiceye.mapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,20 +17,19 @@ import org.gp.civiceye.repository.entity.Governorate;
 @NoArgsConstructor
 @Builder
 public class GovernorateDTO {
-    private Integer governorateId;
+    private Long governorateId;
     private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isActive;
     private List<CityDTO> cities;
 
-    public GovernorateDTO(Optional<Governorate> governorate) {
-        this.governorateId = governorate.get().getGovernorateId();
-        this.name = governorate.get().getName();
-        this.createdAt = governorate.get().getCreatedAt();
-        this.updatedAt = governorate.get().getUpdatedAt();
-        this.isActive = governorate.get().getIsActive();
-        this.cities = governorate.get().getCities().stream().map(CityDTO::new).toList();
+    public GovernorateDTO(Governorate governorate) {
+        this.governorateId = governorate.getGovernorateId();
+        this.name = governorate.getName();
+        this.createdAt = governorate.getCreatedAt();
+        this.isActive = governorate.getIsActive();
+        this.cities = governorate.getCities().stream().map(CityDTO::new).toList();
     }
 
 
