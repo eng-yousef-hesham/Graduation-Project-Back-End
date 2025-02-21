@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,10 +47,11 @@ public class Employee {
     @JoinColumn(name = "City_ID")
     private City city;
 
-    @Column(name = "Created_At", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "Created_At")
     private LocalDateTime createdAt;
 
-    @Column(name = "Is_Active", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Column(name = "Is_Active",columnDefinition = "boolean default true")
     private Boolean isActive;
 
     @OneToMany(mappedBy = "assignedEmployee")

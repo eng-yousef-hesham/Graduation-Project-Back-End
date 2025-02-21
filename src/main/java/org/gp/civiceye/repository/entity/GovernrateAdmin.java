@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -41,12 +42,14 @@ public class GovernrateAdmin {
     @JoinColumn(name = "Governorate_ID", nullable = false)
     private Governorate governorate;
 
-    @Column(name = "Created_At", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "Created_At")
     private LocalDateTime createdAt;
 
     @Column(name = "Last_Login")
     private LocalDateTime lastLogin;
 
-    @Column(name = "Is_Active", columnDefinition = "BOOLEAN DEFAULT TRUE")
+
+    @Column(name = "Is_Active",columnDefinition = "boolean default true")
     private Boolean isActive;
 }

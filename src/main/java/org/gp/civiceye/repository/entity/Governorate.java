@@ -32,7 +32,7 @@ public class Governorate {
     @Column(name = "Created_At", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "Is_Active", columnDefinition = "boolean default true")
+    @Column(name = "Is_Active",columnDefinition = "boolean default true")
     private Boolean isActive = true;
 
     @OneToMany(mappedBy = "governorate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
