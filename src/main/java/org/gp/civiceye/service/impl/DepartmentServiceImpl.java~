@@ -1,0 +1,19 @@
+package org.gp.civiceye.service.impl;
+
+import org.gp.civiceye.repository.entity.Department;
+import org.gp.civiceye.service.DepartmentService;
+import org.springframework.stereotype.Service;
+
+
+import java.util.List;
+import java.util.stream.Stream;
+
+@Service
+public class DepartmentImpl implements DepartmentService {
+
+    @Override
+    public Department[] getAllDepartments() {
+
+        return Department.values();
+    }
+}

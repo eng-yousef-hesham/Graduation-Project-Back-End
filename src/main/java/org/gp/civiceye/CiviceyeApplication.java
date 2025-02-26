@@ -3,16 +3,13 @@ package org.gp.civiceye;
 import com.github.javafaker.Faker;
 import org.gp.civiceye.repository.CitizenRepository;
 import org.gp.civiceye.repository.CityRepository;
-import org.gp.civiceye.repository.GovernorateRepository;
 import org.gp.civiceye.repository.entity.Citizen;
-import org.gp.civiceye.repository.entity.City;
-import org.gp.civiceye.repository.entity.Governorate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.time.LocalDate;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class CiviceyeApplication {
@@ -25,20 +22,22 @@ public class CiviceyeApplication {
 
 //    @Bean
 //    public CommandLineRunner commandLineRunner(
-//            CityRepository cityRepository,
-//            CitizenRepository citizenRepository
+//            CitizenRepository citizenRepository,
+//            PasswordEncoder passwordEncoder
+//
 //    ) {
 //        return args -> {
 //            for (int i = 0; i < 100; i++) {
 //                Faker faker = new Faker();
+//                String password = faker.internet().password(10,20).toString();
+//                String hashpassword =  passwordEncoder.encode(password);
 //                Citizen citizen = Citizen.builder().nationalId(faker.idNumber().valid())
 //                        .firstName(faker.name().firstName())
 //                        .lastName(faker.name().lastName())
 //                        .age(faker.number().numberBetween(20, 80))
 //                        .email(faker.name().username() + "@civiceye.com")
-//                        .city(cityRepository.findByCityId(1))
 //                        .isActive(true)
-//                        .passwordHash(faker.internet().password(59,60).toCharArray())
+//                        .passwordHash(hashpassword)
 //                        .build();
 //                citizenRepository.save(citizen);
 //            }

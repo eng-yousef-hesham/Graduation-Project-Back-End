@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class Citizen {
 
 
     @Column(name = "Created_At", updatable = false, insertable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "Is_Active")
@@ -52,6 +54,8 @@ public class Citizen {
 
     @OneToMany(mappedBy = "citizen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Report> reports = new ArrayList<>();
+
+
 
 
 }
