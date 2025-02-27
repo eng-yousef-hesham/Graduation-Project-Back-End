@@ -1,9 +1,14 @@
 package org.gp.civiceye.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.gp.civiceye.config.authproviders.CitizenUsernamePasswordAuthenticationProvider;
+import org.gp.civiceye.config.authproviders.EmployeeUsernamePasswordAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,13 +24,29 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
 
+import java.util.Arrays;
 import java.util.List;
+
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @Slf4j
 public class ProjectSecurityConfig {
+
+    //Authentication providers
+
+    private final CitizenUsernamePasswordAuthenticationProvider CitizenUsernamePasswordAuthenticationProvider;
+    private final EmployeeUsernamePasswordAuthenticationProvider EmployeeUsernamePasswordAuthenticationProvider;
+
+
+    @Autowired
+    public  ProjectSecurityConfig(CitizenUsernamePasswordAuthenticationProvider CitizenUsernamePasswordAuthenticationProvider,EmployeeUsernamePasswordAuthenticationProvider employeeUsernamePasswordAuthenticationProvider) {
+        this.CitizenUsernamePasswordAuthenticationProvider = CitizenUsernamePasswordAuthenticationProvider;
+        this.EmployeeUsernamePasswordAuthenticationProvider = employeeUsernamePasswordAuthenticationProvider;
+    }
+
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,16 +77,23 @@ public class ProjectSecurityConfig {
         return source;
     }
 
+
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(Arrays.asList(CitizenUsernamePasswordAuthenticationProvider, EmployeeUsernamePasswordAuthenticationProvider));
+    }
+
 //    @Bean
 //    public UserDetailsService userDetailsService(DataSource dataSource) {
 //        return new JdbcUserDetailsManager(dataSource);
 //
 //    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 
 //    @Bean
 //    public CompromisedPasswordChecker compromisedPasswordChecker() {

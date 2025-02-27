@@ -31,20 +31,18 @@ public class CitizenController {
 
 
     @GetMapping("/Citizen")
-    public ResponseEntity<Map<String, Object>> getAllCitizens() {
+    public ResponseEntity<List<CitizenDTO>> getAllCitizens() {
 
-        HashMap<String, Object> response = new HashMap<>();
-
-        response.put("statusText", HttpStatus.OK.getReasonPhrase());
-        response.put("statusCode", HttpStatus.OK.value());
-        response.put("message", "Retrieved All Citizens ");
-        response.put("data", citizenService.GetAllCitizens());
 
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.set("Content-Type", "application/json");
 //        headers.add("Custom-Header", "EmployeeCreated");
+        List<CitizenDTO> citizens = citizenService.GetAllCitizens();
+        if (citizens.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(citizens, HttpStatus.OK);
     }
 
 

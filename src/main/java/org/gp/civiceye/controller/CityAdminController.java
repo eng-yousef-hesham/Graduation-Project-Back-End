@@ -44,7 +44,7 @@ public class CityAdminController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
-        headers.add("Custom-Header", "yousef hesham");
+//        headers.add("Custom-Header", "yousef hesham");
 
         return new ResponseEntity<List<CityAdminDTO>>(cityAdminService.GetAllCityAdmins(), headers,HttpStatus.OK);
     }

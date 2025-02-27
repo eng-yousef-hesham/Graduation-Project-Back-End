@@ -10,4 +10,5 @@ public interface CityAdminRepository extends JpaRepository<CityAdmin, Long> {
 
 //  public CityAdmin findByAdminId(Long adminId);
 
+
 }
