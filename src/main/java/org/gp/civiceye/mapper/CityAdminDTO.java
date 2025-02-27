@@ -18,6 +18,7 @@ public class CityAdminDTO {
     private String email;
     private String cityName;
     private String governorateName;
+    private String level = "City Admin";
 
     public CityAdminDTO(CityAdmin cityAdmin) {
         this.adminId = cityAdmin.getAdminId();

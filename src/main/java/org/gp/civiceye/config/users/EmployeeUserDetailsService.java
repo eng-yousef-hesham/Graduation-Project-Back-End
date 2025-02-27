@@ -1,7 +1,7 @@
-package org.gp.civiceye.config;
+package org.gp.civiceye.config.users;
 
 import lombok.extern.slf4j.Slf4j;
-import org.gp.civiceye.repository.CitizenRepository;
+import org.gp.civiceye.repository.EmployeeRepository;
 import org.gp.civiceye.repository.entity.Citizen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,27 +12,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.List;
-
-import static java.rmi.server.LogStream.log;
 
 @Slf4j
 @Service
-public class CitizenUserDetailsService implements UserDetailsService {
-    CitizenRepository citizenRepository;
+public class EmployeeUserDetailsService implements UserDetailsService {
+    EmployeeRepository EmployeeRepository;
 
     @Autowired
-    public CitizenUserDetailsService(CitizenRepository citizenRepository) {
-        this.citizenRepository = citizenRepository;
+    public EmployeeUserDetailsService(EmployeeRepository employeeRepository) {
+        this.EmployeeRepository = employeeRepository;
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Citizen citizen = citizenRepository.findByEmail(username).orElseThrow(()->new
+        Citizen citizen = EmployeeRepository.findByEmail(username).orElseThrow(()->new
                 UsernameNotFoundException("User not found for username: "+username));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("Citizen"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("Employee"));
         String password = new String(citizen.getPasswordHash());
         User user = new User(citizen.getEmail(),password,authorities);
         return user;
