@@ -1,20 +1,29 @@
 package org.gp.civiceye.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.gp.civiceye.dto.CityDTO;
 import org.gp.civiceye.repository.CityRepository;
+import org.gp.civiceye.repository.GovernorateRepository;
 import org.gp.civiceye.repository.entity.City;
+import org.gp.civiceye.repository.entity.Governorate;
 import org.gp.civiceye.service.CityService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CityServiceImpl implements CityService {
 
-    CityRepository cityRepository;
+    private final CityRepository cityRepository;
+    private final GovernorateRepository governorateRepository;
 
-    public CityServiceImpl(CityRepository cityrepository) {
-        this.cityRepository = cityrepository;
+    @Autowired
+    public CityServiceImpl(CityRepository cityRepository, GovernorateRepository governorateRepository) {
+        this.cityRepository = cityRepository;
+        this.governorateRepository = governorateRepository;
     }
 
     @Override
@@ -32,5 +41,20 @@ public class CityServiceImpl implements CityService {
         Optional<City> city = cityRepository.findById(id);
         return city.orElse(null);
 
+    }
+
+
+    @Override
+    public List<CityDTO> getAllCitiesByGovernorateId(Long governorateId) {
+        Optional<Governorate> governorate = governorateRepository.findById(governorateId);
+
+        if (governorate.isEmpty()) {
+            throw new EntityNotFoundException("Governorate not found with id: " + governorateId);
+        }
+
+        return cityRepository.findAllByGovernorate(governorate.get())
+                .stream()
+                .map(CityDTO::new)
+                .collect(Collectors.toList());
     }
 }

@@ -25,12 +25,11 @@ import java.util.Map;
 @RequestMapping("api/V1")
 public class CityAdminController {
     private CityAdminService cityAdminService;
-    private PasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public CityAdminController(CityAdminService Cityadminaervice, PasswordEncoder passwordencoder) {
+    public CityAdminController(CityAdminService Cityadminaervice) {
         this.cityAdminService = Cityadminaervice;
-        this.passwordEncoder = passwordencoder;
     }
 
     @GetMapping("/cityadmins")
@@ -60,27 +59,7 @@ public class CityAdminController {
     }
 
 
-    @PostMapping("/cityadmin")
-    public ResponseEntity<String> addCityAdmin(@RequestBody CreateCityAdminDTO createCityAdminDTO) {
-        try {
-            String password = createCityAdminDTO.getPassword();
-            String encodedPassword = passwordEncoder.encode(password);
-            createCityAdminDTO.setPassword(encodedPassword);
-            CreateCityAdminDTO savedCityAdmin = cityAdminService.addCityAdmin(createCityAdminDTO);
 
-            if (savedCityAdmin.getAdminId() > 0) {
-                return new ResponseEntity<>("City admin created successfully", HttpStatus.CREATED);
-            }else {
-                return new ResponseEntity<>("City admin creation failed", HttpStatus.BAD_REQUEST);
-            }
-
-
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-    }
 
 
 }

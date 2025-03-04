@@ -1,5 +1,7 @@
 package org.gp.civiceye.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.service.DepartmentService;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,8 @@ public class DepartmentController {
 
 
     @GetMapping("/departments")
+    @Operation(summary = "Get all departments", description = "Fetches a list of all departments.")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved departments" )
     public ResponseEntity<Department[]> getAllDepartments() {
 
         return new ResponseEntity<>(departmentService.getAllDepartments(), HttpStatus.OK);

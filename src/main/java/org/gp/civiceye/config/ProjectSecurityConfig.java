@@ -1,8 +1,7 @@
 package org.gp.civiceye.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.gp.civiceye.config.authproviders.CitizenUsernamePasswordAuthenticationProvider;
-import org.gp.civiceye.config.authproviders.EmployeeUsernamePasswordAuthenticationProvider;
+import org.gp.civiceye.config.authproviders.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,12 +37,24 @@ public class ProjectSecurityConfig {
 
     private final CitizenUsernamePasswordAuthenticationProvider CitizenUsernamePasswordAuthenticationProvider;
     private final EmployeeUsernamePasswordAuthenticationProvider EmployeeUsernamePasswordAuthenticationProvider;
+    private final CityAdminUsernamePasswordAuthenticationProvider CityAdminUsernamePasswordAuthenticationProvider;
+    private final GovernorateAdminUsernamePasswordAuthenticationProvider GovernorateAdminUsernamePasswordAuthenticationProvider;
+    private final MasterAdminUsernamePasswordAuthenticationProvider MasterAdminUsernamePasswordAuthenticationProvider;;
 
 
     @Autowired
-    public  ProjectSecurityConfig(CitizenUsernamePasswordAuthenticationProvider CitizenUsernamePasswordAuthenticationProvider,EmployeeUsernamePasswordAuthenticationProvider employeeUsernamePasswordAuthenticationProvider) {
+    public  ProjectSecurityConfig(CitizenUsernamePasswordAuthenticationProvider CitizenUsernamePasswordAuthenticationProvider,
+                                  EmployeeUsernamePasswordAuthenticationProvider employeeUsernamePasswordAuthenticationProvider,
+                                  CityAdminUsernamePasswordAuthenticationProvider CityAdminUsernamePasswordAuthenticationProvider,
+                                  GovernorateAdminUsernamePasswordAuthenticationProvider GovernorateAdminUsernamePasswordAuthenticationProvider,
+                                  MasterAdminUsernamePasswordAuthenticationProvider MasterAdminUsernamePasswordAuthenticationProvider
+                                  ) {
         this.CitizenUsernamePasswordAuthenticationProvider = CitizenUsernamePasswordAuthenticationProvider;
         this.EmployeeUsernamePasswordAuthenticationProvider = employeeUsernamePasswordAuthenticationProvider;
+        this.CityAdminUsernamePasswordAuthenticationProvider = CityAdminUsernamePasswordAuthenticationProvider;
+        this.GovernorateAdminUsernamePasswordAuthenticationProvider = GovernorateAdminUsernamePasswordAuthenticationProvider;
+        this.MasterAdminUsernamePasswordAuthenticationProvider = MasterAdminUsernamePasswordAuthenticationProvider;
+
     }
 
 
@@ -55,9 +66,9 @@ public class ProjectSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/**", "/api/V1/cityadmin").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/V1/cityadmin").permitAll() // Explicitly allowing POST
+                        .requestMatchers(HttpMethod.POST, "/api/V1/admin").permitAll() // Explicitly allowing POST
                         .anyRequest().authenticated()
-                );
+                ).authenticationManager(authenticationManager());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();
@@ -85,7 +96,12 @@ public class ProjectSecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new ProviderManager(Arrays.asList(CitizenUsernamePasswordAuthenticationProvider, EmployeeUsernamePasswordAuthenticationProvider));
+        return new ProviderManager(Arrays.asList(
+                CitizenUsernamePasswordAuthenticationProvider,
+                EmployeeUsernamePasswordAuthenticationProvider,
+                CityAdminUsernamePasswordAuthenticationProvider,
+                GovernorateAdminUsernamePasswordAuthenticationProvider,
+                MasterAdminUsernamePasswordAuthenticationProvider));
     }
 
 //    @Bean

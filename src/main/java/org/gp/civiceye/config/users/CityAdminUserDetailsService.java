@@ -1,9 +1,8 @@
 package org.gp.civiceye.config.users;
 
 import lombok.extern.slf4j.Slf4j;
-import org.gp.civiceye.repository.EmployeeRepository;
-import org.gp.civiceye.repository.entity.Employee;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.gp.civiceye.repository.CityAdminRepository;
+import org.gp.civiceye.repository.entity.CityAdmin;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,22 +15,21 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class EmployeeUserDetailsService implements UserDetailsService {
-    EmployeeRepository EmployeeRepository;
+public class CityAdminUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    public EmployeeUserDetailsService(EmployeeRepository employeeRepository) {
-        this.EmployeeRepository = employeeRepository;
+    CityAdminRepository cityAdminRepository;
+
+    public CityAdminUserDetailsService(CityAdminRepository cityAdminRepository) {
+        this.cityAdminRepository = cityAdminRepository;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Employee employee = EmployeeRepository.findByEmail(username).orElseThrow(()->new
+        CityAdmin cityAdmin= cityAdminRepository.findByEmail(username).orElseThrow(()->new
                 UsernameNotFoundException("User not found for username: "+username));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("Employee"));
-        String password = new String(employee.getPasswordHash());
-        User user = new User(employee.getEmail(),password,authorities);
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("CityAdmin"));
+        String password = new String(cityAdmin.getPasswordHash());
+        User user = new User(cityAdmin.getEmail(),password,authorities);
         return user;
     }
 }
