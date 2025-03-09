@@ -3,7 +3,7 @@ package org.gp.civiceye.mapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.gp.civiceye.repository.entity.GovernrateAdmin;
+import org.gp.civiceye.repository.entity.GovernorateAdmin;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class GovernrateAdminDTO {
     private String governorateName;
     private String level = "Governrate Admin";
 
-    public GovernrateAdminDTO(GovernrateAdmin governrateAdmin) {
+    public GovernrateAdminDTO(GovernorateAdmin governrateAdmin) {
         this.adminId = governrateAdmin.getAdminId();
         this.nationalId = governrateAdmin.getNationalId();
         this.fullName = governrateAdmin.getFirstName() + " " + governrateAdmin.getLastName();

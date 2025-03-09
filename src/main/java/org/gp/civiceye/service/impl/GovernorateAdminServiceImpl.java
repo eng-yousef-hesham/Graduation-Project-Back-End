@@ -2,7 +2,7 @@ package org.gp.civiceye.service.impl;
 
 import org.gp.civiceye.mapper.GovernrateAdminDTO;
 import org.gp.civiceye.repository.GovernorateAdminRepository;
-import org.gp.civiceye.repository.entity.GovernrateAdmin;
+import org.gp.civiceye.repository.entity.GovernorateAdmin;
 import org.gp.civiceye.service.GovernorateAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class GovernorateAdminServiceImpl implements GovernorateAdminService {
 
     @Override
     public GovernrateAdminDTO getGovernrateAdminById(Long id) {
-        Optional<GovernrateAdmin> governrateAdmin = governrateAdminRepository.findById(id);
+        Optional<GovernorateAdmin> governrateAdmin = governrateAdminRepository.findById(id);
         if (governrateAdmin.isPresent()) {
             return new GovernrateAdminDTO(governrateAdmin.get());
         }

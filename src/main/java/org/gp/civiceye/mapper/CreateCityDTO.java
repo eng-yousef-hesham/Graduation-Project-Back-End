@@ -1,4 +1,4 @@
-package org.gp.civiceye.dto;
+package org.gp.civiceye.mapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
