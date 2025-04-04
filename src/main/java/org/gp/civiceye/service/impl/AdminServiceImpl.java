@@ -42,67 +42,68 @@ public class AdminServiceImpl implements AdminService {
   master admin = 2000
   */
     @Override
-    public String addAdmin(CreateAdminDTO admin) {
+    public ResponseEntity<String> addAdmin(CreateAdminDTO admin) {
 
         String password = admin.getHashPassword();
         String encodedPassword = passwordEncoder.encode(password);
         admin.setHashPassword(encodedPassword);
 
-        if(admin.getType() == 1998){
+        try {
+            if (admin.getType() == 1998) {
 
-            Long cityId = admin.getCityId();
-            Optional<City> city = cityRepository.findById(cityId);
+                Long cityId = admin.getCityId();
+                Optional<City> city = cityRepository.findById(cityId);
 
-            if(!city.isPresent()){
-                return "Error, City not found";
+                if (!city.isPresent()) {
+                    return new ResponseEntity<>("Error, City not found",HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+
+                CityAdmin cityAdmin = CityAdmin.builder()
+                        .nationalId(admin.getNationalId())
+                        .firstName(admin.getFirstName())
+                        .lastName(admin.getLastName())
+                        .email(admin.getEmail())
+                        .passwordHash(admin.getHashPassword())
+                        .city(city.get())
+                        .build();
+
+                cityAdminRepository.save(cityAdmin);
+                return  new ResponseEntity<>("City admin created successfully",HttpStatus.OK);
+            } else if (admin.getType() == 1999) {
+                Long govenorateId = admin.getGovernorateId();
+                Optional<Governorate> governorate = governorateRepository.findById(govenorateId);
+
+                if (!governorate.isPresent()) {
+                    return  new ResponseEntity<>("Error, Governorate not found",HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+
+                GovernorateAdmin governorateAdmin = GovernorateAdmin.builder()
+                        .nationalId(admin.getNationalId())
+                        .firstName(admin.getFirstName())
+                        .lastName(admin.getLastName())
+                        .email(admin.getEmail())
+                        .passwordHash(admin.getHashPassword())
+                        .governorate(governorate.get())
+                        .build();
+
+                governorateAdminRepository.save(governorateAdmin);
+                return  new ResponseEntity<>("governorate admin created successfully",HttpStatus.OK);
+
+            } else if (admin.getType() == 2000) {
+                MasterAdmin governorateAdmin = MasterAdmin.builder()
+                        .nationalId(admin.getNationalId())
+                        .firstName(admin.getFirstName())
+                        .lastName(admin.getLastName())
+                        .email(admin.getEmail())
+                        .passwordHash(admin.getHashPassword())
+                        .build();
+
+                masterAdminRepository.save(governorateAdmin);
+                return  new ResponseEntity<>("master admin created successfully",HttpStatus.OK);
             }
-
-            CityAdmin cityAdmin = CityAdmin.builder()
-                    .nationalId(admin.getNationalId())
-                    .firstName(admin.getFirstName())
-                    .lastName(admin.getLastName())
-                    .email(admin.getEmail())
-                    .passwordHash(admin.getHashPassword())
-                    .city(city.get())
-                    .build();
-
-            cityAdminRepository.save(cityAdmin);
-            return "City admin created successfully";
+        }catch (Exception e){
+            return new ResponseEntity<>("",HttpStatus.CONFLICT);
         }
-        else if(admin.getType() == 1999){
-            Long govenorateId = admin.getGovernorateId();
-            Optional<Governorate> governorate = governorateRepository.findById(govenorateId);
-
-            if(!governorate.isPresent()){
-                return "Error, Governorate not found";
-            }
-
-            GovernorateAdmin governorateAdmin = GovernorateAdmin.builder()
-                    .nationalId(admin.getNationalId())
-                    .firstName(admin.getFirstName())
-                    .lastName(admin.getLastName())
-                    .email(admin.getEmail())
-                    .passwordHash(admin.getHashPassword())
-                    .governorate(governorate.get())
-                    .build();
-
-            governorateAdminRepository.save(governorateAdmin);
-            return "governorate admin created successfully";
-
-        }
-        else if(admin.getType() == 2000){
-            MasterAdmin governorateAdmin = MasterAdmin.builder()
-                    .nationalId(admin.getNationalId())
-                    .firstName(admin.getFirstName())
-                    .lastName(admin.getLastName())
-                    .email(admin.getEmail())
-                    .passwordHash(admin.getHashPassword())
-                    .build();
-
-            masterAdminRepository.save(governorateAdmin);
-            return "master admin created successfully";
-        }
-
-        return "Specified admin type not found";
+        return  new ResponseEntity<>("Specified admin type not found",HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

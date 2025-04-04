@@ -16,9 +16,11 @@ public class CityAdminDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private String cityName;
     private String governorateName;
-    private String level = "City Admin";
+    private String cityName;
+    private long cityId;
+    private long governorateId;
+    private int type = 1998 ;
 
     public CityAdminDTO(CityAdmin cityAdmin) {
         this.adminId = cityAdmin.getAdminId();
@@ -27,8 +29,10 @@ public class CityAdminDTO {
         this.firstName = cityAdmin.getFirstName();
         this.lastName = cityAdmin.getLastName();
         this.email = cityAdmin.getEmail();
+        this.cityId = cityAdmin.getCity().getCityId();
         this.cityName = cityAdmin.getCity().getName();
         this.governorateName = cityAdmin.getCity().getGovernorate().getName();
+        this.governorateId = cityAdmin.getCity().getGovernorate().getGovernorateId();
     }
 
 

@@ -29,7 +29,7 @@ public class EmployeeUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Employee employee = EmployeeRepository.findByEmail(username).orElseThrow(()->new
                 UsernameNotFoundException("User not found for username: "+username));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("Employee"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
         String password = new String(employee.getPasswordHash());
         User user = new User(employee.getEmail(),password,authorities);
         return user;

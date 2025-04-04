@@ -27,7 +27,7 @@ public class CityAdminUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         CityAdmin cityAdmin= cityAdminRepository.findByEmail(username).orElseThrow(()->new
                 UsernameNotFoundException("User not found for username: "+username));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("CityAdmin"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_CITYADMIN"));
         String password = new String(cityAdmin.getPasswordHash());
         User user = new User(cityAdmin.getEmail(),password,authorities);
         return user;
