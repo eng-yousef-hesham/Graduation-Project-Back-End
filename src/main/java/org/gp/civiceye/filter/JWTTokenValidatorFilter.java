@@ -13,12 +13,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
@@ -37,14 +40,17 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                         Claims claims= Jwts.parser().verifyWith(secretKey)
                                 .build().parseSignedClaims(jwt).getPayload();
                         String username = String.valueOf(claims.get("username"));
-                        String authorities = String.valueOf(claims.get("roles"));
-                        Authentication authentication = new UsernamePasswordAuthenticationToken(username,null ,
-                                AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
+                        List<String> rolesList = claims.get("roles", List.class); // Get roles as a List
+                        List<SimpleGrantedAuthority> authorities = rolesList.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList());
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
 
                     }
                 }
             }catch (Exception exception){
+
                 throw new BadCredentialsException("Invalid Token Received");
             }
         }

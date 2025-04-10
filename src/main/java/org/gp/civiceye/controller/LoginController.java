@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import org.gp.civiceye.constants.ApplicationConstants;
 import org.gp.civiceye.mapper.LoginRequestDTO;
 import org.gp.civiceye.mapper.LoginResponseDTO;
+import org.gp.civiceye.mapper.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,6 +28,7 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final Environment env;
+
 
     @Autowired
     public LoginController(AuthenticationManager authenticationManager, Environment env) {
@@ -61,6 +61,30 @@ public class LoginController {
         }
 
         return null;
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<?> checkAuthentication(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok("User is logged in as: " + authentication.getName());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in.");
+        }
+    }
+
+
+    @GetMapping("/user")
+    public ResponseEntity<UserDTO> check(Authentication authentication) {
+
+        UserDTO userDTO = UserDTO.builder().fullName(authentication.getName())
+                .level(authentication.getAuthorities().stream().findFirst().get().getAuthority()).build();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(userDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(userDTO);
+        }
+
     }
 
 }

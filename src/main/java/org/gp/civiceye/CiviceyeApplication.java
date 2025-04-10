@@ -20,47 +20,4 @@ public class CiviceyeApplication {
 
 
 
-//    @Bean
-//    public CommandLineRunner commandLineRunner(
-//            CitizenRepository citizenRepository,
-//            PasswordEncoder passwordEncoder
-//
-//    ) {
-//        return args -> {
-//            for (int i = 0; i < 100; i++) {
-//                Faker faker = new Faker();
-//                String password = faker.internet().password(10,20).toString();
-//                String hashpassword =  passwordEncoder.encode(password);
-//                Citizen citizen = Citizen.builder().nationalId(faker.idNumber().valid())
-//                        .firstName(faker.name().firstName())
-//                        .lastName(faker.name().lastName())
-//                        .age(faker.number().numberBetween(20, 80))
-//                        .email(faker.name().username() + "@civiceye.com")
-//                        .isActive(true)
-//                        .passwordHash(hashpassword)
-//                        .build();
-//                citizenRepository.save(citizen);
-//            }
-//        };
-//    }
-
-
-//    @Bean
-//    public CommandLineRunner commandLineRunner(
-//            GovernorateRepository governorateRepository
-//            , CityRepository cityRepository
-//            ) {
-//        return (args) -> {
-//            Governorate governorate = Governorate.builder().name("alex").isActive(true).cities(null)
-//                    .createdAt(null).updatedAt(null).build();
-//            governorateRepository.save(governorate);
-//
-//            City city = City.builder().governorate(governorate).createdAt(null).updatedAt(null).isActive(true).name("benha").Employees(null).build();
-//
-//            cityRepository.save(city);
-//
-//        };
-//    }
-
-
 }
