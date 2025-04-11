@@ -8,11 +8,9 @@ import org.gp.civiceye.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/V1")
@@ -24,7 +22,7 @@ public class AdminController {
     @Autowired
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
-}
+    }
 
     @PostMapping("/admin")
     @Operation(summary = "add new admin from any type", description = "insert new admin from any type \n" +
@@ -32,14 +30,16 @@ public class AdminController {
             "  governorate admin = 1999\n" +
             "  master admin = 2000")
     @ApiResponse(responseCode = "200", description = "when admin created successfully[City admin created successfully, Governorate admin created successfully, Master admin created successfully]\n"+
-    "when admin type not added [Specified admin type not found]\n"+
-    "when city not found [Error, City not found]\n"+
-    "when governorate not found [Error, Governorate not found]\n")
+            "when admin type not added [Specified admin type not found]\n"+
+            "when city not found [Error, City not found]\n"+
+            "when governorate not found [Error, Governorate not found]\n")
     public ResponseEntity<String> addAdmin(@RequestBody CreateAdminDTO admin) {
 
-           return new ResponseEntity<>(adminService.addAdmin(admin), HttpStatus.OK);
-
-
+        return adminService.addAdmin(admin);
 
     }
+
+
+
+
 }

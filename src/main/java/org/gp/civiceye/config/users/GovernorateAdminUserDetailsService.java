@@ -27,7 +27,7 @@ public class GovernorateAdminUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         GovernorateAdmin governorateAdmin= governorateAdminRepository.findByEmail(username).orElseThrow(()->new
                 UsernameNotFoundException("User not found for username: "+username));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("CityAdmin"),new SimpleGrantedAuthority("GovernorateAdmin"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_CITYADMIN"),new SimpleGrantedAuthority("ROLE_GOVERNORATEADMIN"));
         String password = new String(governorateAdmin.getPasswordHash());
         User user = new User(governorateAdmin.getEmail(),password,authorities);
         return user;

@@ -28,7 +28,7 @@ public class MasterAdminUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         MasterAdmin masterAdmin= masterAdminRepository.findByEmail(username).orElseThrow(()->new
                 UsernameNotFoundException("User not found for username: "+username));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("CityAdmin"),new SimpleGrantedAuthority("GovernorateAdmin"),new SimpleGrantedAuthority("MasterAdmin"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_CITYADMIN"),new SimpleGrantedAuthority("ROLE_GOVERNORATEADMIN"),new SimpleGrantedAuthority("ROLE_MASTERADMIN"));
         String password = new String(masterAdmin.getPasswordHash());
         User user = new User(masterAdmin.getEmail(),password,authorities);
         return user;
