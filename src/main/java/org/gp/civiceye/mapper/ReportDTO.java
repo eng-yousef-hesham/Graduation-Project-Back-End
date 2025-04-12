@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Report;
 import org.gp.civiceye.repository.entity.ReportStatus;
+import org.gp.civiceye.repository.entity.StatusHistory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -33,6 +35,7 @@ public class ReportDTO {
     private String cityName;
     private Long assignedEmployeeId;
     private String assignedEmployeeName;
+    private List<StatusHistoryDTO> statusHistory;
 
 
 
@@ -48,6 +51,7 @@ public class ReportDTO {
         this.updatedAt = report.getUpdatedAt();
         this.expectedResolutionDate = report.getExpectedResolutionDate();
         this.currentStatus = report.getCurrentStatus();
+        this.statusHistory = report.getStatusHistoryList().stream().map(StatusHistoryDTO::new).toList();
 
 
         if (report.getCitizen() != null) {

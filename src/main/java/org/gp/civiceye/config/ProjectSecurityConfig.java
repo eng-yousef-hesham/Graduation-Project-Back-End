@@ -73,11 +73,11 @@ public class ProjectSecurityConfig {
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/V1/masteradmins","/api/V1/admin","/api/V1/citie/"
-                                ,"api/V1/cities/","api/V1/departments","api/V1/governorates","api/V1/check").hasRole("MASTERADMIN")
+                                ,"api/V1/cities/","api/V1/departments","api/V1/governorates","api/V1/check","/api/V1/reports/**").hasRole("MASTERADMIN") // edit while merging
                         .requestMatchers("/api/V1/governorateadmins","api/V1/check").hasRole("GOVERNORATEADMIN")
                         .requestMatchers("/api/V1/cityadmins","api/V1/check").hasRole("CITYADMIN")
                         .requestMatchers("/api/V1/employees","api/V1/check").hasRole("EMPLOYEE")
-                        .requestMatchers("/api/V1/citizen","api/V1/check").hasRole("CITIZEN")
+                        .requestMatchers("/api/V1/citizen","/api/V1/reports/**","api/V1/check").hasRole("CITIZEN")
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/V1/login").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/V1/admin").permitAll() // Explicitly allowing POST
                         .anyRequest().authenticated()
