@@ -6,6 +6,7 @@ import org.gp.civiceye.constants.ApplicationConstants;
 import org.gp.civiceye.mapper.LoginRequestDTO;
 import org.gp.civiceye.mapper.LoginResponseDTO;
 import org.gp.civiceye.mapper.UserDTO;
+import org.gp.civiceye.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,12 +28,14 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final Environment env;
+    private final LoginService loginService;
 
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, Environment env) {
+    public LoginController(AuthenticationManager authenticationManager, Environment env,LoginService loginService) {
         this.authenticationManager = authenticationManager;
         this.env = env;
+        this.loginService =loginService;
     }
 
     @PostMapping("login")
@@ -74,12 +76,13 @@ public class LoginController {
 
 
     @GetMapping("/user")
-    public ResponseEntity<UserDTO> check(Authentication authentication) {
+    public ResponseEntity<UserDTO> userInfo(Authentication authentication) {
 
-        UserDTO userDTO = UserDTO.builder().fullName(authentication.getName())
-                .level(authentication.getAuthorities().stream().findFirst().get().getAuthority()).build();
+        UserDTO userDTO =null;
 
         if (authentication != null && authentication.isAuthenticated()) {
+             userDTO = loginService.userInfo(authentication.getName()
+                    ,authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
             return ResponseEntity.ok(userDTO);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(userDTO);

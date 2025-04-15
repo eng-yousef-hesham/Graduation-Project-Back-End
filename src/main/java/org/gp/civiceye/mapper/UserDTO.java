@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gp.civiceye.repository.entity.GovernorateAdmin;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -19,7 +21,9 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String governorateName;
-    private String level;
+    private String cityName;
+    private String department;
+    private List<String> level;
 
 
 }
