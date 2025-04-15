@@ -49,9 +49,22 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
                     }
                 }
-            }catch (Exception exception){
+            }catch (Exception ex){
 
-                throw new BadCredentialsException("Invalid Token Received");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write(String.format(
+                        "{" +
+                                "\"timestamp\":\"%s\"," +
+                                "\"status\":401," +
+                                "\"error\":\"Unauthorized\"," +
+                                "\"message\":\"Invalid or expired token\"," +
+                                "\"path\":\"%s\"" +
+                                "}",
+                        java.time.Instant.now().toString(),
+                        request.getRequestURI()
+                ));
+                return;
             }
         }
         filterChain.doFilter(request,response);

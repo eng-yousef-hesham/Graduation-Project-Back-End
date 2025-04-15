@@ -1,16 +1,15 @@
 package org.gp.civiceye.controller;
 
+import org.gp.civiceye.mapper.CreateReportDTO;
 import org.gp.civiceye.mapper.ReportDTO;
+import org.gp.civiceye.mapper.UpdateReportStatusDTO;
+import org.gp.civiceye.repository.entity.Report;
 import org.gp.civiceye.service.ReportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/V1")
@@ -20,6 +19,32 @@ public class ReportController {
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
+
+
+
+
+    @PostMapping("/reports/submit")
+    public ResponseEntity<Long> submitReport(@RequestBody CreateReportDTO dto) {
+        Long reportId = reportService.submitReport(dto);
+        return new ResponseEntity<>(reportId, HttpStatus.OK);
+    }
+
+    @GetMapping("/reports/user/{userId}")
+    public ResponseEntity<List<ReportDTO>> getUserReports(@PathVariable Long userId) {
+        return ResponseEntity.ok(reportService.getReportsForUser(userId));
+    }
+
+    @GetMapping("/reports/employee/{employeeId}")
+    public ResponseEntity<List<ReportDTO>> getEmployeeReports(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(reportService.getReportsForEmployee(employeeId));
+    }
+
+    @PostMapping("/reports/status")
+    public ResponseEntity<Void> updateStatus(@RequestBody UpdateReportStatusDTO dto) {
+        reportService.updateReportStatus(dto);
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/reports")
     public ResponseEntity<List<ReportDTO>> getAllReports() {
