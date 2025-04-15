@@ -76,8 +76,8 @@ public class ProjectSecurityConfig {
                                 ,"api/V1/cities/","api/V1/departments","api/V1/governorates").hasRole("MASTERADMIN")
                         .requestMatchers("/api/V1/governorateadmins").hasRole("GOVERNORATEADMIN")
                         .requestMatchers("/api/V1/cityadmins").hasRole("CITYADMIN")
-                        .requestMatchers("/api/V1/employees").hasRole("EMPLOYEE")
-                        .requestMatchers("/api/V1/citizen").hasRole("CITIZEN")
+                        .requestMatchers("/api/V1/employees","/api/V1/reports/**").hasRole("EMPLOYEE")
+                        .requestMatchers("/api/V1/citizen","/api/V1/reports/**").hasRole("CITIZEN")
                         .requestMatchers("/api/V1/check").hasAnyRole("MASTERADMIN", "GOVERNORATEADMIN", "CITYADMIN", "EMPLOYEE", "CITIZEN")
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/V1/login").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/V1/admin").permitAll() // Explicitly allowing POST
