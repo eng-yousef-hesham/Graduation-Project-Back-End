@@ -2,8 +2,10 @@ package org.gp.civiceye.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.gp.civiceye.mapper.CreateAdminDTO;
 import org.gp.civiceye.mapper.CreateCityAdminDTO;
+import org.gp.civiceye.mapper.UpdateAdminDTO;
 import org.gp.civiceye.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,19 @@ public class AdminController {
 
         return adminService.addAdmin(admin);
 
+    }
+
+    @PutMapping("/admin")
+    public ResponseEntity<String> updateAdmin(@Valid @RequestBody UpdateAdminDTO adminDTO) {
+        return adminService.updateAdmin(adminDTO);
+    }
+
+    @PutMapping("/admin/{adminId}")
+    public ResponseEntity<String> updateAdminById(
+            @PathVariable Long adminId,
+            @Valid @RequestBody UpdateAdminDTO adminDTO) {
+        adminDTO.setAdminId(adminId);
+        return adminService.updateAdmin(adminDTO);
     }
 
 

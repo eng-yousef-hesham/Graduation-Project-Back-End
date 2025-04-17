@@ -12,6 +12,4 @@ public interface CityAdminRepository extends JpaRepository<CityAdmin, Long> {
     Optional<CityAdmin> findByEmail(String email);
 
 //  public CityAdmin findByAdminId(Long adminId);
-
-
 }
