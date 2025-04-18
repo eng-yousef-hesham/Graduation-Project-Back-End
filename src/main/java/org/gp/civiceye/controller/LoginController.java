@@ -54,7 +54,7 @@ public class LoginController {
         if (authenticationResponse != null && authenticationResponse.isAuthenticated()) {
             if (env != null) {
                 String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
-                        ApplicationConstants.JWT_SECRET_DEFAULT_VaLUE);
+                        ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
                 jwt = Jwts.builder()
@@ -72,10 +72,10 @@ public class LoginController {
                 // ✅ Create HTTP-only cookie
                 ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
                         .httpOnly(true)
-                        .secure(true) // set to true in production (requires HTTPS)
+                        .secure(false) // set to true in production (requires HTTPS)
                         .path("/")
                         .maxAge(Duration.ofDays(14))
-                        .sameSite("Strict") // or Lax/None depending on your app's needs
+                        .sameSite("Lax")// or Lax/None depending on your app's needs
                         .build();
 
                 // ✅ Add cookie to response

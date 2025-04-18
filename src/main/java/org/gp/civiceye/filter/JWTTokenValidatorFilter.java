@@ -45,7 +45,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 Environment env = getEnvironment();
                 if (env != null) {
                     String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
-                            ApplicationConstants.JWT_SECRET_DEFAULT_VaLUE);
+                            ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
                     SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
                     Claims claims = Jwts.parser()

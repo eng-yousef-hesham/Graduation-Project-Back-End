@@ -30,7 +30,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
             Environment env = getEnvironment();
             if (env != null) {
                 String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
-                        ApplicationConstants.JWT_SECRET_DEFAULT_VaLUE);
+                        ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
                 String jwt = Jwts.builder()
@@ -48,10 +48,9 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
                 // ✅ Set the JWT in an HTTP-only cookie
                 Cookie cookie = new Cookie("jwt", jwt);
                 cookie.setHttpOnly(true); // Prevent JavaScript access
-                cookie.setSecure(true);   // Set to true in production with HTTPS
+                cookie.setSecure(false);   // Set to true in production with HTTPS
                 cookie.setPath("/");
                 cookie.setMaxAge(60 * 60 * 24 * 14); // 14 days
-
                 response.addCookie(cookie);
 
                 // Optional: Still add header if you want both

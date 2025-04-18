@@ -24,12 +24,12 @@ public class CityController {
         this.cityService = cityService;
     }
 
-    @GetMapping("/citie/{id}")
+    @GetMapping("/city/{id}")
     @Operation(summary = "Get one city by city id", description = "Fetches only one city.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved city " )
-    public ResponseEntity<CityDTO> getCitieById(@PathVariable Long id) {
-        CityDTO citie = cityService.getCityDTOByName(id);
-        return ResponseEntity.ok(citie);
+    public ResponseEntity<CityDTO> getCityById(@PathVariable Long id) {
+        CityDTO city = cityService.getCityDTOByName(id);
+        return ResponseEntity.ok(city);
     }
 
     @GetMapping("/cities/{id}")
