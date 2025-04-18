@@ -2,6 +2,7 @@ package org.gp.civiceye.controller;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletResponse;
 import org.gp.civiceye.constants.ApplicationConstants;
 import org.gp.civiceye.mapper.LoginRequestDTO;
 import org.gp.civiceye.mapper.LoginResponseDTO;
@@ -10,7 +11,9 @@ import org.gp.civiceye.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.ApplicationContextHeaderFilter;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -41,30 +45,49 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
-        String jwt ;
-        Authentication authentication = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.username(),
-                loginRequest.password());
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpServletResponse response) {
+        String jwt;
+        Authentication authentication = UsernamePasswordAuthenticationToken.unauthenticated(
+                loginRequest.username(), loginRequest.password());
         Authentication authenticationResponse = authenticationManager.authenticate(authentication);
-        if (null != authenticationResponse && authenticationResponse.isAuthenticated()) {
-            if (null != env) {
+
+        if (authenticationResponse != null && authenticationResponse.isAuthenticated()) {
+            if (env != null) {
                 String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
                         ApplicationConstants.JWT_SECRET_DEFAULT_VaLUE);
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-                jwt =  Jwts.builder().issuer("Civiceye").subject("JWTTOken")
+
+                jwt = Jwts.builder()
+                        .issuer("Civiceye")
+                        .subject("JWTToken")
                         .claim("username", authenticationResponse.getName())
                         .claim("roles", authenticationResponse.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toList()))
                         .issuedAt(new Date())
-                        .expiration(new Date((new Date()).getTime() + 1000 * 60 * 60 * 24 * 14))
-                        .signWith(secretKey).compact();
-                return ResponseEntity.status(HttpStatus.OK).header(ApplicationConstants.JWT_HEADER, jwt)
-                        .body(new LoginResponseDTO(HttpStatus.OK.getReasonPhrase(), jwt));
+                        .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 14)) // 14 days
+                        .signWith(secretKey)
+                        .compact();
+
+                // ✅ Create HTTP-only cookie
+                ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
+                        .httpOnly(true)
+                        .secure(true) // set to true in production (requires HTTPS)
+                        .path("/")
+                        .maxAge(Duration.ofDays(14))
+                        .sameSite("Strict") // or Lax/None depending on your app's needs
+                        .build();
+
+                // ✅ Add cookie to response
+                response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+                return ResponseEntity.ok()
+                        .body(new LoginResponseDTO(HttpStatus.OK.getReasonPhrase(), "Login successful"));
             }
         }
 
-        return null;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new LoginResponseDTO("Unauthorized", null));
     }
 
     @GetMapping("/check")
@@ -93,10 +116,17 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0) // delete cookie
+                .build();
 
-        SecurityContextHolder.getContext().setAuthentication(null);
-        return ResponseEntity.ok("Logout successful");
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok("Logged out");
     }
 
 

@@ -28,29 +28,42 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String jwt = request.getHeader(ApplicationConstants.JWT_HEADER);
-        if (null != jwt){
-            try{
+        String jwt = null;
+
+        // ✅ 1. Extract token from the "jwt" cookie
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    jwt = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (jwt != null) {
+            try {
                 Environment env = getEnvironment();
-                if (null != env) {
+                if (env != null) {
                     String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
                             ApplicationConstants.JWT_SECRET_DEFAULT_VaLUE);
                     SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-                    if (null != secretKey) {
-                        Claims claims= Jwts.parser().verifyWith(secretKey)
-                                .build().parseSignedClaims(jwt).getPayload();
-                        String username = String.valueOf(claims.get("username"));
-                        List<String> rolesList = claims.get("roles", List.class); // Get roles as a List
-                        List<SimpleGrantedAuthority> authorities = rolesList.stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList());
-                        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    }
+                    Claims claims = Jwts.parser()
+                            .verifyWith(secretKey)
+                            .build()
+                            .parseSignedClaims(jwt)
+                            .getPayload();
+
+                    String username = String.valueOf(claims.get("username"));
+                    List<String> rolesList = claims.get("roles", List.class);
+                    List<SimpleGrantedAuthority> authorities = rolesList.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-            }catch (Exception ex){
-
+            } catch (Exception ex) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
                 response.getWriter().write(String.format(
@@ -67,11 +80,8 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getServletPath().equals("/login");
-    }
 }
