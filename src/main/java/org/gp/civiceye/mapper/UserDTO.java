@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDTO {
-    private Long adminId;
+    private Long Id;
     private String nationalId;
     private String fullName;
     private String firstName;

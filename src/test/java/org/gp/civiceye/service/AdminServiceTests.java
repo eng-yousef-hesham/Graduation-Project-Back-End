@@ -1,14 +1,17 @@
 package org.gp.civiceye.service;
 
 import org.gp.civiceye.mapper.CreateAdminDTO;
+import org.gp.civiceye.mapper.UpdateAdminDTO;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.impl.AdminServiceImpl;
+import org.gp.civiceye.service.impl.admin.AddAdminResult;
+import org.gp.civiceye.service.impl.admin.AdminType;
+import org.gp.civiceye.service.impl.admin.DeleteAdminResult;
+import org.gp.civiceye.service.impl.admin.UpdateAdminResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,10 +64,11 @@ class AdminServiceTests {
         when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
 
-        ResponseEntity<String> response = adminService.addAdmin(createAdminDTO);
+        AddAdminResult result = adminService.addAdmin(createAdminDTO);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("City admin created successfully", response.getBody());
+        assertTrue(result.isSuccess());
+        assertEquals("City admin created successfully", result.getMessage());
+        assertEquals(AdminType.CITY_ADMIN, result.getAdminType());
         verify(cityAdminRepository).save(any(CityAdmin.class));
     }
 
@@ -84,10 +88,11 @@ class AdminServiceTests {
         when(governorateRepository.findById(1L)).thenReturn(Optional.of(governorate));
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
 
-        ResponseEntity<String> response = adminService.addAdmin(createAdminDTO);
+        AddAdminResult result = adminService.addAdmin(createAdminDTO);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("governorate admin created successfully", response.getBody());
+        assertTrue(result.isSuccess());
+        assertEquals("Governorate admin created successfully", result.getMessage());
+        assertEquals(AdminType.GOVERNORATE_ADMIN, result.getAdminType());
         verify(governorateAdminRepository).save(any(GovernorateAdmin.class));
     }
 
@@ -103,10 +108,11 @@ class AdminServiceTests {
 
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
 
-        ResponseEntity<String> response = adminService.addAdmin(createAdminDTO);
+        AddAdminResult result = adminService.addAdmin(createAdminDTO);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("master admin created successfully", response.getBody());
+        assertTrue(result.isSuccess());
+        assertEquals("Master admin created successfully", result.getMessage());
+        assertEquals(AdminType.MASTER_ADMIN, result.getAdminType());
         verify(masterAdminRepository).save(any(MasterAdmin.class));
     }
 
@@ -123,10 +129,11 @@ class AdminServiceTests {
 
         when(cityRepository.findById(1L)).thenReturn(Optional.empty());
 
-        ResponseEntity<String> response = adminService.addAdmin(createAdminDTO);
+        AddAdminResult result = adminService.addAdmin(createAdminDTO);
 
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
-        assertEquals("Error, City not found", response.getBody());
+        assertFalse(result.isSuccess());
+        assertEquals("Error, City not found", result.getMessage());
+        assertNull(result.getAdminType());
     }
 
     @Test
@@ -142,10 +149,11 @@ class AdminServiceTests {
 
         when(governorateRepository.findById(1L)).thenReturn(Optional.empty());
 
-        ResponseEntity<String> response = adminService.addAdmin(createAdminDTO);
+        AddAdminResult result = adminService.addAdmin(createAdminDTO);
 
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
-        assertEquals("Error, Governorate not found", response.getBody());
+        assertFalse(result.isSuccess());
+        assertEquals("Error, Governorate not found", result.getMessage());
+        assertNull(result.getAdminType());
     }
 
     @Test
@@ -158,9 +166,133 @@ class AdminServiceTests {
         createAdminDTO.setEmail("bob.jones@example.com");
         createAdminDTO.setHashPassword("password");
 
-        ResponseEntity<String> response = adminService.addAdmin(createAdminDTO);
+        AddAdminResult result = adminService.addAdmin(createAdminDTO);
 
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
-        assertEquals("Specified admin type not found", response.getBody());
+        assertFalse(result.isSuccess());
+        assertEquals("Specified admin type not found", result.getMessage());
+        assertNull(result.getAdminType());
+    }
+
+    @Test
+    void testDeleteCityAdmin_Success() {
+        Long adminId = 1L;
+        int adminType = 1998;
+
+        CityAdmin cityAdmin = new CityAdmin();
+        cityAdmin.setAdminId(adminId);
+        when(cityAdminRepository.findById(adminId)).thenReturn(Optional.of(cityAdmin));
+
+        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
+
+        assertTrue(result.isSuccess());
+        assertEquals("City admin deleted successfully", result.getMessage());
+        assertEquals(AdminType.CITY_ADMIN, result.getAdminType());
+        verify(cityAdminRepository).deleteById(adminId);
+    }
+
+    @Test
+    void testDeleteGovernorateAdmin_Success() {
+        Long adminId = 1L;
+        int adminType = 1999;
+
+        GovernorateAdmin governorateAdmin = new GovernorateAdmin();
+        governorateAdmin.setAdminId(adminId);
+        when(governorateAdminRepository.findById(adminId)).thenReturn(Optional.of(governorateAdmin));
+
+        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
+
+        assertTrue(result.isSuccess());
+        assertEquals("Governorate admin deleted successfully", result.getMessage());
+        assertEquals(AdminType.GOVERNORATE_ADMIN, result.getAdminType());
+        verify(governorateAdminRepository).deleteById(adminId);
+    }
+
+    @Test
+    void testDeleteMasterAdmin_Success() {
+        Long adminId = 1L;
+        int adminType = 2000;
+
+        MasterAdmin masterAdmin = new MasterAdmin();
+        masterAdmin.setAdminId(adminId);
+        when(masterAdminRepository.findById(adminId)).thenReturn(Optional.of(masterAdmin));
+        when(masterAdminRepository.count()).thenReturn(2L); // More than one master admin exists
+
+        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
+
+        assertTrue(result.isSuccess());
+        assertEquals("Master admin deleted successfully", result.getMessage());
+        assertEquals(AdminType.MASTER_ADMIN, result.getAdminType());
+        verify(masterAdminRepository).deleteById(adminId);
+    }
+
+    @Test
+    void testDeleteMasterAdmin_LastAdmin() {
+        Long adminId = 1L;
+        int adminType = 2000;
+
+        MasterAdmin masterAdmin = new MasterAdmin();
+        masterAdmin.setAdminId(adminId);
+        when(masterAdminRepository.findById(adminId)).thenReturn(Optional.of(masterAdmin));
+        when(masterAdminRepository.count()).thenReturn(1L); // Only one master admin exists
+
+        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
+
+        assertFalse(result.isSuccess());
+        assertEquals("Cannot delete the last master admin", result.getMessage());
+        assertEquals(AdminType.MASTER_ADMIN, result.getAdminType());
+        verify(masterAdminRepository, never()).deleteById(adminId);
+    }
+
+    @Test
+    void testDeleteAdmin_NotFound() {
+        Long adminId = 99L;
+        int adminType = 1998;
+
+        when(cityAdminRepository.findById(adminId)).thenReturn(Optional.empty());
+
+        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
+
+        assertFalse(result.isSuccess());
+        assertEquals("Error, City admin not found", result.getMessage());
+        assertEquals(AdminType.CITY_ADMIN, result.getAdminType());
+        verify(cityAdminRepository, never()).deleteById(adminId);
+    }
+
+    @Test
+    void testDeleteAdmin_InvalidType() {
+        Long adminId = 1L;
+        int adminType = 9999; // Invalid type
+
+        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
+
+        assertFalse(result.isSuccess());
+        assertEquals("Specified admin type not found", result.getMessage());
+        assertNull(result.getAdminType());
+    }
+
+    @Test
+    void testUpdateCityAdmin_Success() {
+        UpdateAdminDTO updateDTO = new UpdateAdminDTO();
+        updateDTO.setAdminId(1L);
+        updateDTO.setType(1998);
+        updateDTO.setFirstName("UpdatedFirstName");
+        updateDTO.setLastName("UpdatedLastName");
+        updateDTO.setCityId(2L);
+
+        CityAdmin existingAdmin = new CityAdmin();
+        existingAdmin.setAdminId(1L);
+
+        City city = new City();
+        city.setCityId(2L);
+
+        when(cityAdminRepository.findById(1L)).thenReturn(Optional.of(existingAdmin));
+        when(cityRepository.findById(2L)).thenReturn(Optional.of(city));
+
+        UpdateAdminResult result = adminService.updateAdmin(updateDTO);
+
+        assertTrue(result.isSuccess());
+        assertEquals("City admin updated successfully", result.getMessage());
+        assertEquals(AdminType.CITY_ADMIN, result.getAdminType());
+        verify(cityAdminRepository).save(existingAdmin);
     }
 }

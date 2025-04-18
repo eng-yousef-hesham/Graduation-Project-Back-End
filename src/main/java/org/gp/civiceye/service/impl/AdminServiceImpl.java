@@ -1,14 +1,15 @@
 package org.gp.civiceye.service.impl;
 
 import org.gp.civiceye.mapper.CreateAdminDTO;
-
 import org.gp.civiceye.mapper.UpdateAdminDTO;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
+import org.gp.civiceye.service.impl.admin.AddAdminResult;
 import org.gp.civiceye.service.AdminService;
+import org.gp.civiceye.service.impl.admin.AdminType;
+import org.gp.civiceye.service.impl.admin.DeleteAdminResult;
+import org.gp.civiceye.service.impl.admin.UpdateAdminResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,27 +37,23 @@ public class AdminServiceImpl implements AdminService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
-
     /*city admin = 1998
-  governorate admin = 1999
-  master admin = 2000
-  */
+    governorate admin = 1999
+    master admin = 2000
+    */
     @Override
-    public ResponseEntity<String> addAdmin(CreateAdminDTO admin) {
-
+    public AddAdminResult addAdmin(CreateAdminDTO admin) {
         String password = admin.getHashPassword();
         String encodedPassword = passwordEncoder.encode(password);
         admin.setHashPassword(encodedPassword);
 
         try {
             if (admin.getType() == 1998) {
-
                 Long cityId = admin.getCityId();
                 Optional<City> city = cityRepository.findById(cityId);
 
                 if (!city.isPresent()) {
-                    return new ResponseEntity<>("Error, City not found",HttpStatus.UNPROCESSABLE_ENTITY);
+                    return new AddAdminResult(false, "Error, City not found");
                 }
 
                 CityAdmin cityAdmin = CityAdmin.builder()
@@ -69,13 +66,13 @@ public class AdminServiceImpl implements AdminService {
                         .build();
 
                 cityAdminRepository.save(cityAdmin);
-                return  new ResponseEntity<>("City admin created successfully",HttpStatus.OK);
+                return new AddAdminResult(true, "City admin created successfully", AdminType.CITY_ADMIN);
             } else if (admin.getType() == 1999) {
                 Long govenorateId = admin.getGovernorateId();
                 Optional<Governorate> governorate = governorateRepository.findById(govenorateId);
 
                 if (!governorate.isPresent()) {
-                    return  new ResponseEntity<>("Error, Governorate not found",HttpStatus.UNPROCESSABLE_ENTITY);
+                    return new AddAdminResult(false, "Error, Governorate not found");
                 }
 
                 GovernorateAdmin governorateAdmin = GovernorateAdmin.builder()
@@ -88,10 +85,10 @@ public class AdminServiceImpl implements AdminService {
                         .build();
 
                 governorateAdminRepository.save(governorateAdmin);
-                return  new ResponseEntity<>("governorate admin created successfully",HttpStatus.OK);
+                return new AddAdminResult(true, "Governorate admin created successfully", AdminType.GOVERNORATE_ADMIN);
 
             } else if (admin.getType() == 2000) {
-                MasterAdmin governorateAdmin = MasterAdmin.builder()
+                MasterAdmin masterAdmin = MasterAdmin.builder()
                         .nationalId(admin.getNationalId())
                         .firstName(admin.getFirstName())
                         .lastName(admin.getLastName())
@@ -99,22 +96,23 @@ public class AdminServiceImpl implements AdminService {
                         .passwordHash(admin.getHashPassword())
                         .build();
 
-                masterAdminRepository.save(governorateAdmin);
-                return  new ResponseEntity<>("master admin created successfully",HttpStatus.OK);
+                masterAdminRepository.save(masterAdmin);
+                return new AddAdminResult(true, "Master admin created successfully", AdminType.MASTER_ADMIN);
             }
-        }catch (Exception e){
-            return new ResponseEntity<>("",HttpStatus.CONFLICT);
+
+            return new AddAdminResult(false, "Specified admin type not found");
+        } catch (Exception e) {
+            return new AddAdminResult(false, "Error creating admin: " + e.getMessage());
         }
-        return  new ResponseEntity<>("Specified admin type not found",HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
-    public ResponseEntity<String> updateAdmin(UpdateAdminDTO admin) {
+    public UpdateAdminResult updateAdmin(UpdateAdminDTO admin) {
         try {
             if (admin.getType() == 1998) {
                 Optional<CityAdmin> existingAdmin = cityAdminRepository.findById(admin.getAdminId());
                 if (!existingAdmin.isPresent()) {
-                    return new ResponseEntity<>("Error, City admin not found", HttpStatus.NOT_FOUND);
+                    return new UpdateAdminResult(false, "Error, City admin not found", AdminType.CITY_ADMIN);
                 }
 
                 CityAdmin cityAdmin = existingAdmin.get();
@@ -122,7 +120,7 @@ public class AdminServiceImpl implements AdminService {
                 if (admin.getCityId() != null) {
                     Optional<City> city = cityRepository.findById(admin.getCityId());
                     if (!city.isPresent()) {
-                        return new ResponseEntity<>("Error, City not found", HttpStatus.UNPROCESSABLE_ENTITY);
+                        return new UpdateAdminResult(false, "Error, City not found", AdminType.CITY_ADMIN);
                     }
                     cityAdmin.setCity(city.get());
                 }
@@ -130,12 +128,12 @@ public class AdminServiceImpl implements AdminService {
                 updateAdminBasicInfo(cityAdmin, admin);
 
                 cityAdminRepository.save(cityAdmin);
-                return new ResponseEntity<>("City admin updated successfully", HttpStatus.OK);
+                return new UpdateAdminResult(true, "City admin updated successfully", AdminType.CITY_ADMIN);
 
             } else if (admin.getType() == 1999) {
                 Optional<GovernorateAdmin> existingAdmin = governorateAdminRepository.findById(admin.getAdminId());
                 if (!existingAdmin.isPresent()) {
-                    return new ResponseEntity<>("Error, Governorate admin not found", HttpStatus.NOT_FOUND);
+                    return new UpdateAdminResult(false, "Error, Governorate admin not found", AdminType.GOVERNORATE_ADMIN);
                 }
 
                 GovernorateAdmin governorateAdmin = existingAdmin.get();
@@ -143,7 +141,7 @@ public class AdminServiceImpl implements AdminService {
                 if (admin.getGovernorateId() != null) {
                     Optional<Governorate> governorate = governorateRepository.findById(admin.getGovernorateId());
                     if (!governorate.isPresent()) {
-                        return new ResponseEntity<>("Error, Governorate not found", HttpStatus.UNPROCESSABLE_ENTITY);
+                        return new UpdateAdminResult(false, "Error, Governorate not found", AdminType.GOVERNORATE_ADMIN);
                     }
                     governorateAdmin.setGovernorate(governorate.get());
                 }
@@ -151,12 +149,12 @@ public class AdminServiceImpl implements AdminService {
                 updateAdminBasicInfo(governorateAdmin, admin);
 
                 governorateAdminRepository.save(governorateAdmin);
-                return new ResponseEntity<>("Governorate admin updated successfully", HttpStatus.OK);
+                return new UpdateAdminResult(true, "Governorate admin updated successfully", AdminType.GOVERNORATE_ADMIN);
 
             } else if (admin.getType() == 2000) {
                 Optional<MasterAdmin> existingAdmin = masterAdminRepository.findById(admin.getAdminId());
                 if (!existingAdmin.isPresent()) {
-                    return new ResponseEntity<>("Error, Master admin not found", HttpStatus.NOT_FOUND);
+                    return new UpdateAdminResult(false, "Error, Master admin not found", AdminType.MASTER_ADMIN);
                 }
 
                 MasterAdmin masterAdmin = existingAdmin.get();
@@ -164,12 +162,12 @@ public class AdminServiceImpl implements AdminService {
                 updateAdminBasicInfo(masterAdmin, admin);
 
                 masterAdminRepository.save(masterAdmin);
-                return new ResponseEntity<>("Master admin updated successfully", HttpStatus.OK);
+                return new UpdateAdminResult(true, "Master admin updated successfully", AdminType.MASTER_ADMIN);
             }
 
-            return new ResponseEntity<>("Specified admin type not found", HttpStatus.UNPROCESSABLE_ENTITY);
+            return new UpdateAdminResult(false, "Specified admin type not found", AdminType.UNKNOWN);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error updating admin: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new UpdateAdminResult(false, "Error updating admin: " + e.getMessage(), AdminType.UNKNOWN);
         }
     }
 
@@ -182,17 +180,51 @@ public class AdminServiceImpl implements AdminService {
             admin.setLastName(updateData.getLastName());
         }
 
-//        if (updateData.getEmail() != null) {
-//            admin.setEmail(updateData.getEmail());
-//        }
-//
-//        if (updateData.getNationalId() != null) {
-//            admin.setNationalId(updateData.getNationalId());
-//        }
-
         if (updateData.getHashPassword() != null && !updateData.getHashPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(updateData.getHashPassword());
             admin.setPasswordHash(encodedPassword);
+        }
+    }
+    @Override
+    public DeleteAdminResult deleteAdmin(Long adminId, int adminType) {
+        try {
+            if (adminType == 1998) {
+                Optional<CityAdmin> existingAdmin = cityAdminRepository.findById(adminId);
+                if (!existingAdmin.isPresent()) {
+                    return new DeleteAdminResult(false, "Error, City admin not found", AdminType.CITY_ADMIN);
+                }
+
+                cityAdminRepository.deleteById(adminId);
+                return new DeleteAdminResult(true, "City admin deleted successfully", AdminType.CITY_ADMIN);
+
+            } else if (adminType == 1999) {
+                Optional<GovernorateAdmin> existingAdmin = governorateAdminRepository.findById(adminId);
+                if (!existingAdmin.isPresent()) {
+                    return new DeleteAdminResult(false, "Error, Governorate admin not found", AdminType.GOVERNORATE_ADMIN);
+                }
+
+                governorateAdminRepository.deleteById(adminId);
+                return new DeleteAdminResult(true, "Governorate admin deleted successfully", AdminType.GOVERNORATE_ADMIN);
+
+            } else if (adminType == 2000) {
+                Optional<MasterAdmin> existingAdmin = masterAdminRepository.findById(adminId);
+                if (!existingAdmin.isPresent()) {
+                    return new DeleteAdminResult(false, "Error, Master admin not found", AdminType.MASTER_ADMIN);
+                }
+
+                // You might want to add a check to prevent deleting the last master admin
+                long masterAdminCount = masterAdminRepository.count();
+                if (masterAdminCount <= 1) {
+                    return new DeleteAdminResult(false, "Cannot delete the last master admin", AdminType.MASTER_ADMIN);
+                }
+
+                masterAdminRepository.deleteById(adminId);
+                return new DeleteAdminResult(true, "Master admin deleted successfully", AdminType.MASTER_ADMIN);
+            }
+
+            return new DeleteAdminResult(false, "Specified admin type not found");
+        } catch (Exception e) {
+            return new DeleteAdminResult(false, "Error deleting admin: " + e.getMessage());
         }
     }
 }
