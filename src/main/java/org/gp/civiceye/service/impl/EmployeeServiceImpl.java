@@ -1,13 +1,21 @@
 package org.gp.civiceye.service.impl;
 
+import org.gp.civiceye.mapper.UpdateAdminDTO;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
+import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
 import org.gp.civiceye.repository.CityRepository;
 import org.gp.civiceye.repository.EmployeeRepository;
+import org.gp.civiceye.repository.entity.Admin;
 import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.repository.entity.Employee;
 import org.gp.civiceye.service.EmployeeService;
+import org.gp.civiceye.service.impl.admin.AdminType;
+import org.gp.civiceye.service.impl.admin.DeleteAdminResult;
+import org.gp.civiceye.service.impl.admin.UpdateAdminResult;
 import org.gp.civiceye.service.impl.employee.AddEmployeeResult;
+import org.gp.civiceye.service.impl.employee.DeleteEmployeeResult;
+import org.gp.civiceye.service.impl.employee.UpdateEmployeeResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -94,5 +102,61 @@ public class EmployeeServiceImpl implements EmployeeService {
         return new AddEmployeeResult(true, "Employee created successfully");
     }
 
+    @Override
+    public UpdateEmployeeResult updateEmployee(Long employeeId, EmployeeUpdateDTO employee) {
+        Optional<Employee> existingEmployee = employeeRepository.findById(employeeId);
+        if (!existingEmployee.isPresent()) {
+            return new UpdateEmployeeResult(false, "Error, Employee not found");
+        }
+
+        Employee employeeinfo =existingEmployee.get();
+        if (employee.getCityId() != null) {
+            Optional<City> city = cityRepository.findById(employee.getCityId());
+            if (!city.isPresent()) {
+                return new UpdateEmployeeResult(false, "Error, City not found");
+            }
+            employeeinfo.setCity(city.get());
+        }
+
+        updateEmployeeBasicInfo(employeeinfo, employee);
+
+        employeeRepository.save(employeeinfo);
+
+
+        return new UpdateEmployeeResult(true, "Employee updated successfully");
+    }
+
+
+    private <T extends Employee> void updateEmployeeBasicInfo(T employee, EmployeeUpdateDTO updateData) {
+        if (updateData.getFirstName() != null) {
+            employee.setFirstName(updateData.getFirstName());
+        }
+
+        if (updateData.getLastName() != null) {
+            employee.setLastName(updateData.getLastName());
+        }
+
+        if (updateData.getDepartment() != null) {
+            employee.setDepartment(updateData.getDepartment());
+        }
+        if (updateData.getPassword() != null && !updateData.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(updateData.getPassword());
+            employee.setPasswordHash(encodedPassword);
+        }
+    }
+
+    @Override
+    public DeleteEmployeeResult deleteEmployee(Long employeeId) {
+        try {
+            Optional<Employee> existingEmployee = employeeRepository.findById(employeeId);
+            if (!existingEmployee.isPresent()) {
+                return new DeleteEmployeeResult(false, "Error, Employee not found");
+            }
+            employeeRepository.deleteById(employeeId);
+            return new DeleteEmployeeResult(true, "Employee deleted successfully");
+        } catch (Exception e) {
+            return new DeleteEmployeeResult(false, "Error deleting employee: " + e.getMessage());
+        }
+    }
 
 }
