@@ -62,6 +62,7 @@ public class AdminServiceImpl implements AdminService {
                         .lastName(admin.getLastName())
                         .email(admin.getEmail())
                         .passwordHash(admin.getHashPassword())
+                        .isActive(true)
                         .city(city.get())
                         .build();
 
@@ -82,6 +83,7 @@ public class AdminServiceImpl implements AdminService {
                         .email(admin.getEmail())
                         .passwordHash(admin.getHashPassword())
                         .governorate(governorate.get())
+                        .isActive(true)
                         .build();
 
                 governorateAdminRepository.save(governorateAdmin);
@@ -94,6 +96,7 @@ public class AdminServiceImpl implements AdminService {
                         .lastName(admin.getLastName())
                         .email(admin.getEmail())
                         .passwordHash(admin.getHashPassword())
+                        .isActive(true)
                         .build();
 
                 masterAdminRepository.save(masterAdmin);

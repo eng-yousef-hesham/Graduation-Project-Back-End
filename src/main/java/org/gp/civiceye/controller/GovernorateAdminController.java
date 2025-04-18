@@ -26,7 +26,7 @@ public class GovernorateAdminController {
         this.governorateAdminService = governorateAdminService;
     }
 
-    @GetMapping("/GovernorateAdmins")
+    @GetMapping("/GovernorateAdmin")
     public ResponseEntity<List<GovernrateAdminDTO>> getAllGovernrateAdmins() {
 
 
