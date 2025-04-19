@@ -24,7 +24,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("/employee")
+    @GetMapping("/employees")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
         List<EmployeeDTO> employees = employeeService.getAllEmployees();
         if (!employees.isEmpty()) {
@@ -33,7 +33,7 @@ public class EmployeeController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/employee/{employeeId}")
+    @GetMapping("/employees/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId" ) Long employeeId) {
         EmployeeDTO employees = employeeService.getEmployeeById(employeeId);
         if (!(employees ==null)) {
@@ -43,7 +43,7 @@ public class EmployeeController {
         }
     }
 
-    @PostMapping("/employee")
+    @PostMapping("/employees")
     public ResponseEntity<String> createEmployee(@RequestBody EmployeeCreateDTO employee) {
         AddEmployeeResult emp = employeeService.createEmployee(employee);
         if (emp.isSuccess()) {
@@ -55,7 +55,7 @@ public class EmployeeController {
         }
     }
 
-    @PutMapping("/employee/{employeeId}")
+    @PutMapping("/employees/{employeeId}")
     public ResponseEntity<String> updateEmployee(@PathVariable(name = "employeeId") Long employeeId,
                                                  @RequestBody EmployeeUpdateDTO employee) {
         UpdateEmployeeResult emp = employeeService.updateEmployee(employeeId, employee);
@@ -68,7 +68,7 @@ public class EmployeeController {
         }
     }
 
-    @DeleteMapping("/employee/{employeeId}")
+    @DeleteMapping("/employees/{employeeId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
         DeleteEmployeeResult emp = employeeService.deleteEmployee(employeeId);
         if (emp.isSuccess()) {

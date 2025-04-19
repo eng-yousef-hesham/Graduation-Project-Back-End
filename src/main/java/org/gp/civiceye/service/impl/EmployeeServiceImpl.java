@@ -44,11 +44,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(employee -> new EmployeeDTO(
                         employee.getEmpId(),
                         employee.getNationalId(),
-                        employee.getFirstName(),
-                        employee.getLastName(),
+                        employee.getFirstName()+" "+employee.getLastName(),
                         employee.getEmail(),
                         employee.getDepartment(),
-                        new CityDTO(employee.getCity()),
+                        employee.getCity().getName(),
+                        employee.getCity().getGovernorate().getName(),
                         employee.getCreatedAt(),
                         employee.getIsActive()
                 )).toList();
@@ -59,11 +59,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findById(id).map(employee -> new EmployeeDTO(
                 employee.getEmpId(),
                 employee.getNationalId(),
-                employee.getFirstName(),
-                employee.getLastName(),
+                employee.getFirstName()+" "+employee.getLastName(),
                 employee.getEmail(),
                 employee.getDepartment(),
-                new CityDTO(employee.getCity()),
+                employee.getCity().getName(),
+                employee.getCity().getGovernorate().getName(),
                 employee.getCreatedAt(),
                 employee.getIsActive()
         )).orElse(null);

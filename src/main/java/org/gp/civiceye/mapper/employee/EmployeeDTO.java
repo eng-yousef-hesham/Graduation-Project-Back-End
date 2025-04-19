@@ -17,11 +17,11 @@ import java.time.LocalDateTime;
 public class EmployeeDTO {
     private Long empId;
     private String nationalId;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String email;
     private Department department;
-    private CityDTO city;
+    private String city;
+    private String governorate;
     private LocalDateTime createdAt;
     private Boolean isActive;
 }

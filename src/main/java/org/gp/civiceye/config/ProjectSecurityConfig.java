@@ -78,7 +78,7 @@ public class ProjectSecurityConfig {
                         .requestMatchers("/api/V1/cities/").hasAnyRole("MASTERADMIN", "CITIZEN")
                         .requestMatchers("/api/V1/departments").hasAnyRole("MASTERADMIN", "CITIZEN")
                         .requestMatchers("/api/V1/governorates").hasAnyRole("MASTERADMIN", "CITIZEN")
-                        .requestMatchers("/api/V1/employee").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/V1/employees").hasRole("MASTERADMIN")
 
                         .requestMatchers("/api/V1/governorateadmin").hasRole("GOVERNORATEADMIN")
                         .requestMatchers("/api/V1/employee/gov").hasRole("GOVERNORATEADMIN")
@@ -90,7 +90,7 @@ public class ProjectSecurityConfig {
 
                         .requestMatchers("/api/V1/citizen").hasRole("CITIZEN")
 
-                        .requestMatchers("/api/V1/reports/**").hasAnyRole("EMPLOYEE", "CITIZEN")
+                        .requestMatchers("/api/V1/reports/**").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN")
 
                         .requestMatchers("/api/V1/check").hasAnyRole(
                                 "MASTERADMIN",
