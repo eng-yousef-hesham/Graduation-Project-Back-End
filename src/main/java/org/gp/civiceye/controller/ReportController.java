@@ -1,6 +1,7 @@
 package org.gp.civiceye.controller;
 
 import org.gp.civiceye.mapper.CreateReportDTO;
+import org.gp.civiceye.mapper.ReportCountDTO;
 import org.gp.civiceye.mapper.ReportDTO;
 import org.gp.civiceye.mapper.UpdateReportStatusDTO;
 import org.gp.civiceye.repository.entity.Report;
@@ -39,7 +40,7 @@ public class ReportController {
         return ResponseEntity.ok(reportService.getReportsForEmployee(employeeId));
     }
 
-    @PostMapping("/reports/status")
+    @PutMapping("/reports/status")
     public ResponseEntity<Void> updateStatus(@RequestBody UpdateReportStatusDTO dto) {
         reportService.updateReportStatus(dto);
         return ResponseEntity.ok().build();
@@ -59,5 +60,10 @@ public class ReportController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(reports, HttpStatus.OK);
+    }
+
+    @GetMapping("/reports/countbygovernorate")
+    public ResponseEntity<List<ReportCountDTO>> getReportsCountByGovernorate() {
+        return ResponseEntity.ok(reportService.getReportsCountByGovernorate());
     }
 }

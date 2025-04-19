@@ -2,6 +2,7 @@ package org.gp.civiceye.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.gp.civiceye.mapper.CreateReportDTO;
+import org.gp.civiceye.mapper.ReportCountDTO;
 import org.gp.civiceye.mapper.ReportDTO;
 import org.gp.civiceye.mapper.UpdateReportStatusDTO;
 import org.gp.civiceye.repository.*;
@@ -23,13 +24,16 @@ public class ReportServiceImpl implements ReportService {
     EmployeeRepository employeeRepository;
     StatusHistoryRepository statusHistoryRepository;
 
+    GovernorateRepository governorateRepository;
 
-    public ReportServiceImpl(ReportRepository reportRepository,CityRepository cityRepository, CitizenRepository citizenRepository,EmployeeRepository employeeRepository ,StatusHistoryRepository statusHistoryRepository) {
+
+    public ReportServiceImpl(ReportRepository reportRepository,CityRepository cityRepository, CitizenRepository citizenRepository,EmployeeRepository employeeRepository ,StatusHistoryRepository statusHistoryRepository,GovernorateRepository governorateRepository) {
         this.reportRepository = reportRepository;
         this.cityRepository = cityRepository;
         this.citizenRepository = citizenRepository;
         this.employeeRepository = employeeRepository;
         this.statusHistoryRepository = statusHistoryRepository;
+        this.governorateRepository = governorateRepository;
     }
 
     public Long submitReport(CreateReportDTO dto) {
@@ -112,5 +116,15 @@ public class ReportServiceImpl implements ReportService {
             return reportRepository.findAll().stream()
                     .map(ReportDTO::new)
                     .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReportCountDTO> getReportsCountByGovernorate() {
+        return governorateRepository.findAll().
+                stream().
+                map(governorate -> new ReportCountDTO(governorate.getName(),reportRepository.
+                        countByCity_Governorate(governorate)))
+                .collect(Collectors.toList());
+
     }
 }
