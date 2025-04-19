@@ -1,4 +1,4 @@
-package org.gp.civiceye.dto;
+package org.gp.civiceye.mapper;
 
 import lombok.*;
 import org.gp.civiceye.repository.entity.City;
@@ -14,17 +14,15 @@ public class CityDTO {
     private Long cityId;
     private String name;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private Boolean isActive;
-    private Integer governorateId;
+    private Long governorateId;
 
     public CityDTO(City city) {
         this.cityId = city.getCityId();
         this.name = city.getName();
         this.createdAt = city.getCreatedAt();
-//        this.updatedAt = city.getUpdatedAt();
         this.isActive = city.getIsActive();
-//        this.governorateId = city.getGovernorate().getGovernorateId();
+        this.governorateId = city.getGovernorate().getGovernorateId();
     }
 
 

@@ -72,17 +72,44 @@ public class ProjectSecurityConfig {
                 .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/V1/masteradmins","/api/V1/admin","/api/V1/city/"
-                                ,"api/V1/cities/","api/V1/departments","api/V1/governorates","api/V1/employee").hasRole("MASTERADMIN")
-                        .requestMatchers("/api/V1/governorateadmin","api/V1/employee/gov").hasRole("GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/cityadmins","api/V1/employee/city").hasRole("CITYADMIN")
-                        .requestMatchers("/api/V1/employees","/api/V1/reports/**").hasRole("EMPLOYEE")
-                        .requestMatchers("/api/V1/citizen","/api/V1/reports/**").hasRole("CITIZEN")
-                        .requestMatchers("/api/V1/check").hasAnyRole("MASTERADMIN", "GOVERNORATEADMIN", "CITYADMIN", "EMPLOYEE", "CITIZEN")
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/V1/login").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/V1/admin").permitAll() // Explicitly allowing POST
+                        .requestMatchers("/api/V1/masteradmins").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/V1/admin").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/V1/city/").hasAnyRole("MASTERADMIN")
+                        .requestMatchers("/api/V1/cities/").hasAnyRole("MASTERADMIN", "CITIZEN")
+                        .requestMatchers("/api/V1/departments").hasAnyRole("MASTERADMIN", "CITIZEN")
+                        .requestMatchers("/api/V1/governorates").hasAnyRole("MASTERADMIN", "CITIZEN")
+                        .requestMatchers("/api/V1/employee").hasRole("MASTERADMIN")
+
+                        .requestMatchers("/api/V1/governorateadmin").hasRole("GOVERNORATEADMIN")
+                        .requestMatchers("/api/V1/employee/gov").hasRole("GOVERNORATEADMIN")
+
+                        .requestMatchers("/api/V1/cityadmins").hasRole("CITYADMIN")
+                        .requestMatchers("/api/V1/employee/city").hasRole("CITYADMIN")
+
+                        .requestMatchers("/api/V1/employees").hasRole("EMPLOYEE")
+
+                        .requestMatchers("/api/V1/citizen").hasRole("CITIZEN")
+
+                        .requestMatchers("/api/V1/reports/**").hasAnyRole("EMPLOYEE", "CITIZEN")
+
+                        .requestMatchers("/api/V1/check").hasAnyRole(
+                                "MASTERADMIN",
+                                "GOVERNORATEADMIN",
+                                "CITYADMIN",
+                                "EMPLOYEE",
+                                "CITIZEN"
+                        )
+
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api/V1/login"
+                        ).permitAll()
+
                         .anyRequest().authenticated()
-                ).authenticationManager(authenticationManager());
+                )
+                .authenticationManager(authenticationManager());
         http.formLogin(formLoginConfigurer->formLoginConfigurer.disable());
         http.httpBasic(hbc->hbc.disable());
         return http.build();

@@ -1,7 +1,7 @@
 package org.gp.civiceye.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.gp.civiceye.dto.CityDTO;
+import org.gp.civiceye.mapper.CityDTO;
 import org.gp.civiceye.repository.CityRepository;
 import org.gp.civiceye.repository.GovernorateRepository;
 import org.gp.civiceye.repository.entity.City;

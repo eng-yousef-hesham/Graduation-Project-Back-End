@@ -82,7 +82,7 @@ public class ReportServiceTests {
         // Setup mocks
         when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
         when(citizenRepository.findById(2L)).thenReturn(Optional.of(citizen));
-        when(employeeRepository.findByCity(city)).thenReturn(Optional.of(List.of(employee)));
+        when(employeeRepository.findByCityAndDepartment(city, reportDTO.getDepartment())).thenReturn(Optional.of(List.of(employee)));
 
         doAnswer(invocation -> {
             Report report = invocation.getArgument(0);
@@ -149,7 +149,7 @@ public class ReportServiceTests {
         // Setup mocks
         when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
         when(citizenRepository.findById(2L)).thenReturn(Optional.of(citizen));
-        when(employeeRepository.findByCity(city)).thenReturn(Optional.of(Collections.emptyList()));
+        when(employeeRepository.findByCityAndDepartment(city, reportDTO.getDepartment())).thenReturn(Optional.of(Collections.emptyList()));
 
         // Call and verify exception
         assertThrows(EntityNotFoundException.class, () ->

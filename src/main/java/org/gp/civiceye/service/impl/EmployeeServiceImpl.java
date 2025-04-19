@@ -1,5 +1,6 @@
 package org.gp.civiceye.service.impl;
 
+import org.gp.civiceye.mapper.CityDTO;
 import org.gp.civiceye.mapper.UpdateAdminDTO;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
@@ -19,7 +20,6 @@ import org.gp.civiceye.service.impl.employee.UpdateEmployeeResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.gp.civiceye.dto.CityDTO;
 
 import java.util.List;
 import java.util.Optional;

@@ -39,7 +39,7 @@ public class ReportServiceImpl implements ReportService {
         Citizen citizen = citizenRepository.findById(dto.getCitizenId())
                 .orElseThrow(() -> new EntityNotFoundException("Citizen not found with ID: " + dto.getCitizenId()));
 
-        Optional<List<Employee>> employeesOpt = employeeRepository.findByCity(city);
+        Optional<List<Employee>> employeesOpt = employeeRepository.findByCityAndDepartment(city, dto.getDepartment());
         if (employeesOpt.isEmpty() || employeesOpt.get().isEmpty()) {
             throw new EntityNotFoundException("No employees available for city: " + city.getName());
         }
@@ -47,6 +47,7 @@ public class ReportServiceImpl implements ReportService {
         Employee assignedEmployee = employeesOpt.get().get(0);
 
         Report report = dto.toReportEntity(city,citizen,assignedEmployee);
+
         reportRepository.save(report);
 
         StatusHistory initialStatus = StatusHistory.builder()
