@@ -72,7 +72,7 @@ public class LoginController {
                 // ✅ Create HTTP-only cookie
                 ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
                         .httpOnly(true)
-                        .secure(false) // set to true in production (requires HTTPS)
+                        .secure(true) // set to true in production (requires HTTPS)
                         .path("/")
                         .maxAge(Duration.ofDays(14))
                         .sameSite("Lax")// or Lax/None depending on your app's needs
