@@ -48,7 +48,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
                 // ✅ Set the JWT in an HTTP-only cookie
                 Cookie cookie = new Cookie("jwt", jwt);
                 cookie.setHttpOnly(true); // Prevent JavaScript access
-                cookie.setSecure(false);   // Set to true in production with HTTPS
+                cookie.setSecure(true);   // Set to true in production with HTTPS
                 cookie.setPath("/");
                 cookie.setMaxAge(60 * 60 * 24 * 14); // 14 days
                 response.addCookie(cookie);
