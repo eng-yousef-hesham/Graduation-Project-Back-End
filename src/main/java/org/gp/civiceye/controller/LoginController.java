@@ -75,7 +75,7 @@ public class LoginController {
                         .secure(true) // set to true in production (requires HTTPS)
                         .path("/")
                         .maxAge(Duration.ofDays(14))
-                        .sameSite("Lax")// or Lax/None depending on your app's needs
+                        .sameSite("none")// or Lax/None depending on your app's needs
                         .build();
 
                 // ✅ Add cookie to response
