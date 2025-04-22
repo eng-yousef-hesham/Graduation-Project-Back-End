@@ -26,6 +26,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,13 +58,15 @@ public class LoginController {
                         ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
+                List<String> roles =authenticationResponse.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList());
+
                 jwt = Jwts.builder()
                         .issuer("Civiceye")
-                        .subject("JWTToken")
+                        .subject(authenticationResponse.getName())
                         .claim("username", authenticationResponse.getName())
-                        .claim("roles", authenticationResponse.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toList()))
+                        .claim("roles", roles)
                         .issuedAt(new Date())
                         .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 14)) // 14 days
                         .signWith(secretKey)
@@ -75,19 +78,35 @@ public class LoginController {
                         .secure(true) // set to true in production (requires HTTPS)
                         .path("/")
                         .maxAge(Duration.ofDays(14))
-                        .sameSite("none")// or Lax/None depending on your app's needs
+                        .sameSite("None")// or Lax/None depending on your app's needs
                         .build();
 
                 // ✅ Add cookie to response
                 response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-                return ResponseEntity.ok()
-                        .body(new LoginResponseDTO(HttpStatus.OK.getReasonPhrase(), "Login successful"));
+                String type = mapRoleToType(roles);
+
+
+                LoginResponseDTO responseBody = new LoginResponseDTO(
+                        "Login successful",
+                        authenticationResponse.getName(),
+                        type
+                );
+
+                return ResponseEntity.ok(responseBody);
             }
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new LoginResponseDTO("Unauthorized", null));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+    }
+    private String mapRoleToType(List<String> roles) {
+        if (roles.contains("ROLE_MASTERADMIN")) return "MasterAdmin";
+        if (roles.contains("ROLE_GOVERNORATEADMIN")) return "GovernorateAdmin";
+        if (roles.contains("ROLE_CITYADMIN")) return "CityAdmin";
+        if (roles.contains("ROLE_EMPLOYEE")) return "Employee";
+        if (roles.contains("ROLE_CITIZEN")) return "Citizen";
+        return "Unknown";
     }
 
     @GetMapping("/check")
@@ -121,6 +140,7 @@ public class LoginController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
+                .sameSite("None")
                 .maxAge(0) // delete cookie
                 .build();
 

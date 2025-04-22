@@ -35,7 +35,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
                 String jwt = Jwts.builder()
                         .issuer("Civiceye")
-                        .subject("JWTToken")
+                        .subject(authentication.getName())
                         .claim("username", authentication.getName())
                         .claim("roles", authentication.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
