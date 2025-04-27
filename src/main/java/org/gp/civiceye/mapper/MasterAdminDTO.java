@@ -15,7 +15,7 @@ public class MasterAdminDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private String level = "Master Admin";
+    private int type = 2000 ;
 
 
     public MasterAdminDTO(MasterAdmin masterAdmin) {

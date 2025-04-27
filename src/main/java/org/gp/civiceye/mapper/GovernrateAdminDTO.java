@@ -16,7 +16,8 @@ public class GovernrateAdminDTO {
     private String lastName;
     private String email;
     private String governorateName;
-    private String level = "Governrate Admin";
+    private long governorateId;
+    private int type = 1999 ;
 
     public GovernrateAdminDTO(GovernorateAdmin governrateAdmin) {
         this.adminId = governrateAdmin.getAdminId();
@@ -26,5 +27,6 @@ public class GovernrateAdminDTO {
         this.lastName = governrateAdmin.getLastName();
         this.email = governrateAdmin.getEmail();
         this.governorateName = governrateAdmin.getGovernorate().getName();
+        this.governorateId = governrateAdmin.getGovernorate().getGovernorateId();
     }
 }
