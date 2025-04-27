@@ -1,5 +1,6 @@
 package org.gp.civiceye.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.gp.civiceye.mapper.CreateReportDTO;
 import org.gp.civiceye.mapper.ReportCountDTO;
 import org.gp.civiceye.mapper.ReportDTO;
@@ -33,6 +34,17 @@ public class ReportController {
     @GetMapping("/reports/user/{userId}")
     public ResponseEntity<List<ReportDTO>> getUserReports(@PathVariable Long userId) {
         return ResponseEntity.ok(reportService.getReportsForUser(userId));
+    }
+
+    @GetMapping("/reports/{reportId}")
+    public ResponseEntity<ReportDTO> getReportById(@PathVariable Long reportId) {
+
+        try {
+            return ResponseEntity.ok(reportService.getReportsById(reportId));
+        }
+        catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/reports/employee/{employeeId}")

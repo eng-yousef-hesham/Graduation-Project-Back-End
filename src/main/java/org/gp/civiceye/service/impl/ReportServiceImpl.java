@@ -75,6 +75,17 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public ReportDTO getReportsById(Long reportId) {
+
+        Optional<Report> report = reportRepository.findById(reportId);
+        if (report.isEmpty()) {
+            throw new EntityNotFoundException("Report not found with ID: " + reportId);
+        }
+
+        return new ReportDTO(report.get());
+    }
+
+    @Override
     public List<ReportDTO> getReportsForEmployee(Long employeeId) {
         return reportRepository.findAllByAssignedEmployee_EmpId(employeeId).stream()
                 .map(ReportDTO::new).collect(Collectors.toList());

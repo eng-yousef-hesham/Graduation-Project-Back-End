@@ -19,4 +19,5 @@ public interface ReportService {
     public void updateReportStatus(UpdateReportStatusDTO dto);
 
     List<ReportCountDTO> getReportsCountByGovernorate();
+    public ReportDTO getReportsById(Long reportId);
 }

@@ -118,7 +118,7 @@ public class ProjectSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000/","https://graduation-front-1.onrender.com"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000/","https://graduation-front-1.onrender.com","http://localhost:8000/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
