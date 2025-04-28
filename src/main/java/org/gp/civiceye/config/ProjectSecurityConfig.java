@@ -79,19 +79,14 @@ public class ProjectSecurityConfig {
                         .requestMatchers("/api/V1/departments").hasAnyRole("MASTERADMIN", "CITIZEN")
                         .requestMatchers("/api/V1/governorates").hasAnyRole("MASTERADMIN", "CITIZEN")
                         .requestMatchers("/api/V1/employees").hasRole("MASTERADMIN")
-
                         .requestMatchers("/api/V1/governorateadmin").hasRole("GOVERNORATEADMIN")
                         .requestMatchers("/api/V1/employee/gov").hasRole("GOVERNORATEADMIN")
-
                         .requestMatchers("/api/V1/cityadmins").hasRole("CITYADMIN")
                         .requestMatchers("/api/V1/employee/city").hasRole("CITYADMIN")
-
                         .requestMatchers("/api/V1/employees").hasRole("EMPLOYEE")
-
                         .requestMatchers("/api/V1/citizen").hasRole("CITIZEN")
-
                         .requestMatchers("/api/V1/reports/**").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN")
-
+                        .requestMatchers("/api/V1/report-statuses").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN")
                         .requestMatchers("/api/V1/check").hasAnyRole(
                                 "MASTERADMIN",
                                 "GOVERNORATEADMIN",
@@ -99,14 +94,12 @@ public class ProjectSecurityConfig {
                                 "EMPLOYEE",
                                 "CITIZEN"
                         )
-
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/api/V1/login"
                         ).permitAll()
-
                         .anyRequest().authenticated()
                 )
                 .authenticationManager(authenticationManager());

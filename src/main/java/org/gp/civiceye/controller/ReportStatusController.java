@@ -23,14 +23,8 @@ public class ReportStatusController {
         this.reportStatusService = reportStatusService;
     }
 
-    @GetMapping("/ReportStatus")
+    @GetMapping("/report-statuses")
     public ResponseEntity<ReportStatus[]> getAllReportStatus() {
-
-//        HashMap<String, Object> response = new HashMap<>();
-//        response.put("statusText", HttpStatus.OK.getReasonPhrase());
-//        response.put("statusCode", HttpStatus.OK.value());
-//        response.put("message", "Retrieved All ReportStatus");
-//        response.put("data", reportStatusService.getAllReportStatus());
         return new ResponseEntity<>(reportStatusService.getAllReportStatus(), HttpStatus.OK);
     }
 }

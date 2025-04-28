@@ -11,6 +11,7 @@ import org.gp.civiceye.service.ReportService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,7 +49,9 @@ public class ReportServiceImpl implements ReportService {
             throw new EntityNotFoundException("No employees available for city: " + city.getName());
         }
 
-        Employee assignedEmployee = employeesOpt.get().get(0);
+        List<Employee> employees=employeesOpt.get();
+        employees.sort(Comparator.comparingInt(e -> e.getAssignedReports().size()));
+        Employee assignedEmployee = employees.get(0);
 
         Report report = dto.toReportEntity(city,citizen,assignedEmployee);
 
