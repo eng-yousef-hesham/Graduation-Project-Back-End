@@ -1,7 +1,7 @@
 package org.gp.civiceye.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.gp.civiceye.mapper.CreateReportDTO;
+import org.gp.civiceye.mapper.report.CloseReportDTO;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.impl.ReportServiceImpl;
@@ -44,7 +44,7 @@ public class ReportServiceTests {
     @Captor
     private ArgumentCaptor<StatusHistory> statusCaptor;
 
-    private CreateReportDTO reportDTO;
+    private CloseReportDTO.CreateReportDTO reportDTO;
     private City city;
     private Citizen citizen;
     private Employee employee;
@@ -53,7 +53,7 @@ public class ReportServiceTests {
     @BeforeEach
     public void setup() {
         // Create test data
-        reportDTO = CreateReportDTO.builder()
+        reportDTO = CloseReportDTO.CreateReportDTO.builder()
                 .title("Broken Street Light")
                 .description("Street light not working")
                 .contactInfo("test@example.com")

@@ -1,4 +1,4 @@
-package org.gp.civiceye.mapper;
+package org.gp.civiceye.mapper.city;
 
 import lombok.*;
 import org.gp.civiceye.repository.entity.City;

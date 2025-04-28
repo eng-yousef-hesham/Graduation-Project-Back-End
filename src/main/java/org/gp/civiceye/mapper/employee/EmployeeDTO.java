@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.gp.civiceye.mapper.CityDTO;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Employee;
 

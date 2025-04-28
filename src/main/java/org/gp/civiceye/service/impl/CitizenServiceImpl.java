@@ -1,9 +1,8 @@
 package org.gp.civiceye.service.impl;
 
 import org.gp.civiceye.repository.CitizenRepository;
-import org.gp.civiceye.repository.entity.Citizen;
 import org.gp.civiceye.service.CitizenService;
-import org.gp.civiceye.mapper.CitizenDTO;
+import org.gp.civiceye.mapper.citizen.CitizenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

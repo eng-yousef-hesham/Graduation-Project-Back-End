@@ -1,6 +1,6 @@
 package org.gp.civiceye.service.impl;
 
-import org.gp.civiceye.mapper.GovernorateDTO;
+import org.gp.civiceye.mapper.governorate.GovernorateDTO;
 import org.gp.civiceye.repository.GovernorateRepository;
 import org.gp.civiceye.repository.entity.Governorate;
 import org.gp.civiceye.service.GovernorateService;

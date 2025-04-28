@@ -1,10 +1,10 @@
 package org.gp.civiceye.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.gp.civiceye.mapper.CreateReportDTO;
-import org.gp.civiceye.mapper.ReportCountDTO;
-import org.gp.civiceye.mapper.ReportDTO;
-import org.gp.civiceye.mapper.UpdateReportStatusDTO;
+import org.gp.civiceye.mapper.report.ReportCountDTO;
+import org.gp.civiceye.mapper.report.ReportDTO;
+import org.gp.civiceye.mapper.report.UpdateReportStatusDTO;
+import org.gp.civiceye.mapper.report.CloseReportDTO;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.ReportService;
@@ -37,7 +37,7 @@ public class ReportServiceImpl implements ReportService {
         this.governorateRepository = governorateRepository;
     }
 
-    public Long submitReport(CreateReportDTO dto) {
+    public Long submitReport(CloseReportDTO.CreateReportDTO dto) {
         City city = cityRepository.findById(dto.getCityId())
                 .orElseThrow(() -> new EntityNotFoundException("City not found with ID: " + dto.getCityId()));
 
@@ -86,6 +86,33 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return new ReportDTO(report.get());
+    }
+
+    @Override
+    public void closeReport(CloseReportDTO dto) {
+        Report report = reportRepository.findById(dto.getReportId())
+                .orElseThrow(() -> new RuntimeException("Report not found"));
+
+        StatusHistory lastStatus = statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report)
+                .orElseThrow(() -> new RuntimeException("No status history found"));
+
+        if (!lastStatus.getStatus().equals(ReportStatus.Resolved)) {
+            throw new RuntimeException("Report is not resolved yet");
+        }
+        lastStatus.setEndTime(LocalDateTime.now());
+        statusHistoryRepository.save(lastStatus);
+
+        StatusHistory newStatus = StatusHistory.builder()
+                .report(report)
+                .status(ReportStatus.Closed)
+                .startTime(LocalDateTime.now())
+                .endTime(null)
+                .changedByEmployee(report.getAssignedEmployee())
+                .notes("")
+                .build();
+        report.setCurrentStatus(ReportStatus.Closed);
+        reportRepository.save(report);
+        statusHistoryRepository.save(newStatus);
     }
 
     @Override

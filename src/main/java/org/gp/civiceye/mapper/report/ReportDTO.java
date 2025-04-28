@@ -1,9 +1,10 @@
-package org.gp.civiceye.mapper;
+package org.gp.civiceye.mapper.report;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.gp.civiceye.mapper.StatusHistoryDTO;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Report;
 import org.gp.civiceye.repository.entity.ReportStatus;

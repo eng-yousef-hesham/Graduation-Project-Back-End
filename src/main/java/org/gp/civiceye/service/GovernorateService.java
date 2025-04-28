@@ -1,7 +1,7 @@
 package org.gp.civiceye.service;
 
 
-import org.gp.civiceye.mapper.GovernorateDTO;
+import org.gp.civiceye.mapper.governorate.GovernorateDTO;
 
 import java.util.List;
 

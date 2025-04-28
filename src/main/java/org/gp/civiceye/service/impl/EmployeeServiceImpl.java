@@ -1,19 +1,13 @@
 package org.gp.civiceye.service.impl;
 
-import org.gp.civiceye.mapper.CityDTO;
-import org.gp.civiceye.mapper.UpdateAdminDTO;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
 import org.gp.civiceye.repository.CityRepository;
 import org.gp.civiceye.repository.EmployeeRepository;
-import org.gp.civiceye.repository.entity.Admin;
 import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.repository.entity.Employee;
 import org.gp.civiceye.service.EmployeeService;
-import org.gp.civiceye.service.impl.admin.AdminType;
-import org.gp.civiceye.service.impl.admin.DeleteAdminResult;
-import org.gp.civiceye.service.impl.admin.UpdateAdminResult;
 import org.gp.civiceye.service.impl.employee.AddEmployeeResult;
 import org.gp.civiceye.service.impl.employee.DeleteEmployeeResult;
 import org.gp.civiceye.service.impl.employee.UpdateEmployeeResult;

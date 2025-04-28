@@ -1,6 +1,6 @@
 package org.gp.civiceye.service;
 
-import org.gp.civiceye.mapper.CitizenDTO;
+import org.gp.civiceye.mapper.citizen.CitizenDTO;
 
 import java.util.List;
 

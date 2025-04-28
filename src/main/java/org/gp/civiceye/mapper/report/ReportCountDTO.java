@@ -1,4 +1,4 @@
-package org.gp.civiceye.mapper;
+package org.gp.civiceye.mapper.report;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,9 +1,7 @@
 package org.gp.civiceye.service;
 
-import org.gp.civiceye.mapper.CitizenDTO;
-import org.gp.civiceye.mapper.CityAdminDTO;
-import org.gp.civiceye.mapper.CreateCityAdminDTO;
-import org.gp.civiceye.repository.entity.CityAdmin;
+import org.gp.civiceye.mapper.cityadmin.CityAdminDTO;
+import org.gp.civiceye.mapper.cityadmin.CreateCityAdminDTO;
 
 import java.util.List;
 

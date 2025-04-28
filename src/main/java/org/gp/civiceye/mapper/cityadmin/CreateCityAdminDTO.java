@@ -1,4 +1,4 @@
-package org.gp.civiceye.mapper;
+package org.gp.civiceye.mapper.cityadmin;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,25 +1,17 @@
 package org.gp.civiceye.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.gp.civiceye.mapper.CityAdminDTO;
-import org.gp.civiceye.mapper.CreateCityAdminDTO;
-import org.gp.civiceye.repository.CityAdminRepository;
-import org.gp.civiceye.repository.entity.CityAdmin;
+import org.gp.civiceye.mapper.cityadmin.CityAdminDTO;
 import org.gp.civiceye.service.CityAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/V1")
