@@ -1,10 +1,7 @@
 package org.gp.civiceye.controller;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.gp.civiceye.mapper.report.ReportCountDTO;
-import org.gp.civiceye.mapper.report.ReportDTO;
-import org.gp.civiceye.mapper.report.UpdateReportStatusDTO;
-import org.gp.civiceye.mapper.report.CloseReportDTO;
+import org.gp.civiceye.mapper.report.*;
 import org.gp.civiceye.service.ReportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +22,7 @@ public class ReportController {
 
 
     @PostMapping("/reports/submit")
-    public ResponseEntity<Long> submitReport(@RequestBody CloseReportDTO.CreateReportDTO dto) {
+    public ResponseEntity<Long> submitReport(@RequestBody CreateReportDTO dto) {
         Long reportId = reportService.submitReport(dto);
         return new ResponseEntity<>(reportId, HttpStatus.OK);
     }

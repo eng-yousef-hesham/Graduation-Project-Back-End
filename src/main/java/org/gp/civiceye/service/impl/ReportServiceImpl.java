@@ -1,10 +1,7 @@
 package org.gp.civiceye.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.gp.civiceye.mapper.report.ReportCountDTO;
-import org.gp.civiceye.mapper.report.ReportDTO;
-import org.gp.civiceye.mapper.report.UpdateReportStatusDTO;
-import org.gp.civiceye.mapper.report.CloseReportDTO;
+import org.gp.civiceye.mapper.report.*;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.ReportService;
@@ -37,7 +34,7 @@ public class ReportServiceImpl implements ReportService {
         this.governorateRepository = governorateRepository;
     }
 
-    public Long submitReport(CloseReportDTO.CreateReportDTO dto) {
+    public Long submitReport(CreateReportDTO dto) {
         City city = cityRepository.findById(dto.getCityId())
                 .orElseThrow(() -> new EntityNotFoundException("City not found with ID: " + dto.getCityId()));
 

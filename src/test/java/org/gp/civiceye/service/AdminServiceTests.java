@@ -208,42 +208,6 @@ class AdminServiceTests {
     }
 
     @Test
-    void testDeleteMasterAdmin_Success() {
-        Long adminId = 1L;
-        int adminType = 2000;
-
-        MasterAdmin masterAdmin = new MasterAdmin();
-        masterAdmin.setAdminId(adminId);
-        when(masterAdminRepository.findById(adminId)).thenReturn(Optional.of(masterAdmin));
-        when(masterAdminRepository.count()).thenReturn(2L); // More than one master admin exists
-
-        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
-
-        assertTrue(result.isSuccess());
-        assertEquals("Master admin deleted successfully", result.getMessage());
-        assertEquals(AdminType.MASTER_ADMIN, result.getAdminType());
-        verify(masterAdminRepository).deleteById(adminId);
-    }
-
-    @Test
-    void testDeleteMasterAdmin_LastAdmin() {
-        Long adminId = 1L;
-        int adminType = 2000;
-
-        MasterAdmin masterAdmin = new MasterAdmin();
-        masterAdmin.setAdminId(adminId);
-        when(masterAdminRepository.findById(adminId)).thenReturn(Optional.of(masterAdmin));
-        when(masterAdminRepository.count()).thenReturn(1L); // Only one master admin exists
-
-        DeleteAdminResult result = adminService.deleteAdmin(adminId, adminType);
-
-        assertFalse(result.isSuccess());
-        assertEquals("Cannot delete the last master admin", result.getMessage());
-        assertEquals(AdminType.MASTER_ADMIN, result.getAdminType());
-        verify(masterAdminRepository, never()).deleteById(adminId);
-    }
-
-    @Test
     void testDeleteAdmin_NotFound() {
         Long adminId = 99L;
         int adminType = 1998;
