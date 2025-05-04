@@ -14,38 +14,4 @@ import java.time.LocalDateTime;
 public class CloseReportDTO {
     private Long reportId;
     private Integer rating;
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class CreateReportDTO {
-        private String title;
-        private String contactInfo;
-        private Long cityId;
-        private String description;
-        private Float latitude;
-        private Float longitude;
-        private Department department;
-        private Long citizenId;
-
-
-        public Report toReportEntity(City city, Citizen citizen, Employee assignedEmployee) {
-            return Report.builder()
-                    .description(description)
-                    .contactInfo(contactInfo)
-                    .city(city)
-                    .latitude(latitude)
-                    .longitude(longitude)
-                    .department(department)
-                    .currentStatus(ReportStatus.Submitted) // or your initial status
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .title(title)
-                    .expectedResolutionDate(null)
-                    .assignedEmployee(assignedEmployee)
-                    .citizen(citizen)
-                    .build();
-        }
-    }
 }

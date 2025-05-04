@@ -2,10 +2,12 @@ package org.gp.civiceye.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.gp.civiceye.mapper.report.CloseReportDTO;
+import org.gp.civiceye.mapper.report.CreateReportDTO;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.impl.ReportServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +48,7 @@ public class ReportServiceTests {
     @Captor
     private ArgumentCaptor<StatusHistory> statusCaptor;
 
-    private CloseReportDTO.CreateReportDTO reportDTO;
+    private CreateReportDTO reportDTO;
     private City city;
     private Citizen citizen;
     private Employee employee;
@@ -54,7 +57,7 @@ public class ReportServiceTests {
     @BeforeEach
     public void setup() {
         // Create test data
-        reportDTO = CloseReportDTO.CreateReportDTO.builder()
+        reportDTO = CreateReportDTO.builder()
                 .title("Broken Street Light")
                 .description("Street light not working")
                 .contactInfo("test@example.com")
@@ -83,8 +86,8 @@ public class ReportServiceTests {
         // Setup mocks
         when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
         when(citizenRepository.findById(2L)).thenReturn(Optional.of(citizen));
-        when(employeeRepository.findByCityAndDepartment(city, reportDTO.getDepartment())).thenReturn(Optional.of(new ArrayList<>(List.of(employee))));
-
+        when(employeeRepository.findByCityAndDepartment(city, reportDTO.getDepartment()))
+                .thenReturn(Optional.of(new ArrayList<>(List.of(employee))));
         doAnswer(invocation -> {
             Report report = invocation.getArgument(0);
             report.setReportId(10L);
@@ -156,5 +159,121 @@ public class ReportServiceTests {
         assertThrows(EntityNotFoundException.class, () ->
                 reportService.submitReport(reportDTO)
         );
+    }
+    @Test
+    public void closeReport_WhenReportIsResolved_ShouldCloseSuccessfully() {
+        // Arrange
+        CloseReportDTO closeReportDTO = new CloseReportDTO();
+        closeReportDTO.setReportId(10L);
+
+        Report report = new Report();
+        report.setReportId(10L);
+        report.setAssignedEmployee(employee);
+        report.setCurrentStatus(ReportStatus.Resolved);
+
+        StatusHistory lastStatus = StatusHistory.builder()
+                .report(report)
+                .status(ReportStatus.Resolved)
+                .startTime(LocalDateTime.now().minusDays(1))
+                .endTime(null)
+                .build();
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report))
+                .thenReturn(Optional.of(lastStatus));
+
+        // Act
+        reportService.closeReport(closeReportDTO);
+
+        // Assert
+        // Use ArgumentCaptor to capture both saves to statusHistoryRepository
+        verify(statusHistoryRepository, times(2)).save(statusCaptor.capture());
+        verify(reportRepository).save(reportCaptor.capture());
+
+        // Get both captured values (last one is the new status, first one is the updated old status)
+        List<StatusHistory> capturedStatuses = statusCaptor.getAllValues();
+        StatusHistory updatedOldStatus = capturedStatuses.get(0);
+        StatusHistory newClosedStatus = capturedStatuses.get(1);
+        Report capturedReport = reportCaptor.getValue();
+
+        // Verify the old status was ended
+        assertNotNull(updatedOldStatus.getEndTime());
+        assertEquals(ReportStatus.Resolved, updatedOldStatus.getStatus());
+
+        // Verify the new status was created correctly
+        assertEquals(ReportStatus.Closed, newClosedStatus.getStatus());
+        assertEquals(report, newClosedStatus.getReport());
+        assertNotNull(newClosedStatus.getStartTime());
+        assertNull(newClosedStatus.getEndTime());
+
+        // Verify the report was updated
+        assertEquals(ReportStatus.Closed, capturedReport.getCurrentStatus());
+    }
+    @Test
+    @DisplayName("Test Case 2: Citizen cannot close an unresolved report")
+    public void closeReport_WhenReportIsNotResolved_ShouldThrowException() {
+        // Arrange
+        CloseReportDTO closeReportDTO = new CloseReportDTO();
+        closeReportDTO.setReportId(10L);
+
+        Report report = new Report();
+        report.setReportId(10L);
+        report.setCurrentStatus(ReportStatus.In_Progress);
+
+        StatusHistory lastStatus = StatusHistory.builder()
+                .report(report)
+                .status(ReportStatus.In_Progress)
+                .startTime(LocalDateTime.now().minusDays(1))
+                .endTime(null)
+                .build();
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report))
+                .thenReturn(Optional.of(lastStatus));
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            reportService.closeReport(closeReportDTO);
+        });
+
+        assertEquals("Report is not resolved yet", exception.getMessage());
+
+        // Verify no status updates were saved
+        verify(statusHistoryRepository, never()).save(any(StatusHistory.class));
+        verify(reportRepository, never()).save(any(Report.class));
+    }
+
+    @Test
+    @DisplayName("Test Case 3: Citizen cannot close a report that has already been closed")
+    public void closeReport_WhenReportIsAlreadyClosed_ShouldThrowException() {
+        // Arrange
+        CloseReportDTO closeReportDTO = new CloseReportDTO();
+        closeReportDTO.setReportId(10L);
+
+        Report report = new Report();
+        report.setReportId(10L);
+        report.setCurrentStatus(ReportStatus.Closed);
+
+        StatusHistory lastStatus = StatusHistory.builder()
+                .report(report)
+                .status(ReportStatus.Closed)
+                .startTime(LocalDateTime.now().minusDays(1))
+                .endTime(null)
+                .build();
+
+        when(reportRepository.findById(10L)).thenReturn(Optional.of(report));
+        when(statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report))
+                .thenReturn(Optional.of(lastStatus));
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            reportService.closeReport(closeReportDTO);
+        });
+
+        assertEquals("Report is not resolved yet", exception.getMessage());
+
+        // Verify no status updates were saved
+        verify(statusHistoryRepository, never()).save(any(StatusHistory.class));
+        verify(reportRepository, never()).save(any(Report.class));
     }
 }
