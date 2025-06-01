@@ -18,6 +18,7 @@ public interface CitizenRepository extends JpaRepository<Citizen, Long> {
 
 
 
+
 //    List<Citizen> findByCityId(Integer cityId);
 //    @Query("SELECT c FROM Citizen c WHERE c.age >= :minAge")
 //    List<Citizen> findByMinimumAge(@Param("minAge") Integer minAge);

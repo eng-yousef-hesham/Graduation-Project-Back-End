@@ -16,8 +16,6 @@ public class CitizenDTO {
     private String lastName;
     private String email;
     private Integer age;
-    private String cityName;
-    private String governorateName;
 
     public CitizenDTO(Citizen citizen) {
         this.citizenId = citizen.getCitizenId();
@@ -26,7 +24,5 @@ public class CitizenDTO {
         this.lastName = citizen.getLastName();
         this.email = citizen.getEmail();
         this.age = citizen.getAge();
-//        this.cityName = citizen.getCity().getName();
-//        this.governorateName = citizen.getCity().getGovernorate().getName();
     }
 }
