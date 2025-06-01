@@ -44,9 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                         employee.getEmail(),
                         employee.getDepartment(),
                         employee.getCity().getName(),
-                        employee.getCity().getCityId(),
                         employee.getCity().getGovernorate().getName(),
-                        employee.getCity().getGovernorate().getGovernorateId(),
                         employee.getCreatedAt(),
                         employee.getIsActive(),
                         employee.getRating()
@@ -58,18 +56,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findById(id).map(employee -> new EmployeeDTO(
                 employee.getEmpId(),
                 employee.getNationalId(),
-                employee.getFirstName(),
-                employee.getLastName(),
                 employee.getFirstName()+" "+employee.getLastName(),
                 employee.getEmail(),
                 employee.getDepartment(),
                 employee.getCity().getName(),
-                employee.getCity().getCityId(),
                 employee.getCity().getGovernorate().getName(),
-                employee.getCity().getGovernorate().getGovernorateId(),
                 employee.getCreatedAt(),
                 employee.getIsActive(),
-                employee.getRating())).orElse(null);
+                employee.getRating()
+        )).orElse(null);
     }
 
     public AddEmployeeResult createEmployee(EmployeeCreateDTO employee) {

@@ -18,4 +18,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllByCitizen_CitizenId(Long userId);
 
     Integer countByCity_Governorate(Governorate governorate);
+
+    List<Report> findAllByAssignedEmployee(Employee employee);
 }

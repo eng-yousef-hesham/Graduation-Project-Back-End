@@ -38,6 +38,9 @@ public class Report {
     @Column(name = "Contact_Info", nullable = false)
     private String contactInfo;
 
+    @Column(name = "Rating")
+    private Integer rating;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "Department", nullable = false)
     private Department department;
