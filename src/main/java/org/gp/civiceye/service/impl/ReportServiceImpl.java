@@ -25,7 +25,7 @@ public class ReportServiceImpl implements ReportService {
     GovernorateRepository governorateRepository;
 
 
-    public ReportServiceImpl(ReportRepository reportRepository,CityRepository cityRepository, CitizenRepository citizenRepository,EmployeeRepository employeeRepository ,StatusHistoryRepository statusHistoryRepository,GovernorateRepository governorateRepository) {
+    public ReportServiceImpl(ReportRepository reportRepository, CityRepository cityRepository, CitizenRepository citizenRepository, EmployeeRepository employeeRepository, StatusHistoryRepository statusHistoryRepository, GovernorateRepository governorateRepository) {
         this.reportRepository = reportRepository;
         this.cityRepository = cityRepository;
         this.citizenRepository = citizenRepository;
@@ -46,11 +46,11 @@ public class ReportServiceImpl implements ReportService {
             throw new EntityNotFoundException("No employees available for city: " + city.getName());
         }
 
-        List<Employee> employees=employeesOpt.get();
+        List<Employee> employees = employeesOpt.get();
         employees.sort(Comparator.comparingInt(e -> e.getAssignedReports().size()));
         Employee assignedEmployee = employees.get(0);
 
-        Report report = dto.toReportEntity(city,citizen,assignedEmployee);
+        Report report = dto.toReportEntity(city, citizen, assignedEmployee);
 
         reportRepository.save(report);
 
@@ -108,6 +108,11 @@ public class ReportServiceImpl implements ReportService {
                 .notes("")
                 .build();
         report.setCurrentStatus(ReportStatus.Closed);
+        report.setRating(dto.getRating());
+        Employee employee = report.getAssignedEmployee();
+        int reportCount = (int) employee.getAssignedReports().stream().filter(r -> r.getCurrentStatus().equals(ReportStatus.Closed)).count();
+        Double prevRating = employee.getRating();
+        employee.setRating((prevRating * reportCount + dto.getRating()) / (reportCount + 1));
         reportRepository.save(report);
         statusHistoryRepository.save(newStatus);
     }
@@ -151,16 +156,16 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<ReportDTO> GetAllReports() {
-            return reportRepository.findAll().stream()
-                    .map(ReportDTO::new)
-                    .collect(Collectors.toList());
+        return reportRepository.findAll().stream()
+                .map(ReportDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ReportCountDTO> getReportsCountByGovernorate() {
         return governorateRepository.findAll().
                 stream().
-                map(governorate -> new ReportCountDTO(governorate.getName(),reportRepository.
+                map(governorate -> new ReportCountDTO(governorate.getName(), reportRepository.
                         countByCity_Governorate(governorate)))
                 .collect(Collectors.toList());
 

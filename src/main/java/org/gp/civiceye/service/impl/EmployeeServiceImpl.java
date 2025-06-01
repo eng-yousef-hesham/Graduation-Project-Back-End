@@ -98,6 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .department(employee.getDepartment())
                 .city(city.get())
                 .isActive(true)
+                .rating(0.0)
                 .build();
         Employee savedEmployee = employeeRepository.save(emp);
 

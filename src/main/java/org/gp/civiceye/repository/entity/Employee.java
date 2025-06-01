@@ -52,7 +52,7 @@ public class Employee {
     private LocalDateTime createdAt;
 
     @Column(name = "Rating")
-    private Integer rating;
+    private Double rating;
 
     @Column(name = "Is_Active",columnDefinition = "boolean default true")
     private Boolean isActive;

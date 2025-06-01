@@ -28,7 +28,7 @@ public class EmployeeDTO {
     private Long governorateId;
     private LocalDateTime createdAt;
     private Boolean isActive;
-    private Integer rating;
+    private Double rating;
 
 
     public EmployeeDTO(Object o) {
