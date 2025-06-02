@@ -34,6 +34,8 @@ public class ReportDTO {
     private String citizenName;
     private Long cityId;
     private String cityName;
+    private Long governorateId;
+    private String governorateName;
     private Long assignedEmployeeId;
     private String assignedEmployeeName;
     private List<StatusHistoryDTO> statusHistory;
@@ -64,6 +66,8 @@ public class ReportDTO {
         if (report.getCity() != null) {
             this.cityId = report.getCity().getCityId();
             this.cityName = report.getCity().getName();
+            this.governorateName = report.getCity().getGovernorate().getName();
+            this.governorateId = report.getCity().getGovernorate().getGovernorateId();
         }
 
 
