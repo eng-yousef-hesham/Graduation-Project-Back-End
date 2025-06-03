@@ -1,5 +1,8 @@
 package org.gp.civiceye.service.impl;
 
+import org.gp.civiceye.exception.CityNotFoundException;
+import org.gp.civiceye.exception.EmployeeAlreadyExistsException;
+import org.gp.civiceye.exception.EmployeeNotFoundException;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
@@ -8,15 +11,11 @@ import org.gp.civiceye.repository.EmployeeRepository;
 import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.repository.entity.Employee;
 import org.gp.civiceye.service.EmployeeService;
-import org.gp.civiceye.service.impl.employee.AddEmployeeResult;
-import org.gp.civiceye.service.impl.employee.DeleteEmployeeResult;
-import org.gp.civiceye.service.impl.employee.UpdateEmployeeResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -35,59 +34,58 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDTO> getAllEmployees() {
         return employeeRepository.findAll().stream()
-                .map(employee -> new EmployeeDTO(
-                        employee.getEmpId(),
-                        employee.getNationalId(),
-                        employee.getFirstName(),
-                        employee.getLastName(),
-                        employee.getFirstName()+" "+employee.getLastName(),
-                        employee.getEmail(),
-                        employee.getDepartment(),
-                        employee.getCity().getName(),
-                        employee.getCity().getCityId(),
-                        employee.getCity().getGovernorate().getName(),
-                        employee.getCity().getGovernorate().getGovernorateId(),
-                        employee.getCreatedAt(),
-                        employee.getIsActive(),
-                        employee.getRating()
-                )).toList();
+                .map(employee -> EmployeeDTO.builder()
+                        .empId(employee.getEmpId())
+                        .nationalId(employee.getNationalId())
+                        .firstName(employee.getFirstName())
+                        .lastName(employee.getLastName())
+                        .fullName(employee.getFirstName() + " " + employee.getLastName())
+                        .email(employee.getEmail())
+                        .department(employee.getDepartment())
+                        .city(employee.getCity().getName())
+                        .cityId(employee.getCity().getCityId())
+                        .governorate(employee.getCity().getGovernorate().getName())
+                        .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                        .createdAt(employee.getCreatedAt())
+                        .isActive(employee.getIsActive())
+                        .rating(employee.getRating())
+                        .build()
+                ).toList();
     }
 
     @Override
     public EmployeeDTO getEmployeeById(Long id) {
-        return employeeRepository.findById(id).map(employee -> new EmployeeDTO(
-                employee.getEmpId(),
-                employee.getNationalId(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getFirstName()+" "+employee.getLastName(),
-                employee.getEmail(),
-                employee.getDepartment(),
-                employee.getCity().getName(),
-                employee.getCity().getCityId(),
-                employee.getCity().getGovernorate().getName(),
-                employee.getCity().getGovernorate().getGovernorateId(),
-                employee.getCreatedAt(),
-                employee.getIsActive(),
-                employee.getRating())).orElse(null);
+        return employeeRepository.findById(id).map(employee -> EmployeeDTO.builder()
+                        .empId(employee.getEmpId())
+                        .nationalId(employee.getNationalId())
+                        .firstName(employee.getFirstName())
+                        .lastName(employee.getLastName())
+                        .fullName(employee.getFirstName() + " " + employee.getLastName())
+                        .email(employee.getEmail())
+                        .department(employee.getDepartment())
+                        .city(employee.getCity().getName())
+                        .cityId(employee.getCity().getCityId())
+                        .governorate(employee.getCity().getGovernorate().getName())
+                        .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                        .createdAt(employee.getCreatedAt())
+                        .isActive(employee.getIsActive())
+                        .rating(employee.getRating())
+                        .build())
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+
     }
 
-    public AddEmployeeResult createEmployee(EmployeeCreateDTO employee) {
+    public Long createEmployee(EmployeeCreateDTO employee) {
         String password = employee.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         employee.setPassword(encodedPassword);
 
-        Optional<Employee> existingEmployee = employeeRepository.findByEmailOrNationalId(employee.getEmail(),employee.getNationalId());
-        if (existingEmployee.isPresent()) {
-            return new AddEmployeeResult(false, "Error, Email or National ID Found, Employee already exists");
-        }
+        employeeRepository.findByEmailOrNationalId(employee.getEmail(), employee.getNationalId()).ifPresent(emp -> {
+            throw new EmployeeAlreadyExistsException(employee.getEmail(), employee.getNationalId());
+        });
 
         Long cityId = employee.getCityId();
-        Optional<City> city = cityRepository.findById(cityId);
-
-        if (!city.isPresent()) {
-            return new AddEmployeeResult(false, "Error, City not found");
-        }
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
 
         Employee emp = Employee.builder()
                 .nationalId(employee.getNationalId())
@@ -96,38 +94,25 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .email(employee.getEmail())
                 .passwordHash(employee.getPassword())
                 .department(employee.getDepartment())
-                .city(city.get())
+                .city(city)
                 .isActive(true)
                 .rating(0.0)
                 .build();
+
         Employee savedEmployee = employeeRepository.save(emp);
-
-
-        return new AddEmployeeResult(true, "Employee created successfully");
+        return savedEmployee.getEmpId();
     }
 
     @Override
-    public UpdateEmployeeResult updateEmployee(Long employeeId, EmployeeUpdateDTO employee) {
-        Optional<Employee> existingEmployee = employeeRepository.findById(employeeId);
-        if (!existingEmployee.isPresent()) {
-            return new UpdateEmployeeResult(false, "Error, Employee not found");
-        }
+    public Long updateEmployee(Long employeeId, EmployeeUpdateDTO employee) {
+        Employee employeeInfo = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
 
-        Employee employeeinfo =existingEmployee.get();
-        if (employee.getCityId() != null) {
-            Optional<City> city = cityRepository.findById(employee.getCityId());
-            if (!city.isPresent()) {
-                return new UpdateEmployeeResult(false, "Error, City not found");
-            }
-            employeeinfo.setCity(city.get());
-        }
+        City city = cityRepository.findById(employee.getCityId()).orElseThrow(() -> new CityNotFoundException(employee.getCityId()));
+        employeeInfo.setCity(city);
 
-        updateEmployeeBasicInfo(employeeinfo, employee);
-
-        employeeRepository.save(employeeinfo);
-
-
-        return new UpdateEmployeeResult(true, "Employee updated successfully");
+        updateEmployeeBasicInfo(employeeInfo, employee);
+        employeeRepository.save(employeeInfo);
+        return employeeId;
     }
 
 
@@ -150,17 +135,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public DeleteEmployeeResult deleteEmployee(Long employeeId) {
-        try {
-            Optional<Employee> existingEmployee = employeeRepository.findById(employeeId);
-            if (!existingEmployee.isPresent()) {
-                return new DeleteEmployeeResult(false, "Error, Employee not found");
-            }
-            employeeRepository.deleteById(employeeId);
-            return new DeleteEmployeeResult(true, "Employee deleted successfully");
-        } catch (Exception e) {
-            return new DeleteEmployeeResult(false, "Error deleting employee: " + e.getMessage());
-        }
-    }
+    public Long deleteEmployee(Long employeeId) {
 
+        Employee existingEmployee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+        employeeRepository.deleteById(employeeId);
+        return employeeId;
+    }
 }

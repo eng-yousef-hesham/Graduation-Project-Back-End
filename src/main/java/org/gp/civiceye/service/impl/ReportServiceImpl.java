@@ -1,6 +1,7 @@
 package org.gp.civiceye.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.gp.civiceye.exception.*;
 import org.gp.civiceye.mapper.report.*;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
@@ -36,14 +37,14 @@ public class ReportServiceImpl implements ReportService {
 
     public Long submitReport(CreateReportDTO dto) {
         City city = cityRepository.findById(dto.getCityId())
-                .orElseThrow(() -> new EntityNotFoundException("City not found with ID: " + dto.getCityId()));
+                .orElseThrow(() -> new CityNotFoundException(dto.getCityId()));
 
         Citizen citizen = citizenRepository.findById(dto.getCitizenId())
-                .orElseThrow(() -> new EntityNotFoundException("Citizen not found with ID: " + dto.getCitizenId()));
+                .orElseThrow(() -> new CitizenNotFoundException(dto.getCitizenId()));
 
         Optional<List<Employee>> employeesOpt = employeeRepository.findByCityAndDepartment(city, dto.getDepartment());
         if (employeesOpt.isEmpty() || employeesOpt.get().isEmpty()) {
-            throw new EntityNotFoundException("No employees available for city: " + city.getName());
+            throw new EmployeeNotFoundException("No employees available for city: " + city.getName());
         }
 
         List<Employee> employees = employeesOpt.get();
@@ -79,7 +80,7 @@ public class ReportServiceImpl implements ReportService {
 
         Optional<Report> report = reportRepository.findById(reportId);
         if (report.isEmpty()) {
-            throw new EntityNotFoundException("Report not found with ID: " + reportId);
+            throw new ReportNotFoundException(reportId);
         }
 
         return new ReportDTO(report.get());
@@ -88,13 +89,13 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void closeReport(CloseReportDTO dto) {
         Report report = reportRepository.findById(dto.getReportId())
-                .orElseThrow(() -> new RuntimeException("Report not found"));
+                .orElseThrow(() -> new ReportNotFoundException(dto.getReportId()));
 
         StatusHistory lastStatus = statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report)
-                .orElseThrow(() -> new RuntimeException("No status history found"));
+                .orElseThrow(StatusHistoryNotFoundException::new);
 
         if (!lastStatus.getStatus().equals(ReportStatus.Resolved)) {
-            throw new RuntimeException("Report is not resolved yet");
+            throw new InvalidReportStatusException(lastStatus.getStatus(), ReportStatus.Resolved);
         }
         lastStatus.setEndTime(LocalDateTime.now());
         statusHistoryRepository.save(lastStatus);
@@ -126,13 +127,13 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void updateReportStatus(UpdateReportStatusDTO dto) {
         Report report = reportRepository.findById(dto.getReportId())
-                .orElseThrow(() -> new RuntimeException("Report not found"));
+                .orElseThrow(() -> new ReportNotFoundException(dto.getReportId()));
 
         Employee employee = employeeRepository.findById(dto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new EmployeeNotFoundException(dto.getEmployeeId()));
 
         StatusHistory lastStatus = statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report)
-                .orElseThrow(() -> new RuntimeException("No status history found"));
+                .orElseThrow(StatusHistoryNotFoundException::new);
 
         lastStatus.setEndTime(LocalDateTime.now());
         statusHistoryRepository.save(lastStatus);

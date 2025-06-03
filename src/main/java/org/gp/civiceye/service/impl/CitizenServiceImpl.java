@@ -1,25 +1,22 @@
 package org.gp.civiceye.service.impl;
 
+import org.gp.civiceye.exception.CitizenAlreadyExistsException;
 import org.gp.civiceye.mapper.citizen.CreateCitizenDTO;
 import org.gp.civiceye.repository.CitizenRepository;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.CitizenService;
 import org.gp.civiceye.mapper.citizen.CitizenDTO;
-import org.gp.civiceye.service.impl.admin.AddAdminResult;
-import org.gp.civiceye.service.impl.admin.AdminType;
-import org.gp.civiceye.service.impl.citizen.AddCitizenResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CitizenServiceImpl implements CitizenService {
 
-    private CitizenRepository citizenRepository;
+    private final CitizenRepository citizenRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -36,12 +33,15 @@ public class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
-    public AddCitizenResult addCitizen(CreateCitizenDTO citizenData) {
+    public Long addCitizen(CreateCitizenDTO citizenData) {
 
         String password = citizenData.getHashPassword();
         String encodedPassword = passwordEncoder.encode(password);
         citizenData.setHashPassword(encodedPassword);
 
+        citizenRepository.findByEmailOrNationalId(citizenData.getEmail(), citizenData.getNationalId()).ifPresent(citizen -> {
+            throw new CitizenAlreadyExistsException(citizen.getEmail(), citizen.getNationalId());
+        });
 
         Citizen citizen = Citizen.builder()
                 .nationalId(citizenData.getNationalId())
@@ -53,7 +53,8 @@ public class CitizenServiceImpl implements CitizenService {
                 .isActive(true)
                 .build();
 
-        citizenRepository.save(citizen);
-        return new AddCitizenResult(true, "Citizen created successfully");
+        Citizen savedCitizen = citizenRepository.save(citizen);
+
+        return savedCitizen.getCitizenId();
     }
 }

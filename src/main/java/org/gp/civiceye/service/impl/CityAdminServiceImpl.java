@@ -37,14 +37,8 @@ public class CityAdminServiceImpl implements CityAdminService {
 
     @Override
     public CityAdminDTO getCityAdminById(Long id) {
-
-        Optional<CityAdmin> cityAdmin = cityAdminRepository.findById(id);
-        if (cityAdmin.isPresent()) {
-            return new CityAdminDTO(cityAdmin.get());
-        }
-        return null;
-
-
+        Optional<CityAdmin> cityAdminOptional = cityAdminRepository.findById(id);
+        return cityAdminOptional.map(CityAdminDTO::new).orElse(null);
     }
 
     public CreateCityAdminDTO addCityAdmin(CreateCityAdminDTO CreateCityAdminDTO) {

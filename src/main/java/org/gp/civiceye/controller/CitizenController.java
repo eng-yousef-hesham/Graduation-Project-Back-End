@@ -1,12 +1,9 @@
 package org.gp.civiceye.controller;
 
 
-import org.gp.civiceye.mapper.CreateAdminDTO;
 import org.gp.civiceye.mapper.citizen.CitizenDTO;
 import org.gp.civiceye.mapper.citizen.CreateCitizenDTO;
 import org.gp.civiceye.service.CitizenService;
-import org.gp.civiceye.service.impl.admin.AddAdminResult;
-import org.gp.civiceye.service.impl.citizen.AddCitizenResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +14,7 @@ import java.util.List;
 @RequestMapping("api/V1")
 public class CitizenController {
 
-    private CitizenService citizenService;
+    private final CitizenService citizenService;
 
     public CitizenController(CitizenService citizenservice) {
         this.citizenService = citizenservice;
@@ -41,16 +38,7 @@ public class CitizenController {
 
     @PostMapping("/citizenRegister")
     public ResponseEntity<String> addCitizen(@RequestBody CreateCitizenDTO Citizen) {
-        AddCitizenResult result = citizenService.addCitizen(Citizen);
-
-        if (result.isSuccess()) {
-            return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
-        } else if (result.getMessage().contains("not found")) {
-            return new ResponseEntity<>(result.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
-        } else {
-            return new ResponseEntity<>(result.getMessage(), HttpStatus.CONFLICT);
-        }
+        Long result = citizenService.addCitizen(Citizen);
+        return new ResponseEntity<>("Citizen Created with ID: " + result, HttpStatus.OK);
     }
-
-
 }
