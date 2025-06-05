@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")                    // Your websocket endpoint URL
                 .addInterceptors(jwtHandshakeInterceptor)  // <-- Register your JWT interceptor here
-                .setAllowedOriginPatterns("*")         // Allow CORS as needed
+                .setAllowedOriginPatterns("*")    // Allow CORS as needed
                 .withSockJS();                         // Enable SockJS fallback
     }
 
