@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.gp.civiceye.mapper.cityadmin.CityAdminDTO;
 import org.gp.civiceye.service.CityAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,18 +27,14 @@ public class CityAdminController {
 
     @GetMapping("/cityadmins")
     @Operation(summary = "Get all city admins", description = "Fetches a list of all city administrators.")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved city admins" )
-    public ResponseEntity<List<CityAdminDTO>> getAllCityAdmins() {
-
-//        HashMap<String, Object> response = new HashMap<>();
-//        response.put("data", cityAdminService.GetAllCityAdmins());
-
-
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved city admins")
+    public ResponseEntity<Page<CityAdminDTO>> getAllCityAdmins(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-//        headers.add("Custom-Header", "yousef hesham");
+        Page<CityAdminDTO> cityAdmins = cityAdminService.getAllCityAdmins(page, size);
 
-        return new ResponseEntity<List<CityAdminDTO>>(cityAdminService.GetAllCityAdmins(), headers,HttpStatus.OK);
+        return new ResponseEntity<Page<CityAdminDTO>>(cityAdmins, HttpStatus.OK);
     }
 
 
@@ -49,9 +46,6 @@ public class CityAdminController {
         }
         return new ResponseEntity<>(cityAdminDTO, HttpStatus.OK);
     }
-
-
-
 
 
 }

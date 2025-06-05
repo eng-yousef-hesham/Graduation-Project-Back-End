@@ -6,6 +6,7 @@ import org.gp.civiceye.mapper.report.ReportDTO;
 import org.gp.civiceye.service.ReportAnalysisService;
 import org.gp.civiceye.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -52,10 +53,10 @@ public class ReportAnalysisController {
 
     @MessageMapping("/send")
     @SendTo("/topic/messages")
-    public ResponseEntity<List<ReportDTO>> send(@RequestBody CreateReportDTO dto) {
+    public ResponseEntity<Page<ReportDTO>> send(@RequestBody CreateReportDTO dto) {
         Long reportId = reportService.submitReport(dto);
 
-        List<ReportDTO> reports = reportService.GetAllReports();
+        Page<ReportDTO> reports = reportService.getAllReports(0,10,"reportId","desc");
         if (reports.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

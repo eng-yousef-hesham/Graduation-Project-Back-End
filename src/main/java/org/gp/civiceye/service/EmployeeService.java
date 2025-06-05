@@ -3,12 +3,13 @@ package org.gp.civiceye.service;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface EmployeeService {
 
-    public List<EmployeeDTO> getAllEmployees();
+    public Page<EmployeeDTO> getAllEmployees(int page, int size);
 
     public EmployeeDTO getEmployeeById(Long id);
 

@@ -2,7 +2,9 @@ package org.gp.civiceye.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.gp.civiceye.mapper.report.*;
+import org.gp.civiceye.repository.entity.ReportStatus;
 import org.gp.civiceye.service.ReportService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +19,6 @@ public class ReportController {
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
-
-
-
 
     @PostMapping("/reports/submit")
     public ResponseEntity<Long> submitReport(@RequestBody CreateReportDTO dto) {
@@ -37,8 +36,7 @@ public class ReportController {
 
         try {
             return ResponseEntity.ok(reportService.getReportsById(reportId));
-        }
-        catch (EntityNotFoundException ex) {
+        } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -60,20 +58,23 @@ public class ReportController {
         return ResponseEntity.ok().build();
     }
 
-
     @GetMapping("/reports")
-    public ResponseEntity<List<ReportDTO>> getAllReports() {
+    public ResponseEntity<Page<ReportDTO>> getReports(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "reportId") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) ReportStatus currentStatus) {
 
-//        HashMap<String, Object> response = new HashMap<>();
-//        response.put("statusText", HttpStatus.OK.getReasonPhrase());
-//        response.put("statusCode", HttpStatus.OK.value());
-//        response.put("message", "Retrieved All Reports");
-//        response.put("data", reportService.GetAllReports());
-        List<ReportDTO> reports = reportService.GetAllReports();
-        if (reports.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Page<ReportDTO> reports;
+
+        if (currentStatus != null) {
+            reports = reportService.getReportsByStatus(currentStatus, page, size, sortBy, sortDir);
+        } else {
+            reports = reportService.getAllReports(page, size, sortBy, sortDir);
         }
-        return new ResponseEntity<>(reports, HttpStatus.OK);
+
+        return ResponseEntity.ok(reports);
     }
 
     @GetMapping("/reports/countbygovernorate")

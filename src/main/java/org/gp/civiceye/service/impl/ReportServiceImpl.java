@@ -6,6 +6,10 @@ import org.gp.civiceye.mapper.report.*;
 import org.gp.civiceye.repository.*;
 import org.gp.civiceye.repository.entity.*;
 import org.gp.civiceye.service.ReportService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -154,14 +158,31 @@ public class ReportServiceImpl implements ReportService {
         reportRepository.save(report);
     }
 
-
     @Override
-    public List<ReportDTO> GetAllReports() {
-        return reportRepository.findAll().stream()
-                .map(ReportDTO::new)
-                .collect(Collectors.toList());
-    }
+    public Page<ReportDTO> getAllReports(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
 
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return reportRepository.findAll(pageable)
+                .map(ReportDTO::new);
+    }
+    public Page<ReportDTO> getReportsByStatus(ReportStatus currentStatus, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (currentStatus == null) {
+            return reportRepository.findAll(pageable)
+                    .map(ReportDTO::new);
+        }
+
+        return reportRepository.findByCurrentStatus(currentStatus, pageable)
+                .map(ReportDTO::new);
+    }
     @Override
     public List<ReportCountDTO> getReportsCountByGovernorate() {
         return governorateRepository.findAll().

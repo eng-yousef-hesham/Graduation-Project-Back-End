@@ -5,6 +5,7 @@ import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
 import org.gp.civiceye.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
-        List<EmployeeDTO> employees = employeeService.getAllEmployees();
+    public ResponseEntity<Page<EmployeeDTO>> getAllEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<EmployeeDTO> employees = employeeService.getAllEmployees(page, size);
         return ResponseEntity.ok(employees);
     }
 
@@ -49,6 +52,6 @@ public class EmployeeController {
     @DeleteMapping("/employees/{employeeId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
         Long id = employeeService.deleteEmployee(employeeId);
-        return new ResponseEntity<>("Employee Deleted with ID: " + id , HttpStatus.OK);
+        return new ResponseEntity<>("Employee Deleted with ID: " + id, HttpStatus.OK);
     }
 }

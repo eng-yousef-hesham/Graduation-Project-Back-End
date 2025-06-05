@@ -8,6 +8,9 @@ import org.gp.civiceye.repository.entity.CityAdmin;
 import org.gp.civiceye.service.CityAdminService;
 import org.gp.civiceye.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,12 +30,10 @@ public class CityAdminServiceImpl implements CityAdminService {
     }
 
     @Override
-    public List<CityAdminDTO> GetAllCityAdmins() {
-        return cityAdminRepository.findAll().stream()
-                .map(CityAdminDTO::new)
-                .collect(Collectors.toList());
+    public Page<CityAdminDTO> getAllCityAdmins(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return cityAdminRepository.findAll(pageable).map(CityAdminDTO::new);
     }
-
 
 
     @Override

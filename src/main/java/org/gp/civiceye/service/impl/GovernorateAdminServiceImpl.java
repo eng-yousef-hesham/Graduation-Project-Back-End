@@ -5,6 +5,9 @@ import org.gp.civiceye.repository.GovernorateAdminRepository;
 import org.gp.civiceye.repository.entity.GovernorateAdmin;
 import org.gp.civiceye.service.GovernorateAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,10 +25,10 @@ public class GovernorateAdminServiceImpl implements GovernorateAdminService {
 
 
     @Override
-    public List<GovernrateAdminDTO> GetAllGovernrateAdmins() {
-        return governrateAdminRepository.findAll().stream()
-                .map(GovernrateAdminDTO::new)
-                .collect(Collectors.toList());
+    public Page<GovernrateAdminDTO> getAllGovernrateAdmins(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return governrateAdminRepository.findAll(pageable)
+                .map(GovernrateAdminDTO::new);
     }
 
     @Override

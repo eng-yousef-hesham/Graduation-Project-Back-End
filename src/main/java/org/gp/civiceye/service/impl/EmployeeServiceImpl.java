@@ -12,6 +12,9 @@ import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.repository.entity.Employee;
 import org.gp.civiceye.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +35,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getAllEmployees() {
-        return employeeRepository.findAll().stream()
-                .map(employee -> EmployeeDTO.builder()
+    public Page<EmployeeDTO> getAllEmployees(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeRepository.findAll(pageable).map(employee -> EmployeeDTO.builder()
                         .empId(employee.getEmpId())
                         .nationalId(employee.getNationalId())
                         .firstName(employee.getFirstName())
@@ -50,7 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                         .isActive(employee.getIsActive())
                         .rating(employee.getRating())
                         .build()
-                ).toList();
+                );
     }
 
     @Override
@@ -120,11 +123,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (updateData.getFirstName() != null) {
             employee.setFirstName(updateData.getFirstName());
         }
-
         if (updateData.getLastName() != null) {
             employee.setLastName(updateData.getLastName());
         }
-
         if (updateData.getDepartment() != null) {
             employee.setDepartment(updateData.getDepartment());
         }
