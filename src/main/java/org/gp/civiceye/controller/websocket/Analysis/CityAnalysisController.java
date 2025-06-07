@@ -1,4 +1,4 @@
-package org.gp.civiceye.controller.Analysis;
+package org.gp.civiceye.controller.websocket.Analysis;
 
 import org.gp.civiceye.mapper.report.CreateReportDTO;
 import org.gp.civiceye.repository.entity.City;
@@ -34,7 +34,7 @@ public class CityAnalysisController {
     }
 
     @MessageMapping("/createReport")
-    public void createReportws(@Payload CreateReportDTO dto) {
+    public void createReportWS(@Payload CreateReportDTO dto) {
 
         Long reportId = reportService.submitReport(dto);
 

@@ -1,6 +1,6 @@
 package org.gp.civiceye;
 
-import com.github.javafaker.Faker;
+
 import org.gp.civiceye.repository.CitizenRepository;
 import org.gp.civiceye.repository.CityRepository;
 import org.gp.civiceye.repository.entity.Citizen;
