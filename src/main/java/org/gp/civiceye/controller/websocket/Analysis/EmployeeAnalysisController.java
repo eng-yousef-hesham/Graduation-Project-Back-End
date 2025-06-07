@@ -1,4 +1,4 @@
-package org.gp.civiceye.controller.Analysis;
+package org.gp.civiceye.controller.websocket.Analysis;
 
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.service.EmployeeAnalysisService;
@@ -25,7 +25,7 @@ public class EmployeeAnalysisController {
 
     @MessageMapping("/addempoyee")
     @SendTo("/topic/employeescount")
-    public Long createEmployeews(@Payload EmployeeCreateDTO employee) {
+    public Long createEmployeeWS(@Payload EmployeeCreateDTO employee) {
         Long emp = employeeService.createEmployee(employee);
 
         Long employeesCount = employeeAnalysisService.getEmployeesCount();
