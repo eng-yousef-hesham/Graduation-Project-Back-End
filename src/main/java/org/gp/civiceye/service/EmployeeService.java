@@ -3,6 +3,7 @@ package org.gp.civiceye.service;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
+import org.gp.civiceye.repository.entity.Department;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -18,4 +19,5 @@ public interface EmployeeService {
     public Long updateEmployee(Long employeeId, EmployeeUpdateDTO employee);
 
     public Long deleteEmployee(Long employeeId);
+    Page<EmployeeDTO> getAllEmployeesByDepartment(int page, int size, Department department);
 }

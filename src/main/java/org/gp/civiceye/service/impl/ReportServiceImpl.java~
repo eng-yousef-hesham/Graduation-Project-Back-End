@@ -168,24 +168,6 @@ public class ReportServiceImpl implements ReportService {
         return reportRepository.findAll(pageable)
                 .map(ReportDTO::new);
     }
-
-    public Page<ReportDTO> getReportsByStatusAndDepartment(ReportStatus currentStatus, Department department, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return reportRepository.findByCurrentStatusAndDepartment(currentStatus, department, pageable)
-                .map(ReportDTO::new);
-    }
-
-    public Page<ReportDTO> getReportsByDepartment(Department department, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return reportRepository.findByDepartment(department, pageable)
-                .map(ReportDTO::new);
-    }
     public Page<ReportDTO> getReportsByStatus(ReportStatus currentStatus, int page, int size, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :

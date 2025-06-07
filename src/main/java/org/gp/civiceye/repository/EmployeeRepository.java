@@ -4,6 +4,8 @@ import org.gp.civiceye.repository.entity.Citizen;
 import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +20,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<List<Employee>> findByCity(City city);
 
     Optional<Employee> findByEmailOrNationalId(String email, String nationalId);
+    Page<Employee> findByDepartment(Department department, Pageable pageable);
 }

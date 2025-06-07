@@ -2,6 +2,7 @@ package org.gp.civiceye.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.gp.civiceye.mapper.report.*;
+import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.ReportStatus;
 import org.gp.civiceye.service.ReportService;
 import org.springframework.data.domain.Page;
@@ -64,12 +65,17 @@ public class ReportController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "reportId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) ReportStatus currentStatus) {
-
+            @RequestParam(required = false) ReportStatus currentStatus,
+            @RequestParam(required = false) Department department
+    ) {
         Page<ReportDTO> reports;
 
-        if (currentStatus != null) {
+        if (currentStatus != null && department != null) {
+            reports = reportService.getReportsByStatusAndDepartment(currentStatus, department, page, size, sortBy, sortDir);
+        } else if (currentStatus != null) {
             reports = reportService.getReportsByStatus(currentStatus, page, size, sortBy, sortDir);
+        } else if (department != null) {
+            reports = reportService.getReportsByDepartment(department, page, size, sortBy, sortDir);
         } else {
             reports = reportService.getAllReports(page, size, sortBy, sortDir);
         }

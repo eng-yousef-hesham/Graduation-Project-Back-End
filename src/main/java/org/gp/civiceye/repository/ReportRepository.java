@@ -1,9 +1,7 @@
 package org.gp.civiceye.repository;
 
-import org.gp.civiceye.repository.entity.Employee;
-import org.gp.civiceye.repository.entity.Governorate;
-import org.gp.civiceye.repository.entity.Report;
-import org.gp.civiceye.repository.entity.ReportStatus;
+import aj.org.objectweb.asm.commons.Remapper;
+import org.gp.civiceye.repository.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +23,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Integer countByCity_Governorate(Governorate governorate);
 
     List<Report> findAllByAssignedEmployee(Employee employee);
+    Page<Report> findByDepartment(Department department, Pageable pageable);
+    Page<Report> findByCurrentStatusAndDepartment( ReportStatus status, Department department, Pageable pageable);
+
 }

@@ -3,6 +3,7 @@ package org.gp.civiceye.controller;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
+import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,8 +26,13 @@ public class EmployeeController {
     @GetMapping("/employees")
     public ResponseEntity<Page<EmployeeDTO>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<EmployeeDTO> employees = employeeService.getAllEmployees(page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Department department
+    ) {
+        Page<EmployeeDTO> employees;
+        if (department == null)
+            employees = employeeService.getAllEmployees(page, size);
+        employees = employeeService.getAllEmployeesByDepartment(page, size, department);
         return ResponseEntity.ok(employees);
     }
 

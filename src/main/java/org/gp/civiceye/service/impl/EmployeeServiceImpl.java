@@ -9,6 +9,7 @@ import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
 import org.gp.civiceye.repository.CityRepository;
 import org.gp.civiceye.repository.EmployeeRepository;
 import org.gp.civiceye.repository.entity.City;
+import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Employee;
 import org.gp.civiceye.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,28 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Page<EmployeeDTO> getAllEmployees(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return employeeRepository.findAll(pageable).map(employee -> EmployeeDTO.builder()
+                        .empId(employee.getEmpId())
+                        .nationalId(employee.getNationalId())
+                        .firstName(employee.getFirstName())
+                        .lastName(employee.getLastName())
+                        .fullName(employee.getFirstName() + " " + employee.getLastName())
+                        .email(employee.getEmail())
+                        .department(employee.getDepartment())
+                        .city(employee.getCity().getName())
+                        .cityId(employee.getCity().getCityId())
+                        .governorate(employee.getCity().getGovernorate().getName())
+                        .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                        .createdAt(employee.getCreatedAt())
+                        .isActive(employee.getIsActive())
+                        .rating(employee.getRating())
+                        .build()
+                );
+    }
+
+    @Override
+    public Page<EmployeeDTO> getAllEmployeesByDepartment(int page, int size, Department department) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeRepository.findByDepartment(department, pageable).map(employee -> EmployeeDTO.builder()
                         .empId(employee.getEmpId())
                         .nationalId(employee.getNationalId())
                         .firstName(employee.getFirstName())

@@ -1,6 +1,7 @@
 package org.gp.civiceye.service;
 
 import org.gp.civiceye.mapper.report.*;
+import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.ReportStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +14,8 @@ public interface ReportService {
     public List<ReportDTO> getReportsForUser(Long userId);
 
     public List <ReportDTO> getReportsForEmployee(Long employeeId);
-
-
+    Page<ReportDTO> getReportsByStatusAndDepartment(ReportStatus currentStatus, Department department, int page, int size, String sortBy, String sortDir);
+    Page<ReportDTO> getReportsByDepartment(Department department, int page, int size, String sortBy, String sortDir);
     public void updateReportStatus(UpdateReportStatusDTO dto);
 
     List<ReportCountDTO> getReportsCountByGovernorate();
