@@ -3,6 +3,7 @@ package org.gp.civiceye.repository;
 import org.gp.civiceye.repository.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +24,12 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     // Count Reports Per City
     @Query("SELECT r.city.cityId, r.city.name, COUNT(r) FROM Report r GROUP BY r.city.cityId, r.city.name ORDER BY COUNT(r) DESC")
     List<Object[]> countReportsPerCity();
+
+    @Query("SELECT r.city.cityId, r.city.name, COUNT(r) " +
+            "FROM Report r " +
+            "WHERE r.city.governorate.governorateId = :govId " +
+            "GROUP BY r.city.cityId, r.city.name " +
+            "ORDER BY COUNT(r) DESC")
+    List<Object[]> countReportsPerCityByGovernorate(@Param("govId") Long governorateId);
+
 }
