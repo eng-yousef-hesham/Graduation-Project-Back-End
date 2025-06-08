@@ -24,6 +24,9 @@ public class UserDTO {
     private String cityName;
     private String department;
     private List<String> level;
+    private int type;
+    private Long cityId;
+    private Long governorateId;
 
 
 }
