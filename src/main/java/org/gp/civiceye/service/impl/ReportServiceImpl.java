@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -171,6 +172,20 @@ public class ReportServiceImpl implements ReportService {
         Pageable pageable = PageRequest.of(page, size, sort);
         return reportRepository.findAll(pageable)
                 .map(ReportDTO::new);
+    }
+
+    @Override
+    public List<ReportDTO> getAllReportsWithOutClosedAndCancelled() {
+
+        List<ReportStatus> statuses = new ArrayList<>();
+        statuses.add(ReportStatus.Closed);
+        statuses.add(ReportStatus.Cancelled);
+        List<Report> reports = reportRepository.findByCurrentStatusNotIn(statuses);
+        if (reports.isEmpty()) {
+            return null;
+        }
+
+        return reports.stream().map(ReportDTO::new).collect(Collectors.toList());
     }
 
     public Page<ReportDTO> getReportsByStatusAndDepartment(ReportStatus currentStatus, Department department, int page, int size, String sortBy, String sortDir) {

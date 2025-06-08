@@ -24,4 +24,6 @@ public interface ReportService {
     void closeReport(CloseReportDTO dto);
 
     Page<ReportDTO> getReportsByStatus(ReportStatus currentStatus, int page, int size, String sortBy, String sortDir);
+
+    public List<ReportDTO> getAllReportsWithOutClosedAndCancelled();
 }

@@ -83,6 +83,12 @@ public class ReportController {
         return ResponseEntity.ok(reports);
     }
 
+    @GetMapping("reports/allReports")
+    public ResponseEntity<List<ReportDTO>> getReports()
+    {
+        return ResponseEntity.ok(reportService.getAllReportsWithOutClosedAndCancelled());
+    }
+
     @GetMapping("/reports/countbygovernorate")
     public ResponseEntity<List<ReportCountDTO>> getReportsCountByGovernorate() {
         return ResponseEntity.ok(reportService.getReportsCountByGovernorate());
