@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -39,6 +40,7 @@ public class ReportServiceImpl implements ReportService {
         this.governorateRepository = governorateRepository;
     }
 
+    @Transactional
     public Long submitReport(CreateReportDTO dto) {
         City city = cityRepository.findById(dto.getCityId())
                 .orElseThrow(() -> new CityNotFoundException(dto.getCityId()));
@@ -80,6 +82,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ReportDTO getReportsById(Long reportId) {
 
         Optional<Report> report = reportRepository.findById(reportId);
@@ -129,6 +132,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional
     public void updateReportStatus(UpdateReportStatusDTO dto) {
         Report report = reportRepository.findById(dto.getReportId())
                 .orElseThrow(() -> new ReportNotFoundException(dto.getReportId()));
