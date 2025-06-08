@@ -35,7 +35,8 @@ public class EmployeeController {
         Page<EmployeeDTO> employees;
         if (department == null)
             employees = employeeService.getAllEmployees(page, size);
-        employees = employeeService.getAllEmployeesByDepartment(page, size, department);
+        else
+            employees = employeeService.getAllEmployeesByDepartment(page, size, department);
         return ResponseEntity.ok(employees);
     }
 
