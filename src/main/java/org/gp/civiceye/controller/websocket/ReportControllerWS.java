@@ -64,7 +64,7 @@ public class ReportControllerWS {
 
         List<Map<String, Object>> cityData = reportAnalysisService.getReportsPerGovernorate(governorateId);
 
-        List<Map<String, Object>> cityReportData = reportAnalysisService.getReportsCountPerCity(cityId);
+        Long cityReportData = reportAnalysisService.getReportsCountPerCity(cityId);
 
         Long cityReportCount = reportAnalysisService.getReportsCountPerGovernorate(governorateId);
 

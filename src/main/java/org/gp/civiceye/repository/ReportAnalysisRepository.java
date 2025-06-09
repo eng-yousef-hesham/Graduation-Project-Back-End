@@ -22,8 +22,8 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     List<Object[]> countReportsPerEmployee();
 
     // Count Reports Per City
-    @Query("SELECT r.city.cityId, r.city.name, COUNT(r) FROM Report r WHERE r.city.cityId = :CityId  GROUP BY r.city.cityId, r.city.name ORDER BY COUNT(r) DESC")
-    List<Object[]> countReportsPerCity(@Param("CityId") Long CityId);
+    @Query("SELECT  COUNT(r) FROM Report r WHERE r.city.cityId = :CityId")
+    Long countReportsPerCity(@Param("CityId") Long CityId);
 
     @Query("SELECT r.city.cityId, r.city.name, COUNT(r) " +
             "FROM Report r " +

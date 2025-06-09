@@ -45,10 +45,8 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
-    public List<Map<String, Object>> getReportsCountPerCity(Long CityId) {
-        return ReportAnalysisRepository.countReportsPerCity(CityId).stream().
-                map(obj -> Map.of("cityId", obj[0],"cityName", obj[1], "reportCount", obj[2])).
-                collect(Collectors.toList());
+    public Long getReportsCountPerCity(Long CityId) {
+        return ReportAnalysisRepository.countReportsPerCity(CityId);
     }
 
     @Override
