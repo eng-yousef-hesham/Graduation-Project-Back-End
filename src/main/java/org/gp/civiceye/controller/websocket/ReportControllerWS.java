@@ -39,14 +39,31 @@ public class ReportControllerWS {
 
     @MessageMapping("/updateStatus")
     public void UpdateReportStatusWS(@Payload UpdateReportStatusDTO dto) {
+
         reportService.updateReportStatus(dto);
         Long reportId = dto.getReportId();
         ReportDTO report = reportService.getReportsById(reportId);
         Long citizenId = report.getCitizenId();
         String topic = "/topic/citizen/" + citizenId;
 
+        Long cityId = report.getCityId();
+        Long governorateId = report.getGovernorateId();
+
+        Long inProgresscityReportCount = reportAnalysisService.countReportsPerCityInProgress(cityId);
+
+        Long inProgressGovernorateReportCount = reportAnalysisService.countReportsPerGovernorateInProgress(governorateId);
+
+        Long ResolvedcityReportCount = reportAnalysisService.countReportsPerCityResolved(cityId);
+
+        Long ResolvedGovernorateReportCount = reportAnalysisService.countReportsPerGovernorateResolved(governorateId);
+
+
         messagingTemplate.convertAndSend(topic, "Report #" + reportId + " status changed to " + dto.getNewStatus());
 
+        messagingTemplate.convertAndSend("/topic/inProgressReportsCountPerCity/" + cityId, inProgresscityReportCount);
+        messagingTemplate.convertAndSend("/topic/inProgressReportsCountPerCity/" + governorateId, inProgressGovernorateReportCount);
+        messagingTemplate.convertAndSend("/topic/ResolvedReportsCountPerCity/" + cityId, ResolvedcityReportCount);
+        messagingTemplate.convertAndSend("/topic/ResolvedReportsCountPerCity/" + governorateId, ResolvedGovernorateReportCount);
     }
 
     @MessageMapping("/createReport")

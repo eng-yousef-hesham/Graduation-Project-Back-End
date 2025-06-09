@@ -1,6 +1,7 @@
 package org.gp.civiceye.repository;
 
 import org.gp.civiceye.repository.entity.Report;
+import org.gp.civiceye.repository.entity.ReportStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,5 +38,17 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
             "FROM Report r " +
             "WHERE r.city.governorate.governorateId = :govId")
     Long countReportsInGovernorate(@Param("govId") Long governorateId);
+
+    @Query("SELECT r FROM Report r WHERE r.currentStatus = 'In_Progress' and r.city.cityId = :CityId")
+    Long countReportsPerCityInProgress(@Param("CityId") Long CityId);
+
+    @Query("SELECT r FROM Report r WHERE r.currentStatus = 'In_Progress' and r.city.governorate.governorateId = :govId")
+    Long countReportsPerGovernorateInProgress(@Param("govId") Long govId);
+
+    @Query("SELECT r FROM Report r WHERE r.currentStatus = 'Resolved' and r.city.cityId = :CityId")
+    Long countReportsPerCityResolved(@Param("CityId") Long CityId);
+
+    @Query("SELECT r FROM Report r WHERE r.currentStatus = 'Resolved' and r.city.governorate.governorateId = :govId")
+    Long countReportsPerGovernorateResolved(@Param("govId") Long govId);
 
 }

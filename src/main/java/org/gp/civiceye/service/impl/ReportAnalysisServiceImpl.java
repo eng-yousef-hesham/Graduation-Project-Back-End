@@ -53,4 +53,24 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     public Long getReportsCountPerGovernorate(Long govId) {
         return ReportAnalysisRepository.countReportsInGovernorate(govId);
     }
+
+    @Override
+    public Long countReportsPerCityInProgress(Long CityId) {
+        return ReportAnalysisRepository.countReportsPerCityInProgress(CityId);
+    }
+
+    @Override
+    public Long countReportsPerGovernorateInProgress(Long govId) {
+        return ReportAnalysisRepository.countReportsPerGovernorateInProgress(govId);
+    }
+
+    @Override
+    public Long countReportsPerCityResolved(Long CityId) {
+        return ReportAnalysisRepository.countReportsPerCityResolved(CityId);
+    }
+
+    @Override
+    public Long countReportsPerGovernorateResolved(Long govId) {
+        return ReportAnalysisRepository.countReportsPerGovernorateResolved(govId);
+    }
 }

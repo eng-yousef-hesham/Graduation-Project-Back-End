@@ -15,4 +15,9 @@ public interface ReportAnalysisService {
     public Long getReportsCountPerCity(Long CityId);
 
     public Long getReportsCountPerGovernorate(Long govId);
+    public Long countReportsPerCityInProgress(Long CityId);
+    public Long countReportsPerGovernorateInProgress(Long govId);
+
+    public Long countReportsPerCityResolved(Long CityId);
+    public Long countReportsPerGovernorateResolved(Long govId);
 }
