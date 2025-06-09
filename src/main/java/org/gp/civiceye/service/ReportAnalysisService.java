@@ -9,7 +9,10 @@ public interface ReportAnalysisService {
 
     public List<Map<String, Object>> getReportsPerEmployee();
 
-    public List<Map<String, Object>> getReportsPerCity();
 
     public List<Map<String, Object>> getReportsPerGovernorate(Long govId);
+
+    public List<Map<String, Object>> getReportsCountPerCity(Long CityId);
+
+    public Long getReportsCountPerGovernorate(Long govId);
 }

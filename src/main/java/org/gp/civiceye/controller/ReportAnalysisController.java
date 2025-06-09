@@ -45,22 +45,6 @@ public class ReportAnalysisController {
         return ResponseEntity.ok(reportAnalysisService.getReportsPerEmployee());
     }
 
-    @GetMapping("/per-city")
-    @Operation(summary = "Geographical Distribution of Reports (Count by City)" )
-    public ResponseEntity<List<Map<String, Object>>> getReportsPerCity() {
-        return ResponseEntity.ok(reportAnalysisService.getReportsPerCity());
-    }
 
-    @MessageMapping("/send")
-    @SendTo("/topic/messages")
-    public ResponseEntity<Page<ReportDTO>> send(@RequestBody CreateReportDTO dto) {
-        Long reportId = reportService.submitReport(dto);
-
-        Page<ReportDTO> reports = reportService.getAllReports(0,10,"reportId","desc");
-        if (reports.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(reports, HttpStatus.OK);
-    }
 
 }
