@@ -30,13 +30,27 @@ public class EmployeeController {
     public ResponseEntity<Page<EmployeeDTO>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Department department
+            @RequestParam(required = false) Department department,
+            @RequestParam(required = false) Long cityId,
+            @RequestParam(required = false) Long govId
     ) {
         Page<EmployeeDTO> employees;
-        if (department == null)
-            employees = employeeService.getAllEmployees(page, size);
-        else
-            employees = employeeService.getAllEmployeesByDepartment(page, size, department);
+        if (cityId != null) {
+            if (department == null)
+                employees = employeeService.getAllEmployeesByCityId(cityId, page, size);
+            else
+                employees = employeeService.getAllEmployeesByDepartmentAndCityId(department, cityId, page, size);
+        } else if (govId != null) {
+            if (department == null)
+                employees = employeeService.getAllEmployeesByGovernorateId(govId, page, size);
+            else
+                employees = employeeService.getAllEmployeesByDepartmentAndGovernorateId(department, govId, page, size);
+        } else {
+            if (department == null)
+                employees = employeeService.getAllEmployees(page, size);
+            else
+                employees = employeeService.getAllEmployeesByDepartment(department, page, size);
+        }
         return ResponseEntity.ok(employees);
     }
 

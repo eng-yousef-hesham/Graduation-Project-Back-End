@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface GovernorateAdminService {
 
-    public Page<GovernrateAdminDTO> getAllGovernrateAdmins(int page, int size);
+    public Page<GovernrateAdminDTO> getAllGovernorateAdmins(int page, int size);
+    Page<GovernrateAdminDTO> getAllGovernorateAdminsByGovernorate(Long govId, int page,int size);
 
-    public GovernrateAdminDTO getGovernrateAdminById(Long id);
+    public GovernrateAdminDTO getGovernorateAdminById(Long id);
 }

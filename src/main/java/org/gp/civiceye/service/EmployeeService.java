@@ -12,6 +12,10 @@ public interface EmployeeService {
 
     public Page<EmployeeDTO> getAllEmployees(int page, int size);
 
+    public Page<EmployeeDTO> getAllEmployeesByCityId(Long cityId, int page, int size);
+
+    public Page<EmployeeDTO> getAllEmployeesByGovernorateId(Long govId, int page, int size);
+
     public EmployeeDTO getEmployeeById(Long id);
 
     public Long createEmployee(EmployeeCreateDTO employee);
@@ -19,5 +23,10 @@ public interface EmployeeService {
     public Long updateEmployee(Long employeeId, EmployeeUpdateDTO employee);
 
     public Long deleteEmployee(Long employeeId);
-    Page<EmployeeDTO> getAllEmployeesByDepartment(int page, int size, Department department);
+
+    Page<EmployeeDTO> getAllEmployeesByDepartment(Department department, int page, int size);
+
+    Page<EmployeeDTO> getAllEmployeesByDepartmentAndCityId(Department department,Long cityId, int page, int size);
+
+    Page<EmployeeDTO> getAllEmployeesByDepartmentAndGovernorateId(Department department,Long govId, int page, int size);
 }

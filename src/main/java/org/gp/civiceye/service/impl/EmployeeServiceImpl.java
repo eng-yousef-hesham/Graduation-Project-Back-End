@@ -3,14 +3,17 @@ package org.gp.civiceye.service.impl;
 import org.gp.civiceye.exception.CityNotFoundException;
 import org.gp.civiceye.exception.EmployeeAlreadyExistsException;
 import org.gp.civiceye.exception.EmployeeNotFoundException;
+import org.gp.civiceye.exception.GovernorateNotFoundException;
 import org.gp.civiceye.mapper.employee.EmployeeCreateDTO;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.mapper.employee.EmployeeUpdateDTO;
 import org.gp.civiceye.repository.CityRepository;
 import org.gp.civiceye.repository.EmployeeRepository;
+import org.gp.civiceye.repository.GovernorateRepository;
 import org.gp.civiceye.repository.entity.City;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Employee;
+import org.gp.civiceye.repository.entity.Governorate;
 import org.gp.civiceye.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,13 +28,15 @@ import java.util.List;
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final CityRepository cityRepository;
+    private final GovernorateRepository governorateRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, CityRepository cityRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, CityRepository cityRepository, GovernorateRepository governorateRepository) {
         this.employeeRepository = employeeRepository;
         this.cityRepository = cityRepository;
         this.passwordEncoder = passwordEncoder;
+        this.governorateRepository = governorateRepository;
 
     }
 
@@ -39,44 +44,138 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Page<EmployeeDTO> getAllEmployees(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return employeeRepository.findAll(pageable).map(employee -> EmployeeDTO.builder()
-                        .empId(employee.getEmpId())
-                        .nationalId(employee.getNationalId())
-                        .firstName(employee.getFirstName())
-                        .lastName(employee.getLastName())
-                        .fullName(employee.getFirstName() + " " + employee.getLastName())
-                        .email(employee.getEmail())
-                        .department(employee.getDepartment())
-                        .city(employee.getCity().getName())
-                        .cityId(employee.getCity().getCityId())
-                        .governorate(employee.getCity().getGovernorate().getName())
-                        .governorateId(employee.getCity().getGovernorate().getGovernorateId())
-                        .createdAt(employee.getCreatedAt())
-                        .isActive(employee.getIsActive())
-                        .rating(employee.getRating())
-                        .build()
-                );
+                .empId(employee.getEmpId())
+                .nationalId(employee.getNationalId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .fullName(employee.getFirstName() + " " + employee.getLastName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .city(employee.getCity().getName())
+                .cityId(employee.getCity().getCityId())
+                .governorate(employee.getCity().getGovernorate().getName())
+                .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                .createdAt(employee.getCreatedAt())
+                .isActive(employee.getIsActive())
+                .rating(employee.getRating())
+                .build()
+        );
     }
 
     @Override
-    public Page<EmployeeDTO> getAllEmployeesByDepartment(int page, int size, Department department) {
+    public Page<EmployeeDTO> getAllEmployeesByCityId(Long cityId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
+        return employeeRepository.findByCity(city, pageable).map(employee -> EmployeeDTO.builder()
+                .empId(employee.getEmpId())
+                .nationalId(employee.getNationalId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .fullName(employee.getFirstName() + " " + employee.getLastName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .city(employee.getCity().getName())
+                .cityId(employee.getCity().getCityId())
+                .governorate(employee.getCity().getGovernorate().getName())
+                .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                .createdAt(employee.getCreatedAt())
+                .isActive(employee.getIsActive())
+                .rating(employee.getRating())
+                .build()
+        );
+    }
+
+    @Override
+    public Page<EmployeeDTO> getAllEmployeesByGovernorateId(Long govId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
+                () -> new GovernorateNotFoundException(govId));
+        return employeeRepository.findByCity_Governorate(governorate, pageable).map(employee -> EmployeeDTO.builder()
+                .empId(employee.getEmpId())
+                .nationalId(employee.getNationalId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .fullName(employee.getFirstName() + " " + employee.getLastName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .city(employee.getCity().getName())
+                .cityId(employee.getCity().getCityId())
+                .governorate(employee.getCity().getGovernorate().getName())
+                .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                .createdAt(employee.getCreatedAt())
+                .isActive(employee.getIsActive())
+                .rating(employee.getRating())
+                .build()
+        );
+    }
+
+    @Override
+    public Page<EmployeeDTO> getAllEmployeesByDepartment(Department department, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return employeeRepository.findByDepartment(department, pageable).map(employee -> EmployeeDTO.builder()
-                        .empId(employee.getEmpId())
-                        .nationalId(employee.getNationalId())
-                        .firstName(employee.getFirstName())
-                        .lastName(employee.getLastName())
-                        .fullName(employee.getFirstName() + " " + employee.getLastName())
-                        .email(employee.getEmail())
-                        .department(employee.getDepartment())
-                        .city(employee.getCity().getName())
-                        .cityId(employee.getCity().getCityId())
-                        .governorate(employee.getCity().getGovernorate().getName())
-                        .governorateId(employee.getCity().getGovernorate().getGovernorateId())
-                        .createdAt(employee.getCreatedAt())
-                        .isActive(employee.getIsActive())
-                        .rating(employee.getRating())
-                        .build()
-                );
+                .empId(employee.getEmpId())
+                .nationalId(employee.getNationalId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .fullName(employee.getFirstName() + " " + employee.getLastName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .city(employee.getCity().getName())
+                .cityId(employee.getCity().getCityId())
+                .governorate(employee.getCity().getGovernorate().getName())
+                .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                .createdAt(employee.getCreatedAt())
+                .isActive(employee.getIsActive())
+                .rating(employee.getRating())
+                .build()
+        );
+    }
+
+    @Override
+    public Page<EmployeeDTO> getAllEmployeesByDepartmentAndCityId(Department department, Long cityId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
+        return employeeRepository.findByDepartmentAndCity(department, city, pageable).map(employee -> EmployeeDTO.builder()
+                .empId(employee.getEmpId())
+                .nationalId(employee.getNationalId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .fullName(employee.getFirstName() + " " + employee.getLastName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .city(employee.getCity().getName())
+                .cityId(employee.getCity().getCityId())
+                .governorate(employee.getCity().getGovernorate().getName())
+                .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                .createdAt(employee.getCreatedAt())
+                .isActive(employee.getIsActive())
+                .rating(employee.getRating())
+                .build()
+        );
+    }
+
+    @Override
+    public Page<EmployeeDTO> getAllEmployeesByDepartmentAndGovernorateId(Department department, Long govId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
+                () -> new GovernorateNotFoundException(govId));
+        return employeeRepository.findByDepartmentAndCity_Governorate(department, governorate, pageable).map(employee -> EmployeeDTO.builder()
+                .empId(employee.getEmpId())
+                .nationalId(employee.getNationalId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .fullName(employee.getFirstName() + " " + employee.getLastName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .city(employee.getCity().getName())
+                .cityId(employee.getCity().getCityId())
+                .governorate(employee.getCity().getGovernorate().getName())
+                .governorateId(employee.getCity().getGovernorate().getGovernorateId())
+                .createdAt(employee.getCreatedAt())
+                .isActive(employee.getIsActive())
+                .rating(employee.getRating())
+                .build()
+        );
     }
 
     @Override

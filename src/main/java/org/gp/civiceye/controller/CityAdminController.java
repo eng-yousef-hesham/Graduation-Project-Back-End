@@ -30,11 +30,20 @@ public class CityAdminController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved city admins")
     public ResponseEntity<Page<CityAdminDTO>> getAllCityAdmins(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        HttpHeaders headers = new HttpHeaders();
-        Page<CityAdminDTO> cityAdmins = cityAdminService.getAllCityAdmins(page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Long cityId,
+            @RequestParam(required = false) Long govId
 
-        return new ResponseEntity<Page<CityAdminDTO>>(cityAdmins, HttpStatus.OK);
+    ) {
+        Page<CityAdminDTO> cityAdmins;
+        if (cityId != null) {
+            cityAdmins = cityAdminService.getAllCityAdminsByCityId(cityId, page, size);
+        } else if (govId != null) {
+            cityAdmins = cityAdminService.getAllCityAdminsByGovernorateId(govId, page, size);
+        } else {
+            cityAdmins = cityAdminService.getAllCityAdmins(page, size);
+        }
+        return new ResponseEntity<>(cityAdmins, HttpStatus.OK);
     }
 
 

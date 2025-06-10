@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface CityAdminService {
     public Page<CityAdminDTO> getAllCityAdmins(int page, int size);
+    public Page<CityAdminDTO> getAllCityAdminsByCityId(Long cityId,int page, int size);
+    public Page<CityAdminDTO> getAllCityAdminsByGovernorateId(Long govId,int page, int size);
 
     public CityAdminDTO getCityAdminById(Long id);
 
