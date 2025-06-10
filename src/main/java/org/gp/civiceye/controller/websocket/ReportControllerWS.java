@@ -61,9 +61,9 @@ public class ReportControllerWS {
         messagingTemplate.convertAndSend(topic, "Report #" + reportId + " status changed to " + dto.getNewStatus());
 
         messagingTemplate.convertAndSend("/topic/inProgressReportsCountPerCity/" + cityId, inProgresscityReportCount);
-        messagingTemplate.convertAndSend("/topic/inProgressReportsCountPerCity/" + governorateId, inProgressGovernorateReportCount);
+        messagingTemplate.convertAndSend("/topic/inProgressReportsCountPerGovernorate/" + governorateId, inProgressGovernorateReportCount);
         messagingTemplate.convertAndSend("/topic/ResolvedReportsCountPerCity/" + cityId, ResolvedcityReportCount);
-        messagingTemplate.convertAndSend("/topic/ResolvedReportsCountPerCity/" + governorateId, ResolvedGovernorateReportCount);
+        messagingTemplate.convertAndSend("/topic/ResolvedReportsCountPerGovernorate/" + governorateId, ResolvedGovernorateReportCount);
     }
 
     @MessageMapping("/createReport")
