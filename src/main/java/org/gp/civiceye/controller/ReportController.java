@@ -66,26 +66,49 @@ public class ReportController {
             @RequestParam(defaultValue = "reportId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(required = false) ReportStatus currentStatus,
-            @RequestParam(required = false) Department department
+            @RequestParam(required = false) Department department,
+            @RequestParam(required = false) Long cityId,
+            @RequestParam(required = false) Long govId
+
     ) {
         Page<ReportDTO> reports;
-
-        if (currentStatus != null && department != null) {
-            reports = reportService.getReportsByStatusAndDepartment(currentStatus, department, page, size, sortBy, sortDir);
-        } else if (currentStatus != null) {
-            reports = reportService.getReportsByStatus(currentStatus, page, size, sortBy, sortDir);
-        } else if (department != null) {
-            reports = reportService.getReportsByDepartment(department, page, size, sortBy, sortDir);
+        if (cityId != null) {
+            if (currentStatus != null && department != null) {
+                reports = reportService.getReportsByStatusAndDepartmentAndCityId(currentStatus, department, cityId, page, size, sortBy, sortDir);
+            } else if (currentStatus != null) {
+                reports = reportService.getReportsByStatusAndCityId(currentStatus, cityId, page, size, sortBy, sortDir);
+            } else if (department != null) {
+                reports = reportService.getReportsByDepartmentAndCityId(department, cityId, page, size, sortBy, sortDir);
+            } else {
+                reports = reportService.getAllReportsByCityId(cityId, page, size, sortBy, sortDir);
+            }
+        } else if (govId != null) {
+            if (currentStatus != null && department != null) {
+                reports = reportService.getReportsByStatusAndDepartmentAndGovernmentId(currentStatus, department, govId,page, size, sortBy, sortDir);
+            } else if (currentStatus != null) {
+                reports = reportService.getReportsByStatusAndGovernmentId(currentStatus,govId, page, size, sortBy, sortDir);
+            } else if (department != null) {
+                reports = reportService.getReportsByDepartmentAndGovernmentId(department,govId, page, size, sortBy, sortDir);
+            } else {
+                reports = reportService.getAllReportsByGovernmentId(govId,page, size, sortBy, sortDir);
+            }
         } else {
-            reports = reportService.getAllReports(page, size, sortBy, sortDir);
+            if (currentStatus != null && department != null) {
+                reports = reportService.getReportsByStatusAndDepartment(currentStatus, department, page, size, sortBy, sortDir);
+            } else if (currentStatus != null) {
+                reports = reportService.getReportsByStatus(currentStatus, page, size, sortBy, sortDir);
+            } else if (department != null) {
+                reports = reportService.getReportsByDepartment(department, page, size, sortBy, sortDir);
+            } else {
+                reports = reportService.getAllReports(page, size, sortBy, sortDir);
+            }
         }
 
         return ResponseEntity.ok(reports);
     }
 
     @GetMapping("reports/allReports")
-    public ResponseEntity<List<ReportDTO>> getReports()
-    {
+    public ResponseEntity<List<ReportDTO>> getReports() {
         return ResponseEntity.ok(reportService.getAllReportsWithOutClosedAndCancelled());
     }
 

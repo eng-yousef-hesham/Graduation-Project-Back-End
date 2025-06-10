@@ -175,6 +175,28 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public Page<ReportDTO> getAllReportsByCityId(Long cityId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
+        return reportRepository.findByCity(city, pageable).map(ReportDTO::new);
+    }
+
+    @Override
+    public Page<ReportDTO> getAllReportsByGovernmentId(Long govId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Governorate governorate = governorateRepository.findById(govId).orElseThrow((() -> new GovernorateNotFoundException(govId)));
+        return reportRepository.findByCity_Governorate(governorate, pageable).map(ReportDTO::new);
+    }
+
+    @Override
     public List<ReportDTO> getAllReportsWithOutClosedAndCancelled() {
 
         List<ReportStatus> statuses = new ArrayList<>();
@@ -197,6 +219,29 @@ public class ReportServiceImpl implements ReportService {
                 .map(ReportDTO::new);
     }
 
+    @Override
+    public Page<ReportDTO> getReportsByStatusAndDepartmentAndGovernmentId(ReportStatus currentStatus, Department department, Long govId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
+                () -> new GovernorateNotFoundException(govId));
+        return reportRepository.findByCurrentStatusAndDepartmentAndCity_Governorate(currentStatus, department, governorate, pageable).map(ReportDTO::new);
+    }
+
+    @Override
+    public Page<ReportDTO> getReportsByStatusAndDepartmentAndCityId(ReportStatus currentStatus, Department department, Long cityId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
+        return reportRepository.findByCurrentStatusAndDepartmentAndCity(currentStatus, department, city, pageable).map(ReportDTO::new);
+    }
+
     public Page<ReportDTO> getReportsByDepartment(Department department, int page, int size, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :
@@ -205,6 +250,30 @@ public class ReportServiceImpl implements ReportService {
         return reportRepository.findByDepartment(department, pageable)
                 .map(ReportDTO::new);
     }
+
+    @Override
+    public Page<ReportDTO> getReportsByDepartmentAndGovernmentId(Department department, Long govId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
+                () -> new GovernorateNotFoundException(govId));
+        return reportRepository.findByDepartmentAndCity_Governorate(department, governorate, pageable).map(ReportDTO::new);
+    }
+
+    @Override
+    public Page<ReportDTO> getReportsByDepartmentAndCityId(Department department, Long cityId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
+        return reportRepository.findByDepartmentAndCity(department, city, pageable).map(ReportDTO::new);
+    }
+
     public Page<ReportDTO> getReportsByStatus(ReportStatus currentStatus, int page, int size, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :
@@ -220,6 +289,30 @@ public class ReportServiceImpl implements ReportService {
         return reportRepository.findByCurrentStatus(currentStatus, pageable)
                 .map(ReportDTO::new);
     }
+
+    @Override
+    public Page<ReportDTO> getReportsByStatusAndGovernmentId(ReportStatus currentStatus, Long govId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
+                () -> new GovernorateNotFoundException(govId));
+        return reportRepository.findByCurrentStatusAndCity_Governorate(currentStatus,governorate,pageable).map(ReportDTO::new);
+    }
+
+    @Override
+    public Page<ReportDTO> getReportsByStatusAndCityId(ReportStatus currentStatus, Long cityId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
+        return reportRepository.findByCurrentStatusAndCity(currentStatus,city,pageable).map(ReportDTO::new);
+    }
+
     @Override
     public List<ReportCountDTO> getReportsCountByGovernorate() {
         return governorateRepository.findAll().

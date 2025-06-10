@@ -22,11 +22,29 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Page<Report> findByCurrentStatus(ReportStatus currentStatus, Pageable pageable);
 
+    Page<Report> findByCurrentStatusAndCity(ReportStatus currentStatus, City city, Pageable pageable);
+
+    Page<Report> findByCurrentStatusAndCity_Governorate(ReportStatus currentStatus, Governorate governorate, Pageable pageable);
+
+    Page<Report> findByCity(City city, Pageable pageable);
+
+    Page<Report> findByCity_Governorate(Governorate governorate, Pageable pageable);
+
     Integer countByCity_Governorate(Governorate governorate);
 
     List<Report> findAllByAssignedEmployee(Employee employee);
+
     Page<Report> findByDepartment(Department department, Pageable pageable);
-    Page<Report> findByCurrentStatusAndDepartment( ReportStatus status, Department department, Pageable pageable);
+
+    Page<Report> findByDepartmentAndCity_Governorate(Department department, Governorate governorate, Pageable pageable);
+
+    Page<Report> findByDepartmentAndCity(Department department, City city, Pageable pageable);
+
+    Page<Report> findByCurrentStatusAndDepartment(ReportStatus status, Department department, Pageable pageable);
+
+    Page<Report> findByCurrentStatusAndDepartmentAndCity(ReportStatus status, Department department, City city, Pageable pageable);
+
+    Page<Report> findByCurrentStatusAndDepartmentAndCity_Governorate(ReportStatus status, Department department, Governorate governorate, Pageable pageable);
 
 
     @Query("SELECT r FROM Report r WHERE r.currentStatus NOT IN :statuses")
