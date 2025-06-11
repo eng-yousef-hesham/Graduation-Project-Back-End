@@ -9,6 +9,7 @@ import org.gp.civiceye.service.ReportAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,19 +49,20 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
-    public List<Map<String,Long>> initReportNumbersForGovernorate(Long govId){
-        return Stream.of(Map.of("allReports",getReportsCountPerGovernorate(govId)),
-                Map.of("allInProgressReports",countReportsPerGovernorateInProgress(govId)),
-                Map.of("allResolvedReports",countReportsPerGovernorateResolved(govId)))
-                .collect(Collectors.toList());
+    public Map<String,Long> initReportNumbersForGovernorate(Long govId){
+        return Stream.of(Map.entry("allReports",getReportsCountPerGovernorate(govId)),
+                Map.entry("allInProgressReports",countReportsPerGovernorateInProgress(govId)),
+                Map.entry("allResolvedReports",countReportsPerGovernorateResolved(govId)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
-    public List<Map<String,Long>> initReportNumbersForcity(Long cityId){
-        return Stream.of(Map.of("allReports",getReportsCountPerCity(cityId)),
-                Map.of("allInProgressReports",countReportsPerCityInProgress(cityId)),
-                Map.of("allResolvedReports",countReportsPerCityResolved(cityId)))
-                .collect(Collectors.toList());
+    public Map<String, Long> initReportNumbersForcity(Long cityId) {
+        return Stream.of(
+                Map.entry("allReports", getReportsCountPerCity(cityId)),
+                Map.entry("allInProgressReports", countReportsPerCityInProgress(cityId)),
+                Map.entry("allResolvedReports", countReportsPerCityResolved(cityId)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

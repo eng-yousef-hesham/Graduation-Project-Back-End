@@ -43,15 +43,15 @@ public class ReportAnalysisController {
     }
 
 
-    @GetMapping("/init/report/numpers/gov/{govId}")
-    public ResponseEntity<List<Map<String,Long>>> initReportNumbersForGovernorate
+    @GetMapping("/init/report/numbers/gov/{govId}")
+    public ResponseEntity<Map<String,Long>> initReportNumbersForGovernorate
             (@PathVariable(name = "govId" ) Long govId) {
 
         return ResponseEntity.ok(reportAnalysisService.initReportNumbersForGovernorate(govId));
     }
 
-    @GetMapping("/init/report/numpers/city/{cityId}")
-    public ResponseEntity<List<Map<String,Long>>> initReportNumbersForcity
+    @GetMapping("/init/report/numbers/city/{cityId}")
+    public ResponseEntity<Map<String,Long>> initReportNumbersForcity
             (@PathVariable(name = "cityId" ) Long cityId) {
 
         return ResponseEntity.ok(reportAnalysisService.initReportNumbersForcity(cityId));

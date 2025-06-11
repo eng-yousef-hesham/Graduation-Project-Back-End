@@ -22,6 +22,6 @@ public interface ReportAnalysisService {
     public Long countReportsPerCityResolved(Long CityId);
     public Long countReportsPerGovernorateResolved(Long govId);
 
-    public List<Map<String,Long>> initReportNumbersForGovernorate(Long govId);
-    public List<Map<String,Long>> initReportNumbersForcity(Long cityId);
+    public Map<String,Long> initReportNumbersForGovernorate(Long govId);
+    public Map<String,Long> initReportNumbersForcity(Long cityId);
 }
