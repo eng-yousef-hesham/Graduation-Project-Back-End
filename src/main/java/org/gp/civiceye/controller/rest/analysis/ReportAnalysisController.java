@@ -1,16 +1,11 @@
-package org.gp.civiceye.controller;
+package org.gp.civiceye.controller.rest.analysis;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.gp.civiceye.mapper.report.CreateReportDTO;
 import org.gp.civiceye.mapper.report.ReportDTO;
-import org.gp.civiceye.service.ReportAnalysisService;
+import org.gp.civiceye.service.analysis.ReportAnalysisService;
 import org.gp.civiceye.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +50,22 @@ public class ReportAnalysisController {
             (@PathVariable(name = "cityId" ) Long cityId) {
 
         return ResponseEntity.ok(reportAnalysisService.initReportNumbersForcity(cityId));
+    }
+
+    @GetMapping("/init/report/top-4-reports/master")
+    public ResponseEntity<List<ReportDTO>> GetTop4Reports() {
+
+        return ResponseEntity.ok(reportAnalysisService.GetTop4Reports());
+    }
+    @GetMapping("/init/report/top-4-reports/gov/{govId}")
+    public ResponseEntity<List<ReportDTO>> GetTop4ReportsBygovId(@PathVariable(name = "govId" ) Long govId) {
+
+        return ResponseEntity.ok(reportAnalysisService.GetTop4ReportsByGovId(govId));
+    }
+    @GetMapping("/init/report/top-4-reports/city/{cityId}")
+    public ResponseEntity<List<ReportDTO>> GetTop4ReportsByCityId(@PathVariable(name = "cityId" ) Long cityId) {
+
+        return ResponseEntity.ok(reportAnalysisService.GetTop4ReportsByCityId(cityId));
     }
 
 

@@ -1,7 +1,7 @@
 package org.gp.civiceye.controller;
 
 import org.gp.civiceye.service.PDFReportService;
-import org.gp.civiceye.service.ReportAnalysisService;
+import org.gp.civiceye.service.analysis.ReportAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

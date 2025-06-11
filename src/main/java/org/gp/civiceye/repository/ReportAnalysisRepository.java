@@ -53,4 +53,14 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     @Query("SELECT COUNT(r) FROM Report r WHERE r.currentStatus = 'Resolved' and r.city.governorate.governorateId = :govId")
     Long countReportsPerGovernorateResolved(@Param("govId") Long govId);
 
+    List<Report> findTop4ByOrderByCreatedAtDesc();
+
+    @Query("SELECT r FROM Report r WHERE r.city.governorate.governorateId = :govId")
+    List<Report> findTop4ByGovernorateId(Long govId);
+
+    @Query("SELECT r FROM Report r WHERE r.city.cityId = :cityId")
+    List<Report> findTop4ByCityId(Long cityId);
+
+
+
 }

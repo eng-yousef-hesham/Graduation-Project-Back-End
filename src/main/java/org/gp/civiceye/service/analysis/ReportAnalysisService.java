@@ -1,4 +1,6 @@
-package org.gp.civiceye.service;
+package org.gp.civiceye.service.analysis;
+
+import org.gp.civiceye.mapper.report.ReportDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -24,4 +26,9 @@ public interface ReportAnalysisService {
 
     public Map<String,Long> initReportNumbersForGovernorate(Long govId);
     public Map<String,Long> initReportNumbersForcity(Long cityId);
+
+    public List<ReportDTO> GetTop4Reports();
+
+    public List<ReportDTO> GetTop4ReportsByGovId(Long govId);
+    public List<ReportDTO> GetTop4ReportsByCityId(Long cityId);
 }

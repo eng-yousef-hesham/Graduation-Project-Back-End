@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface StatusHistoryRepository extends JpaRepository<StatusHistory, Long> {
     Optional<StatusHistory> findTopByReportOrderByStartTimeDesc(Report report);
 
+
 }

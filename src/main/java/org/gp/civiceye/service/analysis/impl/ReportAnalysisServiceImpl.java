@@ -1,15 +1,12 @@
-package org.gp.civiceye.service.impl;
+package org.gp.civiceye.service.analysis.impl;
 
-import org.gp.civiceye.exception.ReportNotFoundException;
 import org.gp.civiceye.exception.ReportsIsEmptyException;
-import org.gp.civiceye.mapper.employee.EmployeeDTO;
+import org.gp.civiceye.mapper.report.ReportDTO;
 import org.gp.civiceye.repository.ReportAnalysisRepository;
-import org.gp.civiceye.repository.ReportRepository;
-import org.gp.civiceye.service.ReportAnalysisService;
+import org.gp.civiceye.service.analysis.ReportAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -105,5 +102,24 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     public Long countReportsPerGovernorateResolved(Long govId) {
         return ReportAnalysisRepository.countReportsPerGovernorateResolved(govId).describeConstable().
                 orElseThrow(ReportsIsEmptyException::new);
+    }
+
+    @Override
+    public List<ReportDTO> GetTop4Reports() {
+        return ReportAnalysisRepository.findTop4ByOrderByCreatedAtDesc().stream()
+                .map(ReportDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReportDTO> GetTop4ReportsByGovId(Long govId) {
+        return ReportAnalysisRepository.findTop4ByGovernorateId(govId).stream()
+                .map(ReportDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReportDTO> GetTop4ReportsByCityId(Long cityId) {
+        return ReportAnalysisRepository.findTop4ByCityId(cityId).stream()
+                .map(ReportDTO::new)
+                .collect(Collectors.toList());
     }
 }
