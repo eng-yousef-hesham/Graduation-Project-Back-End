@@ -73,6 +73,7 @@ public class ProjectSecurityConfig {
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/V1/masteradmins").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/V1/download-report").hasRole("MASTERADMIN")
                         .requestMatchers("/api/V1/admin").hasRole("MASTERADMIN")
                         .requestMatchers("/api/V1/city/").hasAnyRole("MASTERADMIN")
                         .requestMatchers("/api/V1/cities/").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")

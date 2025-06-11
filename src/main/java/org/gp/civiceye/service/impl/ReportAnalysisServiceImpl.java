@@ -1,5 +1,7 @@
 package org.gp.civiceye.service.impl;
 
+import org.gp.civiceye.exception.ReportNotFoundException;
+import org.gp.civiceye.exception.ReportsIsEmptyException;
 import org.gp.civiceye.mapper.employee.EmployeeDTO;
 import org.gp.civiceye.repository.ReportAnalysisRepository;
 import org.gp.civiceye.repository.ReportRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ReportAnalysisServiceImpl implements ReportAnalysisService {
@@ -45,32 +48,60 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
+    public List<Map<String,Long>> initReportNumbersForGovernorate(Long govId){
+        return Stream.of(Map.of("allReports",getReportsCountPerGovernorate(govId)),
+                Map.of("allInProgressReports",countReportsPerGovernorateInProgress(govId)),
+                Map.of("allResolvedReports",countReportsPerGovernorateResolved(govId)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Map<String,Long>> initReportNumbersForcity(Long cityId){
+        return Stream.of(Map.of("allReports",getReportsCountPerCity(cityId)),
+                Map.of("allInProgressReports",countReportsPerCityInProgress(cityId)),
+                Map.of("allResolvedReports",countReportsPerCityResolved(cityId)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long getAllReportsCount() {
+        return ReportAnalysisRepository.findCountOfAllReports().describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
+    }
+
+    @Override
     public Long getReportsCountPerCity(Long CityId) {
-        return ReportAnalysisRepository.countReportsPerCity(CityId);
+        return ReportAnalysisRepository.countReportsPerCity(CityId).describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
     }
 
     @Override
     public Long getReportsCountPerGovernorate(Long govId) {
-        return ReportAnalysisRepository.countReportsInGovernorate(govId);
+        return ReportAnalysisRepository.countReportsInGovernorate(govId).describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
     }
 
     @Override
     public Long countReportsPerCityInProgress(Long CityId) {
-        return ReportAnalysisRepository.countReportsPerCityInProgress(CityId);
+        return ReportAnalysisRepository.countReportsPerCityInProgress(CityId).describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
     }
 
     @Override
     public Long countReportsPerGovernorateInProgress(Long govId) {
-        return ReportAnalysisRepository.countReportsPerGovernorateInProgress(govId);
+        return ReportAnalysisRepository.countReportsPerGovernorateInProgress(govId).describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
     }
 
     @Override
     public Long countReportsPerCityResolved(Long CityId) {
-        return ReportAnalysisRepository.countReportsPerCityResolved(CityId);
+        return ReportAnalysisRepository.countReportsPerCityResolved(CityId).describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
     }
 
     @Override
     public Long countReportsPerGovernorateResolved(Long govId) {
-        return ReportAnalysisRepository.countReportsPerGovernorateResolved(govId);
+        return ReportAnalysisRepository.countReportsPerGovernorateResolved(govId).describeConstable().
+                orElseThrow(ReportsIsEmptyException::new);
     }
 }

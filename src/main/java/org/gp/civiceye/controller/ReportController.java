@@ -107,8 +107,8 @@ public class ReportController {
         return ResponseEntity.ok(reports);
     }
 
-    @GetMapping("reports/allReports")
-    public ResponseEntity<List<ReportDTO>> getReports() {
+    @GetMapping("reports/allReportsWithOutClosedAndCancelled")
+    public ResponseEntity<List<ReportDTO>> getReportsWithOutClosedAndCancelled() {
         return ResponseEntity.ok(reportService.getAllReportsWithOutClosedAndCancelled());
     }
 

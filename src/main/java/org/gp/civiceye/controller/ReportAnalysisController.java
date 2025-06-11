@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +40,21 @@ public class ReportAnalysisController {
     @Operation(summary = "Number of Reports Assigned to Each Employee" )
     public ResponseEntity<List<Map<String, Object>>> getReportsPerEmployee() {
         return ResponseEntity.ok(reportAnalysisService.getReportsPerEmployee());
+    }
+
+
+    @GetMapping("/init/report/numpers/gov/{govId}")
+    public ResponseEntity<List<Map<String,Long>>> initReportNumbersForGovernorate
+            (@PathVariable(name = "govId" ) Long govId) {
+
+        return ResponseEntity.ok(reportAnalysisService.initReportNumbersForGovernorate(govId));
+    }
+
+    @GetMapping("/init/report/numpers/city/{cityId}")
+    public ResponseEntity<List<Map<String,Long>>> initReportNumbersForcity
+            (@PathVariable(name = "cityId" ) Long cityId) {
+
+        return ResponseEntity.ok(reportAnalysisService.initReportNumbersForcity(cityId));
     }
 
 
