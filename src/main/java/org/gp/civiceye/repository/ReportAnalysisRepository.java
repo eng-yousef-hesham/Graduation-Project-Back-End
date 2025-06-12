@@ -55,10 +55,10 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
 
     List<Report> findTop4ByOrderByCreatedAtDesc();
 
-    @Query("SELECT r FROM Report r WHERE r.city.governorate.governorateId = :govId")
+    @Query("SELECT r FROM Report r WHERE r.city.governorate.governorateId = :govId ORDER BY r.createdAt DESC limit 4")
     List<Report> findTop4ByGovernorateId(Long govId);
 
-    @Query("SELECT r FROM Report r WHERE r.city.cityId = :cityId")
+    @Query("SELECT r FROM Report r WHERE r.city.cityId = :cityId ORDER BY r.createdAt DESC limit 4")
     List<Report> findTop4ByCityId(Long cityId);
 
 

@@ -68,6 +68,10 @@ public class ReportAnalysisController {
         return ResponseEntity.ok(reportAnalysisService.GetTop4ReportsByCityId(cityId));
     }
 
+    @GetMapping("/init/report/pie-chart/gov/{govId}")
+    public ResponseEntity<List<Map<String, Object>>> getReportsCountPerGovernorate(@PathVariable(name = "govId" ) Long govId) {
 
+        return ResponseEntity.ok(reportAnalysisService.getReportsPerGovernorate(govId));
+    }
 
 }
