@@ -76,6 +76,10 @@ public class ReportControllerWS {
 
         Long governorateId = city.getGovernorate().getGovernorateId();
 
+        Long empId = reportService.getReportsById(reportId).getAssignedEmployeeId();
+
+        String topic = "/topic/employee/" + empId;
+
 
 
         List<Map<String, Object>> cityData = reportAnalysisService.getReportsPerGovernorate(governorateId);
@@ -84,6 +88,8 @@ public class ReportControllerWS {
 
         Long cityReportCount = reportAnalysisService.getReportsCountPerGovernorate(governorateId);
 
+
+        messagingTemplate.convertAndSend(topic, "Report #" + reportId + " has been assigned to you." + " Please check your dashboard.");
 
         messagingTemplate.convertAndSend("/topic/reportsCountPerCitiesInGovernorate/" + governorateId, cityData);
 
