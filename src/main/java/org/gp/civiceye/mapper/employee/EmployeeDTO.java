@@ -43,4 +43,21 @@ public class EmployeeDTO {
         this.isActive = employee.getIsActive();
         this.rating = employee.getRating();
     }
+
+    public EmployeeDTO(Employee employee) {
+        this.empId = employee.getEmpId();
+        this.firstName = employee.getFirstName();
+        this.lastName = employee.getLastName();
+        this.fullName = employee.getFirstName() + " " + employee.getLastName();
+        this.nationalId = employee.getNationalId();
+        this.email = employee.getEmail();
+        this.department = employee.getDepartment();
+        this.city = employee.getCity().getName();
+        this.cityId = employee.getCity().getCityId();
+        this.governorate = employee.getCity().getGovernorate().getName();
+        this.governorateId = employee.getCity().getGovernorate().getGovernorateId();
+        this.createdAt = employee.getCreatedAt();
+        this.isActive = employee.getIsActive();
+        this.rating = employee.getRating();
+    }
 }

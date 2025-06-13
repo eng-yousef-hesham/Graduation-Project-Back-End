@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/V1")
@@ -52,6 +53,22 @@ public class EmployeeAnalysisController {
     public ResponseEntity<List<EmployeeDTO>> GetTop8EmployeesForCity(@PathVariable(name = "cityId" ) Long cityId) {
 
         return ResponseEntity.ok(employeeAnalysisService.getTop8RatedEmployeesPerCity(cityId));
+    }
+
+    @GetMapping("/init/employees/fast/top-8/master")
+    public ResponseEntity<Map<String, Double>> GetTop8FastEmployees() {
+
+        return ResponseEntity.ok(employeeAnalysisService.get8FastestEmployeeToSolveReports());
+    }
+    @GetMapping("/init/employees/fast/top-8/gov/{govId}")
+    public ResponseEntity<Map<String, Double>> GetTop8FastEmployeesForGovernorate(@PathVariable(name = "govId" ) Long govId) {
+
+        return ResponseEntity.ok(employeeAnalysisService.get8FastestEmployeeToSolveReportsPerGovernorate(govId));
+    }
+    @GetMapping("/init/employees/fast/top-8/city/{cityId}")
+    public ResponseEntity<Map<String, Double>> GetTop8FastEmployeesForCity(@PathVariable(name = "cityId" ) Long cityId) {
+
+        return ResponseEntity.ok(employeeAnalysisService.get8FastestEmployeeToSolveReportsPerCity(cityId));
     }
 
 

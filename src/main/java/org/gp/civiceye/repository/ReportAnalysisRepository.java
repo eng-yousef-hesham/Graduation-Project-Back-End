@@ -81,4 +81,25 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
             "ORDER BY COUNT(r) DESC")
     List<Object[]> findCountOfReportsPerDepartmentPerCity(@Param("cityId") Long cityId);
 
+
+    @Query("SELECT r.assignedEmployee.firstName, r.assignedEmployee.lastName, " +
+            "CAST(sum(r.updatedAt - r.createdAt) AS long) FROM Report r WHERE r.currentStatus = 'Resolved' " +
+            "GROUP BY r.assignedEmployee " +
+            "ORDER BY CAST(sum(r.updatedAt - r.createdAt) AS long) asc LIMIT 8")
+    List<Object[]> find8FastestEmployeeToSolveReports();
+
+    @Query("SELECT r.assignedEmployee.firstName, r.assignedEmployee.lastName, " +
+            "CAST(sum(r.updatedAt - r.createdAt) AS long) FROM Report r WHERE r.currentStatus = 'Resolved' AND " +
+            "r.city.governorate.governorateId = :govId " +
+            "GROUP BY r.assignedEmployee " +
+            "ORDER BY CAST(sum(r.updatedAt - r.createdAt) AS long) asc LIMIT 8")
+    List<Object[]> find8FastestEmployeeToSolveReportsPerGovernorate(@Param("govId") Long govId);
+
+    @Query("SELECT r.assignedEmployee.firstName, r.assignedEmployee.lastName, " +
+            "CAST(sum(r.updatedAt - r.createdAt) AS long) FROM Report r WHERE r.currentStatus = 'Resolved' AND " +
+            "r.city.cityId = :cityId " +
+            "GROUP BY r.assignedEmployee " +
+            "ORDER BY CAST(sum(r.updatedAt - r.createdAt) AS long) asc LIMIT 8")
+    List<Object[]> find8FastestEmployeeToSolveReportsPerCity(@Param("cityId") Long cityId);
+
 }
