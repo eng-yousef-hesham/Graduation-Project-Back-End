@@ -45,7 +45,7 @@ public class Citizen {
     private Integer age;
 
 
-    @Column(name = "Created_At", updatable = false, insertable = false)
+    @Column(name = "Created_At", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
