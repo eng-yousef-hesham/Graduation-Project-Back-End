@@ -1,6 +1,7 @@
 package org.gp.civiceye.service.analysis.impl;
 
 import org.gp.civiceye.exception.ReportsIsEmptyException;
+import org.gp.civiceye.mapper.CityReportCountDTO;
 import org.gp.civiceye.mapper.report.ReportDTO;
 import org.gp.civiceye.repository.ReportAnalysisRepository;
 import org.gp.civiceye.service.analysis.ReportAnalysisService;
@@ -126,18 +127,23 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
 
 
     @Override
-    public Map<String, Double> getAverageTimeToSolveReportInCities() {
-        return ReportAnalysisRepository.findAverageTimeToSolveReportInCities().stream().
-                collect(Collectors.toMap(obj -> (String) obj[1], obj -> (Double) obj[2]));
+    public List<CityReportCountDTO> getAverageTimeToSolveReportInCities() {
+        return ReportAnalysisRepository.findAverageTimeToSolveReportInCities().stream()
+                .map(obj -> new CityReportCountDTO((String) obj[1], (Double) obj[2]))
+                .collect(Collectors.toList());
     }
+
     @Override
-    public Map<String, Double> getAverageTimeToSolveReportInCity(Long cityId) {
-        return ReportAnalysisRepository.findAverageTimeToSolveReportInCity(cityId).stream().
-                collect(Collectors.toMap(obj -> (String) obj[1], obj -> (Double) obj[2]));
+    public List<CityReportCountDTO> getAverageTimeToSolveReportInCity(Long cityId) {
+        return ReportAnalysisRepository.findAverageTimeToSolveReportInCity(cityId).stream()
+                .map(obj -> new CityReportCountDTO((String) obj[1], (Double) obj[2]))
+                .collect(Collectors.toList());
     }
+
     @Override
-    public Map<String, Double> getAverageTimeToSolveReportInCitiesPerGovernorate(Long govId) {
-        return ReportAnalysisRepository.findAverageTimeToSolveReportInCitiesPerGovernorate(govId).stream().
-                collect(Collectors.toMap(obj -> (String) obj[1], obj -> (Double) obj[2]));
+    public List<CityReportCountDTO> getAverageTimeToSolveReportInCitiesPerGovernorate(Long govId) {
+        return ReportAnalysisRepository.findAverageTimeToSolveReportInCitiesPerGovernorate(govId).stream()
+                .map(obj -> new CityReportCountDTO((String) obj[1], (Double) obj[2]))
+                .collect(Collectors.toList());
     }
 }

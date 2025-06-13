@@ -75,7 +75,8 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
             "ORDER BY COUNT(r) DESC")
     List<Object[]> findCountOfReportsPerDepartmentPerGovernorate(@Param("govId") Long govId);
 
-    @Query("SELECT r.department, COUNT(r) FROM Report r " +
+    @Query("SELECT r.department, COUNT(r) " +
+            "FROM Report r " +
             "WHERE r.city.cityId = :cityId " +
             "GROUP BY r.department " +
             "ORDER BY COUNT(r) DESC")

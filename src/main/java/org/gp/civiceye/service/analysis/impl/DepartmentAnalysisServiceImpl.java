@@ -6,6 +6,8 @@ import org.gp.civiceye.service.analysis.DepartmentAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,31 +23,61 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
 
     @Override
     public Map<Department, Long> getCountOfReportsPerDepartment() {
-        return reportAnalysisRepository.findCountOfReportsPerDepartment()
-                .stream()
+        List<Object[]> results = reportAnalysisRepository.findCountOfReportsPerDepartment();
+
+        // Convert to map
+        Map<Department, Long> countMap = results.stream()
                 .collect(Collectors.toMap(
-                        obj -> (Department) obj[0],
-                        obj -> (Long) obj[1]
+                        row -> (Department) row[0],
+                        row -> (Long) row[1]
                 ));
+
+        // Step 2: Ensure all enums are present, fill in missing with 0
+        Map<Department, Long> finalMap = new LinkedHashMap<>();
+        for (Department dept : Department.values()) {
+            finalMap.put(dept, countMap.getOrDefault(dept, 0L));
+        }
+
+        return finalMap;
     }
 
     @Override
     public Map<Department, Long> getCountOfReportsPerDepartmentPerGovernorate(Long govId) {
-        return reportAnalysisRepository.findCountOfReportsPerDepartmentPerGovernorate(govId)
-                .stream()
+        List<Object[]> results = reportAnalysisRepository.findCountOfReportsPerDepartmentPerGovernorate(govId);
+
+        // Convert to map
+        Map<Department, Long> countMap = results.stream()
                 .collect(Collectors.toMap(
-                        obj -> (Department) obj[0],
-                        obj -> (Long) obj[1]
+                        row -> (Department) row[0],
+                        row -> (Long) row[1]
                 ));
+
+        // Step 2: Ensure all enums are present, fill in missing with 0
+        Map<Department, Long> finalMap = new LinkedHashMap<>();
+        for (Department dept : Department.values()) {
+            finalMap.put(dept, countMap.getOrDefault(dept, 0L));
+        }
+
+        return finalMap;
     }
 
     @Override
     public Map<Department, Long> getCountOfReportsPerDepartmentPerCity(Long cityId) {
-        return reportAnalysisRepository.findCountOfReportsPerDepartmentPerCity(cityId)
-                .stream()
+        List<Object[]> results = reportAnalysisRepository.findCountOfReportsPerDepartmentPerCity(cityId);
+
+        // Convert to map
+        Map<Department, Long> countMap = results.stream()
                 .collect(Collectors.toMap(
-                        obj -> (Department) obj[0],
-                        obj -> (Long) obj[1]
+                        row -> (Department) row[0],
+                        row -> (Long) row[1]
                 ));
+
+        // Step 2: Ensure all enums are present, fill in missing with 0
+        Map<Department, Long> finalMap = new LinkedHashMap<>();
+        for (Department dept : Department.values()) {
+            finalMap.put(dept, countMap.getOrDefault(dept, 0L));
+        }
+
+        return finalMap;
     }
 }
