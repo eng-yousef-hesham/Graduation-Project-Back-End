@@ -1,5 +1,6 @@
 package org.gp.civiceye.repository;
 
+import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.Report;
 import org.gp.civiceye.repository.entity.ReportStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
@@ -62,5 +64,21 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     List<Report> findTop4ByCityId(Long cityId);
 
 
+    @Query("SELECT r.department, COUNT(r) FROM Report r " +
+            "GROUP BY r.department " +
+            "ORDER BY COUNT(r) DESC")
+    List<Object[]> findCountOfReportsPerDepartment();
+
+    @Query("SELECT r.department, COUNT(r) FROM Report r " +
+            "WHERE r.city.governorate.governorateId = :govId " +
+            "GROUP BY r.department " +
+            "ORDER BY COUNT(r) DESC")
+    List<Object[]> findCountOfReportsPerDepartmentPerGovernorate(@Param("govId") Long govId);
+
+    @Query("SELECT r.department, COUNT(r) FROM Report r " +
+            "WHERE r.city.cityId = :cityId " +
+            "GROUP BY r.department " +
+            "ORDER BY COUNT(r) DESC")
+    List<Object[]> findCountOfReportsPerDepartmentPerCity(@Param("cityId") Long cityId);
 
 }
