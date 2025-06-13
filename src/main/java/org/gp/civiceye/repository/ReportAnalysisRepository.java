@@ -82,24 +82,64 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     List<Object[]> findCountOfReportsPerDepartmentPerCity(@Param("cityId") Long cityId);
 
 
-    @Query("SELECT r.assignedEmployee.firstName, r.assignedEmployee.lastName, " +
-            "CAST(sum(r.updatedAt - r.createdAt) AS long) FROM Report r WHERE r.currentStatus = 'Resolved' " +
-            "GROUP BY r.assignedEmployee " +
-            "ORDER BY CAST(sum(r.updatedAt - r.createdAt) AS long) asc LIMIT 8")
+    @Query(value = "SELECT e.first_name, e.last_name, " +
+            "AVG(EXTRACT(EPOCH FROM (r.updated_at - r.created_at)) / 3600)::float8 AS avg_hours " +
+            "FROM report r " +
+            "JOIN employee e ON r.assigned_emp_id = e.emp_id " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "WHERE r.current_status = 'Resolved' " +
+            "GROUP BY e.emp_id, e.first_name, e.last_name " +
+            "ORDER BY avg_hours ASC " +
+            "LIMIT 8", nativeQuery = true)
     List<Object[]> find8FastestEmployeeToSolveReports();
 
-    @Query("SELECT r.assignedEmployee.firstName, r.assignedEmployee.lastName, " +
-            "CAST(sum(r.updatedAt - r.createdAt) AS long) FROM Report r WHERE r.currentStatus = 'Resolved' AND " +
-            "r.city.governorate.governorateId = :govId " +
-            "GROUP BY r.assignedEmployee " +
-            "ORDER BY CAST(sum(r.updatedAt - r.createdAt) AS long) asc LIMIT 8")
+    @Query(value = "SELECT e.first_name, e.last_name, " +
+            "AVG(EXTRACT(EPOCH FROM (r.updated_at - r.created_at)) / 3600)::float8 AS avg_hours " +
+            "FROM report r " +
+            "JOIN employee e ON r.assigned_emp_id = e.emp_id " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "WHERE r.current_status = 'Resolved' AND c.governorate_id = :govId " +
+            "GROUP BY e.emp_id, e.first_name, e.last_name " +
+            "ORDER BY avg_hours ASC " +
+            "LIMIT 8", nativeQuery = true)
     List<Object[]> find8FastestEmployeeToSolveReportsPerGovernorate(@Param("govId") Long govId);
 
-    @Query("SELECT r.assignedEmployee.firstName, r.assignedEmployee.lastName, " +
-            "CAST(sum(r.updatedAt - r.createdAt) AS long) FROM Report r WHERE r.currentStatus = 'Resolved' AND " +
-            "r.city.cityId = :cityId " +
-            "GROUP BY r.assignedEmployee " +
-            "ORDER BY CAST(sum(r.updatedAt - r.createdAt) AS long) asc LIMIT 8")
+    @Query(value = "SELECT e.first_name, e.last_name, " +
+            "AVG(EXTRACT(EPOCH FROM (r.updated_at - r.created_at)) / 3600)::float8 AS avg_hours " +
+            "FROM report r " +
+            "JOIN employee e ON r.assigned_emp_id = e.emp_id " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "WHERE r.current_status = 'Resolved' AND c.city_id = :cityId " +
+            "GROUP BY e.emp_id, e.first_name, e.last_name " +
+            "ORDER BY avg_hours ASC " +
+            "LIMIT 8", nativeQuery = true)
     List<Object[]> find8FastestEmployeeToSolveReportsPerCity(@Param("cityId") Long cityId);
 
+
+    @Query(value = "SELECT c.city_id, c.name, " +
+            "AVG(EXTRACT(EPOCH FROM (r.updated_at - r.created_at)) / 3600)::float8 AS avg_hours " +
+            "FROM report r " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "WHERE r.current_status = 'Resolved' " +
+            "GROUP BY c.city_id, c.name " +
+            "ORDER BY avg_hours ASC", nativeQuery = true)
+    List<Object[]> findAverageTimeToSolveReportInCities();
+
+    @Query(value = "SELECT c.city_id, c.name, " +
+            "AVG(EXTRACT(EPOCH FROM (r.updated_at - r.created_at)) / 3600)::float8 AS avg_hours " +
+            "FROM report r " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "WHERE r.current_status = 'Resolved' AND c.city_id = :cityId " +
+            "GROUP BY c.city_id, c.name " +
+            "ORDER BY avg_hours ASC", nativeQuery = true)
+    List<Object[]> findAverageTimeToSolveReportInCity(Long cityId);
+
+    @Query(value = "SELECT c.city_id, c.name, " +
+            "AVG(EXTRACT(EPOCH FROM (r.updated_at - r.created_at)) / 3600)::float8 AS avg_hours " +
+            "FROM report r " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "WHERE r.current_status = 'Resolved' AND c.governorate_id = :govId " +
+            "GROUP BY c.city_id, c.name " +
+            "ORDER BY avg_hours ASC", nativeQuery = true)
+    List<Object[]> findAverageTimeToSolveReportInCitiesPerGovernorate(Long govId);
 }

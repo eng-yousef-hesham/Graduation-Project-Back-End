@@ -31,4 +31,8 @@ public interface ReportAnalysisService {
 
     public List<ReportDTO> GetTop4ReportsByGovId(Long govId);
     public List<ReportDTO> GetTop4ReportsByCityId(Long cityId);
+
+    public Map<String,Double> getAverageTimeToSolveReportInCities();
+    public Map<String,Double> getAverageTimeToSolveReportInCity(Long cityId);
+    public Map<String,Double> getAverageTimeToSolveReportInCitiesPerGovernorate(Long govId);
 }

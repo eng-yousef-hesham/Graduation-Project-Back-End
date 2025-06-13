@@ -122,4 +122,22 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
                 .map(ReportDTO::new)
                 .collect(Collectors.toList());
     }
+
+
+
+    @Override
+    public Map<String, Double> getAverageTimeToSolveReportInCities() {
+        return ReportAnalysisRepository.findAverageTimeToSolveReportInCities().stream().
+                collect(Collectors.toMap(obj -> (String) obj[1], obj -> (Double) obj[2]));
+    }
+    @Override
+    public Map<String, Double> getAverageTimeToSolveReportInCity(Long cityId) {
+        return ReportAnalysisRepository.findAverageTimeToSolveReportInCity(cityId).stream().
+                collect(Collectors.toMap(obj -> (String) obj[1], obj -> (Double) obj[2]));
+    }
+    @Override
+    public Map<String, Double> getAverageTimeToSolveReportInCitiesPerGovernorate(Long govId) {
+        return ReportAnalysisRepository.findAverageTimeToSolveReportInCitiesPerGovernorate(govId).stream().
+                collect(Collectors.toMap(obj -> (String) obj[1], obj -> (Double) obj[2]));
+    }
 }

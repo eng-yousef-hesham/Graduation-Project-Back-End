@@ -114,13 +114,7 @@ public class EmployeeAnalysisServiceImpl implements EmployeeAnalysisService {
         for (Object[] result : results) {
             String FirstName = (String) result[0];
             String LastName = (String) result[1];
-            Long totalResolutionTimeNanos = (Long) result[2]; // This will be in nanoseconds
-
-            // Convert nanoseconds to hours for better readability
-            Double totalResolutionTimeHours = totalResolutionTimeNanos / (1000000000.0 * 3600.0);
-
-
-            // Convert Employee entity to EmployeeDTO
+            Double totalResolutionTimeHours = (Double) result[2];
             String employeeName = FirstName + " " + LastName;
 
             employeePerformanceMap.put(employeeName, totalResolutionTimeHours);

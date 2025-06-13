@@ -74,4 +74,21 @@ public class ReportAnalysisController {
         return ResponseEntity.ok(reportAnalysisService.getReportsPerGovernorate(govId));
     }
 
+    @GetMapping("/init/report/cities/avg-time/master")
+    public ResponseEntity<Map<String,Double>> getAverageTimeToSolveReportInCities() {
+
+        return ResponseEntity.ok(reportAnalysisService.getAverageTimeToSolveReportInCities());
+    }
+    @GetMapping("/init/report/cities/avg-time/city/{cityId}")
+    public ResponseEntity<Map<String,Double>> getAverageTimeToSolveReportInCity(@PathVariable(name = "cityId" ) Long cityId) {
+
+        return ResponseEntity.ok(reportAnalysisService.getAverageTimeToSolveReportInCity(cityId));
+    }
+    @GetMapping("/init/report/cities/avg-time/gov/{govId}")
+    public ResponseEntity<Map<String,Double>> getAverageTimeToSolveReportInCitiesPerGovernorate(@PathVariable(name = "govId" ) Long govId) {
+
+        return ResponseEntity.ok(reportAnalysisService.getAverageTimeToSolveReportInCitiesPerGovernorate(govId));
+    }
+
+
 }
