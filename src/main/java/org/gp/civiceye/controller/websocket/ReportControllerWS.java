@@ -94,8 +94,8 @@ public class ReportControllerWS {
             List<ReportDTO> cityReports = reportAnalysisService.GetTop4ReportsByCityId(cityId);
             List<ReportDTO> govReports = reportAnalysisService.GetTop4ReportsByGovId(governorateId);
 
-            messagingTemplate.convertAndSend("/topic/latestReports" + cityId, cityReports);
-            messagingTemplate.convertAndSend("/topic/latestReports" + governorateId, govReports);
+            messagingTemplate.convertAndSend("/topic/latestReports/city/" + cityId, cityReports);
+            messagingTemplate.convertAndSend("/topic/latestReports/gov/" + governorateId, govReports);
 
         } catch (Exception e) {
             // Send error message to the specific user who sent the request
