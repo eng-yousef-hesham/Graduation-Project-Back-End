@@ -7,6 +7,7 @@ import org.gp.civiceye.repository.ReportAnalysisRepository;
 import org.gp.civiceye.service.analysis.ReportAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -106,18 +107,23 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
+    @Transactional
     public List<ReportDTO> GetTop4Reports() {
         return ReportAnalysisRepository.findTop4ByOrderByCreatedAtDesc().stream()
                 .map(ReportDTO::new)
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
     public List<ReportDTO> GetTop4ReportsByGovId(Long govId) {
         return ReportAnalysisRepository.findTop4ByGovernorateId(govId).stream()
                 .map(ReportDTO::new)
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
     public List<ReportDTO> GetTop4ReportsByCityId(Long cityId) {
         return ReportAnalysisRepository.findTop4ByCityId(cityId).stream()
                 .map(ReportDTO::new)
