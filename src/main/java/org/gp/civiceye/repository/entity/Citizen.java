@@ -49,13 +49,14 @@ public class Citizen {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "Spam_Count")
+    private Integer spamCount;
+
     @Column(name = "Is_Active")
     private Boolean isActive;
 
     @OneToMany(mappedBy = "citizen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Report> reports = new ArrayList<>();
-
-
 
 
 }

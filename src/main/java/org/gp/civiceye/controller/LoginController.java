@@ -4,12 +4,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gp.civiceye.constants.ApplicationConstants;
+import org.gp.civiceye.exception.BannedUserException;
 import org.gp.civiceye.mapper.LoginRequestDTO;
 import org.gp.civiceye.mapper.LoginResponseDTO;
 import org.gp.civiceye.mapper.UserDTO;
+import org.gp.civiceye.repository.CitizenRepository;
+import org.gp.civiceye.repository.entity.Citizen;
 import org.gp.civiceye.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.filter.ApplicationContextHeaderFilter;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
@@ -36,13 +37,16 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
     private final Environment env;
     private final LoginService loginService;
+    private final CitizenRepository citizenRepository;
 
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, Environment env,LoginService loginService) {
+    public LoginController(AuthenticationManager authenticationManager, Environment env, LoginService loginService,
+                           CitizenRepository citizenRepository) {
         this.authenticationManager = authenticationManager;
         this.env = env;
-        this.loginService =loginService;
+        this.loginService = loginService;
+        this.citizenRepository = citizenRepository;
     }
 
     @PostMapping("login")
@@ -58,9 +62,16 @@ public class LoginController {
                         ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
-                List<String> roles =authenticationResponse.getAuthorities().stream()
+                List<String> roles = authenticationResponse.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList());
+
+                if (roles.contains("ROLE_CITIZEN")) {
+                    Citizen citizen = citizenRepository.findByEmail(loginRequest.username()).get();
+                    if (!citizen.getIsActive()) {
+                        throw new BannedUserException("User with email " + loginRequest.username() + " is banned. Please contact the admin.");
+                    }
+                }
 
                 jwt = Jwts.builder()
                         .issuer("Civiceye")
@@ -100,6 +111,7 @@ public class LoginController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
+
     private String mapRoleToType(List<String> roles) {
         if (roles.contains("ROLE_MASTERADMIN")) return "MasterAdmin";
         if (roles.contains("ROLE_GOVERNORATEADMIN")) return "GovernorateAdmin";
@@ -122,11 +134,11 @@ public class LoginController {
     @GetMapping("/user")
     public ResponseEntity<UserDTO> userInfo(Authentication authentication) {
 
-        UserDTO userDTO =null;
+        UserDTO userDTO = null;
 
         if (authentication != null && authentication.isAuthenticated()) {
-             userDTO = loginService.userInfo(authentication.getName()
-                    ,authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+            userDTO = loginService.userInfo(authentication.getName()
+                    , authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
             return ResponseEntity.ok(userDTO);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(userDTO);

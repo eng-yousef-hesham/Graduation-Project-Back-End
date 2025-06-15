@@ -52,6 +52,7 @@ public class CitizenServiceImpl implements CitizenService {
                 .passwordHash(citizenData.getHashPassword())
                 .age(citizenData.getAge())
                 .isActive(true)
+                .spamCount(0)
                 .build();
 
         Citizen savedCitizen = citizenRepository.save(citizen);

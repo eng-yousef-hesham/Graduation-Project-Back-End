@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -155,7 +156,15 @@ public class ReportServiceImpl implements ReportService {
                 .changedByEmployee(employee)
                 .notes(dto.getNotes() != null ? dto.getNotes() : "")
                 .build();
-
+        if (newStatus.getStatus().equals(ReportStatus.Cancelled) && SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains("ROLE_EMPLOYEE")) {
+            newStatus.setEndTime(LocalDateTime.now());
+            Citizen citizen = citizenRepository.findById(report.getCitizen().getCitizenId()).orElseThrow(() -> new CitizenNotFoundException(report.getCitizen().getCitizenId()));
+            citizen.setSpamCount(citizen.getSpamCount() + 1);
+            if (citizen.getSpamCount() >= 3) {
+                citizen.setIsActive(false);
+            }
+            citizenRepository.save(citizen);
+        }
         statusHistoryRepository.save(newStatus);
 
         report.setCurrentStatus(dto.getNewStatus());
@@ -299,7 +308,7 @@ public class ReportServiceImpl implements ReportService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Governorate governorate = governorateRepository.findById(govId).orElseThrow(
                 () -> new GovernorateNotFoundException(govId));
-        return reportRepository.findByCurrentStatusAndCity_Governorate(currentStatus,governorate,pageable).map(ReportDTO::new);
+        return reportRepository.findByCurrentStatusAndCity_Governorate(currentStatus, governorate, pageable).map(ReportDTO::new);
     }
 
     @Override
@@ -310,7 +319,7 @@ public class ReportServiceImpl implements ReportService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
-        return reportRepository.findByCurrentStatusAndCity(currentStatus,city,pageable).map(ReportDTO::new);
+        return reportRepository.findByCurrentStatusAndCity(currentStatus, city, pageable).map(ReportDTO::new);
     }
 
     @Override

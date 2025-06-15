@@ -5,7 +5,6 @@ import org.gp.civiceye.mapper.cityadmin.CityAdminDTO;
 import org.gp.civiceye.service.CityAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,6 @@ import java.util.List;
 @RequestMapping("api/V1")
 public class CityAdminController {
     private CityAdminService cityAdminService;
-
 
     @Autowired
     public CityAdminController(CityAdminService Cityadminaervice) {
@@ -33,7 +31,6 @@ public class CityAdminController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) Long govId
-
     ) {
         Page<CityAdminDTO> cityAdmins;
         if (cityId != null) {
@@ -46,7 +43,6 @@ public class CityAdminController {
         return new ResponseEntity<>(cityAdmins, HttpStatus.OK);
     }
 
-
     @GetMapping("/cityadmin/{id}")
     public ResponseEntity<CityAdminDTO> getCityAdminById(@PathVariable(name = "id") Long id) {
         CityAdminDTO cityAdminDTO = cityAdminService.getCityAdminById(id);
@@ -55,6 +51,4 @@ public class CityAdminController {
         }
         return new ResponseEntity<>(cityAdminDTO, HttpStatus.OK);
     }
-
-
 }
