@@ -129,6 +129,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<ReportDTO> getReportsForEmployee(Long employeeId) {
+        employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
         return reportRepository.findAllByAssignedEmployee_EmpId(employeeId).stream()
                 .map(ReportDTO::new).collect(Collectors.toList());
     }
