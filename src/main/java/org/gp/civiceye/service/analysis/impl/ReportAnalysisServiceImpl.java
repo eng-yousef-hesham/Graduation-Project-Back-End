@@ -2,6 +2,7 @@ package org.gp.civiceye.service.analysis.impl;
 
 import org.gp.civiceye.exception.ReportsIsEmptyException;
 import org.gp.civiceye.mapper.CityReportCountDTO;
+import org.gp.civiceye.mapper.ReportCountEveryDayDTO;
 import org.gp.civiceye.mapper.report.ReportDTO;
 import org.gp.civiceye.repository.ReportAnalysisRepository;
 import org.gp.civiceye.service.analysis.ReportAnalysisService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -151,5 +153,29 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
         return ReportAnalysisRepository.findAverageTimeToSolveReportInCitiesPerGovernorate(govId).stream()
                 .map(obj -> new CityReportCountDTO((String) obj[1], (Double) obj[2]))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDay() {
+        return ReportAnalysisRepository.findCountOfReportsPerDay().stream(
+        ).map(obj -> new ReportCountEveryDayDTO((Timestamp) obj[0], (Long) obj[1])
+        ).collect(Collectors.toList()
+        );
+    }
+
+    @Override
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerGovernorate(Long cityId) {
+        return ReportAnalysisRepository.findCountOfReportsPerDayPerCity(cityId).stream(
+        ).map(obj -> new ReportCountEveryDayDTO((Timestamp) obj[0], (Long) obj[1])
+        ).collect(Collectors.toList()
+        );
+    }
+
+    @Override
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerCity(Long govId) {
+        return ReportAnalysisRepository.findCountOfReportsPerDayPerGovernorate(govId).stream(
+        ).map(obj -> new ReportCountEveryDayDTO((Timestamp) obj[0], (Long) obj[1])
+        ).collect(Collectors.toList()
+        );
     }
 }

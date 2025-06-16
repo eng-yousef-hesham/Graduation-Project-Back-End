@@ -2,6 +2,7 @@ package org.gp.civiceye.controller.rest.analysis;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.gp.civiceye.mapper.CityReportCountDTO;
+import org.gp.civiceye.mapper.ReportCountEveryDayDTO;
 import org.gp.civiceye.mapper.report.ReportDTO;
 import org.gp.civiceye.service.analysis.ReportAnalysisService;
 import org.gp.civiceye.service.ReportService;
@@ -89,6 +90,22 @@ public class ReportAnalysisController {
     public ResponseEntity<List<CityReportCountDTO>> getAverageTimeToSolveReportInCitiesPerGovernorate(@PathVariable(name = "govId" ) Long govId) {
 
         return ResponseEntity.ok(reportAnalysisService.getAverageTimeToSolveReportInCitiesPerGovernorate(govId));
+    }
+
+    @GetMapping("/init/report/count/per-day/master")
+    public ResponseEntity<List<ReportCountEveryDayDTO>> GetCountOfReportsPerDay() {
+
+        return ResponseEntity.ok(reportAnalysisService.GetCountOfReportsPerDay());
+    }
+    @GetMapping("/init/report/count/per-day/city/{cityId}")
+    public ResponseEntity<List<ReportCountEveryDayDTO>> GetCountOfReportsPerDayPerCity(@PathVariable(name = "cityId" ) Long cityId) {
+
+        return ResponseEntity.ok(reportAnalysisService.GetCountOfReportsPerDayPerCity(cityId));
+    }
+    @GetMapping("/init/report/count/per-day/gov/{govId}")
+    public ResponseEntity<List<ReportCountEveryDayDTO>> GetCountOfReportsPerDayPerGovernorate(@PathVariable(name = "govId" ) Long govId) {
+
+        return ResponseEntity.ok(reportAnalysisService.GetCountOfReportsPerDayPerGovernorate(govId));
     }
 
 

@@ -1,6 +1,7 @@
 package org.gp.civiceye.service.analysis;
 
 import org.gp.civiceye.mapper.CityReportCountDTO;
+import org.gp.civiceye.mapper.ReportCountEveryDayDTO;
 import org.gp.civiceye.mapper.report.ReportDTO;
 
 import java.util.List;
@@ -36,4 +37,8 @@ public interface ReportAnalysisService {
     public List<CityReportCountDTO> getAverageTimeToSolveReportInCities();
     public List<CityReportCountDTO> getAverageTimeToSolveReportInCity(Long cityId);
     public List<CityReportCountDTO> getAverageTimeToSolveReportInCitiesPerGovernorate(Long govId);
+
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDay();
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerGovernorate(Long govId);
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerCity(Long cityId);
 }
