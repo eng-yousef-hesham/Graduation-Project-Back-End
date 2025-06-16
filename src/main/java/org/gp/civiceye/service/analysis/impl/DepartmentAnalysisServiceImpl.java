@@ -5,6 +5,7 @@ import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.service.analysis.DepartmentAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     }
 
     @Override
+    @Transactional
     public Map<Department, Long> getCountOfReportsPerDepartment() {
         List<Object[]> results = reportAnalysisRepository.findCountOfReportsPerDepartment();
 
@@ -42,6 +44,7 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     }
 
     @Override
+    @Transactional
     public Map<Department, Long> getCountOfReportsPerDepartmentPerGovernorate(Long govId) {
         List<Object[]> results = reportAnalysisRepository.findCountOfReportsPerDepartmentPerGovernorate(govId);
 
@@ -62,6 +65,7 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     }
 
     @Override
+    @Transactional
     public Map<Department, Long> getCountOfReportsPerDepartmentPerCity(Long cityId) {
         List<Object[]> results = reportAnalysisRepository.findCountOfReportsPerDepartmentPerCity(cityId);
 

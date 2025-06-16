@@ -1,11 +1,14 @@
 package org.gp.civiceye.controller.websocket;
 
 import org.gp.civiceye.exception.ReportNotCreatedException;
+import org.gp.civiceye.mapper.ReportCountEveryDayDTO;
 import org.gp.civiceye.mapper.report.CreateReportDTO;
 import org.gp.civiceye.mapper.report.ReportDTO;
 import org.gp.civiceye.mapper.report.UpdateReportStatusDTO;
 import org.gp.civiceye.repository.entity.City;
+import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.service.CityService;
+import org.gp.civiceye.service.analysis.DepartmentAnalysisService;
 import org.gp.civiceye.service.analysis.ReportAnalysisService;
 import org.gp.civiceye.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +28,20 @@ public class ReportControllerWS {
     private final ReportService reportService;
     private final CityService CityService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final DepartmentAnalysisService departmentAnalysisService;
 
 
     @Autowired
     public ReportControllerWS(ReportAnalysisService reportAnalysisService,
                                   ReportService reportService,
                                   SimpMessagingTemplate messagingTemplate,
-                                  CityService cityservice) {
+                                  CityService cityservice,
+                                  DepartmentAnalysisService departmentAnalysisService) {
         this.reportService = reportService;
         this.reportAnalysisService = reportAnalysisService;
         this.messagingTemplate = messagingTemplate;
         this.CityService = cityservice;
+        this.departmentAnalysisService = departmentAnalysisService;
     }
 
     @MessageMapping("/updateStatus")
@@ -91,11 +97,29 @@ public class ReportControllerWS {
             messagingTemplate.convertAndSend("/topic/reportsCountPerCity/" + cityId, cityReportData);
             messagingTemplate.convertAndSend("/topic/reportsCountPerGovernorate/" + governorateId, cityReportCount);
 
+            //send latest 4 reports
             List<ReportDTO> cityReports = reportAnalysisService.GetTop4ReportsByCityId(cityId);
             List<ReportDTO> govReports = reportAnalysisService.GetTop4ReportsByGovId(governorateId);
 
             messagingTemplate.convertAndSend("/topic/latestReports/city/" + cityId, cityReports);
             messagingTemplate.convertAndSend("/topic/latestReports/gov/" + governorateId, govReports);
+
+
+            //send reports per day
+            List<ReportCountEveryDayDTO> cityReportsPerDay = reportAnalysisService.GetCountOfReportsPerDayPerCity(cityId);
+            List<ReportCountEveryDayDTO> govReportsPerDay = reportAnalysisService.GetCountOfReportsPerDayPerGovernorate(governorateId);
+
+            messagingTemplate.convertAndSend("/topic/ReportsPerDay/city/" + cityId, cityReportsPerDay);
+            messagingTemplate.convertAndSend("/topic/ReportsPerDay/gov/" + governorateId, govReportsPerDay);
+
+
+            //send reports per department
+            Map<Department, Long> cityReportsPerDepartment = departmentAnalysisService.getCountOfReportsPerDepartmentPerCity(cityId);
+            Map<Department, Long> govcityReportsPerDepartment= departmentAnalysisService.getCountOfReportsPerDepartmentPerGovernorate(governorateId);
+
+            messagingTemplate.convertAndSend("/topic/ReportsPerDay/city/" + cityId, cityReportsPerDepartment);
+            messagingTemplate.convertAndSend("/topic/ReportsPerDay/gov/" + governorateId, govcityReportsPerDepartment);
+
 
         } catch (Exception e) {
             // Send error message to the specific user who sent the request

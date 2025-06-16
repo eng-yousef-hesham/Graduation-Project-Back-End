@@ -147,7 +147,7 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     @Query(value = "SELECT DATE_TRUNC('day', r.created_at) AS day,\n" +
             "COUNT(*) AS count\n" +
             "FROM report r\n" +
-            "where created_at > now() - INTERVAL '6 month'\n" +
+            "where created_at >= now() - INTERVAL '2 month'\n" +
             "GROUP BY DATE_TRUNC('day', r.created_at)\n" +
             "ORDER BY day ASC;", nativeQuery = true)
     List<Object[]> findCountOfReportsPerDay();
@@ -155,9 +155,9 @@ public interface ReportAnalysisRepository extends JpaRepository<Report, Long> {
     @Query(value = "SELECT DATE_TRUNC('day', r.created_at) AS day, " +
             "COUNT(*) AS count " +
             "FROM report r " +
-            "JOIN city c ON r.city_id = c.id " +
-            "JOIN governorate g ON c.governorate_id = g.id " +
-            "WHERE r.created_at > now() - INTERVAL '6 month' AND g.id = :govId " +
+            "JOIN city c ON r.city_id = c.city_id " +
+            "JOIN governorate g ON c.governorate_id = g.governorate_id " +
+            "WHERE r.created_at > now() - INTERVAL '2 month' AND g.governorate_id= :govId " +
             "GROUP BY DATE_TRUNC('day', r.created_at) " +
             "ORDER BY day ASC", nativeQuery = true)
     List<Object[]> findCountOfReportsPerDayPerGovernorate(@Param("govId") Long govId);

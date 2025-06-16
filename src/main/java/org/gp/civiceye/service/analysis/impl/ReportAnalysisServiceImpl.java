@@ -156,6 +156,7 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
+    @Transactional
     public List<ReportCountEveryDayDTO> GetCountOfReportsPerDay() {
         return ReportAnalysisRepository.findCountOfReportsPerDay().stream(
         ).map(obj -> new ReportCountEveryDayDTO((Timestamp) obj[0], (Long) obj[1])
@@ -164,7 +165,8 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
-    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerGovernorate(Long cityId) {
+    @Transactional
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerCity(Long cityId) {
         return ReportAnalysisRepository.findCountOfReportsPerDayPerCity(cityId).stream(
         ).map(obj -> new ReportCountEveryDayDTO((Timestamp) obj[0], (Long) obj[1])
         ).collect(Collectors.toList()
@@ -172,7 +174,8 @@ public class ReportAnalysisServiceImpl implements ReportAnalysisService {
     }
 
     @Override
-    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerCity(Long govId) {
+    @Transactional
+    public List<ReportCountEveryDayDTO> GetCountOfReportsPerDayPerGovernorate(Long govId) {
         return ReportAnalysisRepository.findCountOfReportsPerDayPerGovernorate(govId).stream(
         ).map(obj -> new ReportCountEveryDayDTO((Timestamp) obj[0], (Long) obj[1])
         ).collect(Collectors.toList()
