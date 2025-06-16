@@ -117,8 +117,8 @@ public class ReportControllerWS {
             Map<Department, Long> cityReportsPerDepartment = departmentAnalysisService.getCountOfReportsPerDepartmentPerCity(cityId);
             Map<Department, Long> govcityReportsPerDepartment= departmentAnalysisService.getCountOfReportsPerDepartmentPerGovernorate(governorateId);
 
-            messagingTemplate.convertAndSend("/topic/ReportsPerDay/city/" + cityId, cityReportsPerDepartment);
-            messagingTemplate.convertAndSend("/topic/ReportsPerDay/gov/" + governorateId, govcityReportsPerDepartment);
+            messagingTemplate.convertAndSend("/topic/ReportsPerDepartment/city/" + cityId, cityReportsPerDepartment);
+            messagingTemplate.convertAndSend("/topic/ReportsPerDepartment/gov/" + governorateId, govcityReportsPerDepartment);
 
 
         } catch (Exception e) {
