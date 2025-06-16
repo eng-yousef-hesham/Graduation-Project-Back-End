@@ -92,7 +92,6 @@ public class ReportServiceImpl implements ReportService {
 
         List<Report> reports = reportRepository.findAllByAssignedEmployee_EmpId(employeeId);
         EmployeeReportsCountDTO employeeReportsCountDTO = new EmployeeReportsCountDTO();
-        employeeReportsCountDTO.setTotalCount(reports.size());
         reports.forEach(
                 report -> {
                     Integer currentCount = employeeReportsCountDTO.getReportsCount().getOrDefault(report.getCurrentStatus(), 0);

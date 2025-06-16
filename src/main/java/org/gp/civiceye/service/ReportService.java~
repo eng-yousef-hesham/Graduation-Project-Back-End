@@ -20,7 +20,7 @@ public interface ReportService {
 
     public List<ReportDTO> getReportsForUser(Long userId);
 
-    public EmployeeReportsCountDTO getReportsForEmployeeByStatus(Long employeeId);
+    public List<EmployeeReportsCountDTO> getReportsForEmployeeByDepartment(Long employeeId);
 
     public List<ReportDTO> getReportsForEmployee(Long employeeId);
 

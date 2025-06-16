@@ -1,6 +1,7 @@
 package org.gp.civiceye.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.gp.civiceye.mapper.employee.EmployeeReportsCountDTO;
 import org.gp.civiceye.mapper.report.*;
 import org.gp.civiceye.repository.entity.Department;
 import org.gp.civiceye.repository.entity.ReportStatus;
@@ -47,6 +48,11 @@ public class ReportController {
         return ResponseEntity.ok(reportService.getReportsForEmployee(employeeId));
     }
 
+    @GetMapping("/reports/status/employee/{employeeId}")
+    public ResponseEntity<EmployeeReportsCountDTO> getEmployeeReportsByStatus(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(reportService.getReportsForEmployeeByStatus(employeeId));
+    }
+
     @PutMapping("/reports/status")
     public ResponseEntity<Void> updateStatus(@RequestBody UpdateReportStatusDTO dto) {
         reportService.updateReportStatus(dto);
@@ -84,13 +90,13 @@ public class ReportController {
             }
         } else if (govId != null) {
             if (currentStatus != null && department != null) {
-                reports = reportService.getReportsByStatusAndDepartmentAndGovernmentId(currentStatus, department, govId,page, size, sortBy, sortDir);
+                reports = reportService.getReportsByStatusAndDepartmentAndGovernmentId(currentStatus, department, govId, page, size, sortBy, sortDir);
             } else if (currentStatus != null) {
-                reports = reportService.getReportsByStatusAndGovernmentId(currentStatus,govId, page, size, sortBy, sortDir);
+                reports = reportService.getReportsByStatusAndGovernmentId(currentStatus, govId, page, size, sortBy, sortDir);
             } else if (department != null) {
-                reports = reportService.getReportsByDepartmentAndGovernmentId(department,govId, page, size, sortBy, sortDir);
+                reports = reportService.getReportsByDepartmentAndGovernmentId(department, govId, page, size, sortBy, sortDir);
             } else {
-                reports = reportService.getAllReportsByGovernmentId(govId,page, size, sortBy, sortDir);
+                reports = reportService.getAllReportsByGovernmentId(govId, page, size, sortBy, sortDir);
             }
         } else {
             if (currentStatus != null && department != null) {
