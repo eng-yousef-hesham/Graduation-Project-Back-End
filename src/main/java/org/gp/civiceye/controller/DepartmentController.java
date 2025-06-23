@@ -10,11 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
-@RequestMapping("api/V1")
+@RequestMapping("api/v1/departments")
 public class DepartmentController {
 
     DepartmentService departmentService;
@@ -23,14 +20,10 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-
-
-    @GetMapping("/departments")
+    @GetMapping
     @Operation(summary = "Get all departments", description = "Fetches a list of all departments.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved departments" )
     public ResponseEntity<Department[]> getAllDepartments() {
-
         return new ResponseEntity<>(departmentService.getAllDepartments(), HttpStatus.OK);
-
     }
 }

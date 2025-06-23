@@ -25,7 +25,7 @@ public class CreateAdminDTO {
 
     private long cityId;
     private long governorateId;
-    private String HashPassword;
+    private String password;
     private int type;
 
 }

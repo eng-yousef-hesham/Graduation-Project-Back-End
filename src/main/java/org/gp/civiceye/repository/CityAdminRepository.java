@@ -14,8 +14,6 @@ import java.util.Optional;
 @Repository
 public interface CityAdminRepository extends JpaRepository<CityAdmin, Long> {
     Optional<CityAdmin> findByEmail(String email);
-    Page<CityAdmin> findByCity(City city, Pageable pageable);
-    Page<CityAdmin> findByCity_Governorate(Governorate governorate, Pageable pageable);
-
-//  public CityAdmin findByAdminId(Long adminId);
+    Page<CityAdmin> findByCity_CityId(Long cityId, Pageable pageable);
+    Page<CityAdmin> findByCity_Governorate_GovernorateId(Long governorateId, Pageable pageable);
 }

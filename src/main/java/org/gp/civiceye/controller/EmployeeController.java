@@ -29,23 +29,7 @@ public class EmployeeController {
             @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) Long govId
     ) {
-        Page<EmployeeDTO> employees;
-        if (cityId != null) {
-            if (department == null)
-                employees = employeeService.getAllEmployeesByCityId(cityId, page, size);
-            else
-                employees = employeeService.getAllEmployeesByDepartmentAndCityId(department, cityId, page, size);
-        } else if (govId != null) {
-            if (department == null)
-                employees = employeeService.getAllEmployeesByGovernorateId(govId, page, size);
-            else
-                employees = employeeService.getAllEmployeesByDepartmentAndGovernorateId(department, govId, page, size);
-        } else {
-            if (department == null)
-                employees = employeeService.getAllEmployees(page, size);
-            else
-                employees = employeeService.getAllEmployeesByDepartment(department, page, size);
-        }
+        Page<EmployeeDTO> employees = employeeService.getAllEmployees(page, size, department, cityId, govId);
         return ResponseEntity.ok(employees);
     }
 

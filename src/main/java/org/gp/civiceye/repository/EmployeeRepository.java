@@ -15,17 +15,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<List<Employee>> findByCityAndDepartment(City city, Department department);
 
-    Optional<List<Employee>> findByCity(City city);
+    Page<Employee> findByCity_CityId(Long cityId, Pageable pageable);
 
     Optional<Employee> findByEmailOrNationalId(String email, String nationalId);
 
     Page<Employee> findByDepartment(Department department, Pageable pageable);
 
-    Page<Employee> findByDepartmentAndCity(Department department, City city, Pageable pageable);
+    Page<Employee> findByDepartmentAndCity_CityId(Department department, Long cityId, Pageable pageable);
 
-    Page<Employee> findByDepartmentAndCity_Governorate(Department department, Governorate governorate, Pageable pageable);
+    Page<Employee> findByDepartmentAndCity_Governorate_GovernorateId(Department department, Long governorateId, Pageable pageable);
 
     Page<Employee> findByCity(City city, Pageable pageable);
 
-    Page<Employee> findByCity_Governorate(Governorate governorate, Pageable pageable);
+    Page<Employee> findByCity_Governorate_GovernorateId(Long governorateId, Pageable pageable);
 }

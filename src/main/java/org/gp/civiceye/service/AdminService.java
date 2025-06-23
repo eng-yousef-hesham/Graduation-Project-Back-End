@@ -6,5 +6,5 @@ import org.gp.civiceye.mapper.UpdateAdminDTO;
 public interface AdminService {
     Long addAdmin(CreateAdminDTO admin);
     Long updateAdmin(UpdateAdminDTO admin);
-    Long deleteAdmin(Long adminId, int adminType);
+    void deleteAdmin(Long adminId);
 }

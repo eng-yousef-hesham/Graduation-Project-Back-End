@@ -27,7 +27,7 @@ public class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
-    public List<CitizenDTO> GetAllCitizens() {
+    public List<CitizenDTO> getAllCitizens() {
         return citizenRepository.findAll().stream()
                 .map(CitizenDTO::new)
                 .collect(Collectors.toList());
@@ -35,12 +35,13 @@ public class CitizenServiceImpl implements CitizenService {
 
     @Override
     public Long addCitizen(CreateCitizenDTO citizenData) {
-
-        String password = citizenData.getHashPassword();
+        String password = citizenData.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
-        citizenData.setHashPassword(encodedPassword);
+        citizenData.setPassword(encodedPassword);
 
-        citizenRepository.findByEmailOrNationalId(citizenData.getEmail(), citizenData.getNationalId()).ifPresent(citizen -> {
+        citizenRepository.findByEmailOrNationalId(citizenData.getEmail(),
+                citizenData.getNationalId())
+                .ifPresent(citizen -> {
             throw new CitizenAlreadyExistsException(citizen.getEmail(), citizen.getNationalId());
         });
 
@@ -49,7 +50,7 @@ public class CitizenServiceImpl implements CitizenService {
                 .firstName(citizenData.getFirstName())
                 .lastName(citizenData.getLastName())
                 .email(citizenData.getEmail())
-                .passwordHash(citizenData.getHashPassword())
+                .passwordHash(citizenData.getPassword())
                 .age(citizenData.getAge())
                 .isActive(true)
                 .spamCount(0)

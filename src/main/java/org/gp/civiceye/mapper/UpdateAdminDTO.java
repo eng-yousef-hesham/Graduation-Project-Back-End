@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,7 +18,7 @@ public class UpdateAdminDTO {
     private String lastName;
     private String email;
     private String nationalId;
-    private String hashPassword;   // New password (optional)
-    private Long cityId;           // For city admin (optional)
-    private Long governorateId;    // For governorate admin (optional)
+    private Optional<String> password;   // New password (optional)
+    private Optional<Long> cityId;           // For city admin (optional)
+    private Optional<Long> governorateId;    // For governorate admin (optional)
 }

@@ -19,7 +19,7 @@ public class CitizenController {
         this.citizenService = citizenservice;
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<CitizenDTO>> getAllCitizens() {
         List<CitizenDTO> citizens = citizenService.getAllCitizens();
         return new ResponseEntity<>(citizens, HttpStatus.OK);

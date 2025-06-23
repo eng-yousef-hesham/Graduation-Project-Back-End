@@ -46,7 +46,4 @@ public class Admin {
 
     @Column(name = "Is_Active",columnDefinition = "boolean default true")
     private Boolean isActive;
-
-
-
 }

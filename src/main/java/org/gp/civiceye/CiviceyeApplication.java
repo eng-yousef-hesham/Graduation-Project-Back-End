@@ -13,11 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class CiviceyeApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CiviceyeApplication.class, args);
     }
-
-
 
 }

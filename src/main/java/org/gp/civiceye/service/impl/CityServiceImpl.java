@@ -1,6 +1,6 @@
 package org.gp.civiceye.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
+import org.gp.civiceye.exception.CityNotFoundException;
 import org.gp.civiceye.exception.GovernorateNotFoundException;
 import org.gp.civiceye.mapper.city.CityDTO;
 import org.gp.civiceye.repository.CityRepository;
@@ -28,10 +28,10 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public CityDTO getCityDTOByName(Long id) {
-
+    public CityDTO getCityByCityId(Long id) {
         Optional<City> optionalCity = cityRepository.findById(id);
-        return optionalCity.map(CityDTO::new).orElse(null);
+        return optionalCity.map(CityDTO::new)
+                .orElseThrow(() -> new CityNotFoundException(id));
     }
 
     @Override

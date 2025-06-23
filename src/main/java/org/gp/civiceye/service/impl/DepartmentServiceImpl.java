@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
-
     @Override
     public Department[] getAllDepartments() {
-
         return Department.values();
     }
 }
