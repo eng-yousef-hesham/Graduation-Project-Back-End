@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/V1")
+@RequestMapping("/api/v1/GovernorateAdmin")
 public class GovernorateAdminController {
     GovernorateAdminService governorateAdminService;
 
@@ -19,7 +19,7 @@ public class GovernorateAdminController {
         this.governorateAdminService = governorateAdminService;
     }
 
-    @GetMapping("/GovernorateAdmin")
+    @GetMapping
     public ResponseEntity<Page<GovernrateAdminDTO>> getAllGovernorateAdmins(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -34,7 +34,7 @@ public class GovernorateAdminController {
         return new ResponseEntity<>(governorateAdmins, HttpStatus.OK);
     }
 
-    @GetMapping("/GovernorateAdmin/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<GovernrateAdminDTO> getGovernorateAdminById(@PathVariable(name = "id") Long id) {
         GovernrateAdminDTO governorateAdminDTO = governorateAdminService.getGovernorateAdminById(id);
         if (governorateAdminDTO == null) {

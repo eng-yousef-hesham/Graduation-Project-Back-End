@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/V1")
+@RequestMapping("/api/v1/employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
 
@@ -21,7 +21,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("/employees")
+    @GetMapping
     public ResponseEntity<Page<EmployeeDTO>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -29,30 +29,31 @@ public class EmployeeController {
             @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) Long govId
     ) {
-        Page<EmployeeDTO> employees = employeeService.getAllEmployees(page, size, department, cityId, govId);
+        Page<EmployeeDTO> employees = employeeService
+                .getAllEmployees(page, size, department, cityId, govId);
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/employees/{employeeId}")
+    @GetMapping("/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long employeeId) {
         EmployeeDTO employee = employeeService.getEmployeeById(employeeId);
         return ResponseEntity.ok(employee);
     }
 
-    @PostMapping("/employees")
+    @PostMapping
     public ResponseEntity<String> createEmployee(@RequestBody EmployeeCreateDTO employee) {
         Long emp = employeeService.createEmployee(employee);
         return new ResponseEntity<>("Employee Created with ID: " + emp, HttpStatus.OK);
     }
 
-    @PutMapping("/employees/{employeeId}")
+    @PutMapping("/{employeeId}")
     public ResponseEntity<String> updateEmployee(@PathVariable(name = "employeeId") Long employeeId,
                                                  @RequestBody EmployeeUpdateDTO employee) {
         Long id = employeeService.updateEmployee(employeeId, employee);
         return new ResponseEntity<>("Employee Updated with ID: " + id, HttpStatus.OK);
     }
 
-    @DeleteMapping("/employees/{employeeId}")
+    @DeleteMapping("/{employeeId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
         Long id = employeeService.deleteEmployee(employeeId);
         return new ResponseEntity<>("Employee Deleted with ID: " + id, HttpStatus.OK);

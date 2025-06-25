@@ -17,8 +17,10 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Collection<Object> findByAssignedEmployee(Employee assignedEmployee);
 
     List<Report> findAllByAssignedEmployee_EmpId(Long employeeId);
+    List<Report> findAllByAssignedEmployee_Email(String email);
 
     List<Report> findAllByCitizen_CitizenId(Long userId);
+    List<Report> findAllByCitizen_Email(String email);
 
     Page<Report> findByCurrentStatus(ReportStatus currentStatus, Pageable pageable);
 
@@ -46,7 +48,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Page<Report> findByCurrentStatusAndDepartmentAndCity_Governorate(ReportStatus status, Department department, Governorate governorate, Pageable pageable);
 
-
+    int countByCity_Governorate_GovernorateId(Long govId);
+    int countByCurrentStatusAndAssignedEmployee_EmpId (ReportStatus status, Long employeeId);
     @Query("SELECT r FROM Report r WHERE r.currentStatus NOT IN :statuses")
     List<Report> findByCurrentStatusNotIn(@Param("statuses") List<ReportStatus> statuses);
 }

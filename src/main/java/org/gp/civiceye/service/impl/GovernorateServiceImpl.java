@@ -20,16 +20,6 @@ public class GovernorateServiceImpl implements GovernorateService {
     }
 
     @Override
-    public GovernorateDTO getGovernorateByID(Long id) {
-        Optional<Governorate> governorateOptional =governorateRepository.findById(id);
-        if (governorateOptional.isPresent()) {
-            return new GovernorateDTO(governorateOptional.get());
-        }
-       return new GovernorateDTO();
-
-    }
-
-    @Override
     public List<GovernorateDTO> GetAllGovernorates() {
 
         return governorateRepository.findAll().stream()

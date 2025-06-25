@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/V1")
+@RequestMapping("api/v1/report-statuses")
 public class ReportStatusController {
     ReportStatusService reportStatusService ;
 
@@ -23,7 +23,7 @@ public class ReportStatusController {
         this.reportStatusService = reportStatusService;
     }
 
-    @GetMapping("/report-statuses")
+    @GetMapping
     public ResponseEntity<ReportStatus[]> getAllReportStatus() {
         return new ResponseEntity<>(reportStatusService.getAllReportStatus(), HttpStatus.OK);
     }

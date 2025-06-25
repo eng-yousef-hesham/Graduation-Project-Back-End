@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface GovernorateService {
 
-    GovernorateDTO getGovernorateByID(Long id);
     List<GovernorateDTO> GetAllGovernorates();
 }

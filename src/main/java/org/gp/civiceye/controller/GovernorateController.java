@@ -13,21 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/V1")
-public class GovenorateController {
-    private GovernorateService goverorateService;
+@RequestMapping("/api/v1/governorates")
+public class GovernorateController {
+    private final GovernorateService governorateService;
 
     @Autowired
-    public GovenorateController(GovernorateService goverorateService) {
-        this.goverorateService = goverorateService;
+    public GovernorateController(GovernorateService governorateService) {
+        this.governorateService = governorateService;
     }
 
-    @GetMapping("/governorates")
+    @GetMapping
     @Operation(summary = "Get all governorates", description = "Fetches a list of all governorates without their cities.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved governorates" )
     public ResponseEntity<List<GovernorateDTO>> getAllGovernorates() {
-
-        return ResponseEntity.ok(goverorateService.GetAllGovernorates());
+        return ResponseEntity.ok(governorateService.GetAllGovernorates());
     }
 
 }

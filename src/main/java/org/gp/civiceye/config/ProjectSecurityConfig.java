@@ -72,22 +72,22 @@ public class ProjectSecurityConfig {
                 .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/V1/masteradmins").hasRole("MASTERADMIN")
-                        .requestMatchers("/api/V1/download-report").hasRole("MASTERADMIN")
-                        .requestMatchers("/api/V1/admin").hasRole("MASTERADMIN")
-                        .requestMatchers("/api/V1/city/").hasAnyRole("MASTERADMIN")
-                        .requestMatchers("/api/V1/cities/").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/departments").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/governorates").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/governorateadmin").hasRole("GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/employee/gov").hasRole("GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/cityadmins").hasRole("CITYADMIN")
-                        .requestMatchers("/api/V1/employee/city").hasRole("CITYADMIN")
-                        .requestMatchers("/api/V1/employees").hasAnyRole("MASTERADMIN","EMPLOYEE","CITYADMIN","GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/citizen").hasRole("CITIZEN")
-                        .requestMatchers("/api/V1/reports/**").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN","CITYADMIN","GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/report-statuses").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN","CITYADMIN","GOVERNORATEADMIN")
-                        .requestMatchers("/api/V1/check").hasAnyRole(
+                        .requestMatchers("/api/v1/masteradmins").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/v1/download-report").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/v1/admin").hasRole("MASTERADMIN")
+                        .requestMatchers("/api/v1/city/").hasAnyRole("MASTERADMIN")
+                        .requestMatchers("/api/v1/cities/").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/departments").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/governorates").hasAnyRole("MASTERADMIN", "CITIZEN","CITYADMIN","GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/governorateadmin").hasRole("GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/employee/gov").hasRole("GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/cityadmins").hasRole("CITYADMIN")
+                        .requestMatchers("/api/v1/employee/city").hasRole("CITYADMIN")
+                        .requestMatchers("/api/v1/employees").hasAnyRole("MASTERADMIN","EMPLOYEE","CITYADMIN","GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/citizen").hasRole("CITIZEN")
+                        .requestMatchers("/api/v1/reports/**").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN","CITYADMIN","GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/report-statuses").hasAnyRole("EMPLOYEE", "CITIZEN","MASTERADMIN","CITYADMIN","GOVERNORATEADMIN")
+                        .requestMatchers("/api/v1/check").hasAnyRole(
                                 "MASTERADMIN",
                                 "GOVERNORATEADMIN",
                                 "CITYADMIN",
@@ -98,8 +98,8 @@ public class ProjectSecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/api/V1/login",
-                                "/api/V1/citizenRegister",
+                                "/api/v1/login",
+                                "/api/v1/citizenRegister",
                                 "/ws"
                         ).permitAll()
                         .anyRequest().authenticated()

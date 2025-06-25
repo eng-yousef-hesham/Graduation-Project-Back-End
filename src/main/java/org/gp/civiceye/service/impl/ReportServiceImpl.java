@@ -12,28 +12,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl implements ReportService {
-
     ReportRepository reportRepository;
     CityRepository cityRepository;
     CitizenRepository citizenRepository;
     EmployeeRepository employeeRepository;
     StatusHistoryRepository statusHistoryRepository;
-
     GovernorateRepository governorateRepository;
-
 
     public ReportServiceImpl(ReportRepository reportRepository, CityRepository cityRepository, CitizenRepository citizenRepository, EmployeeRepository employeeRepository, StatusHistoryRepository statusHistoryRepository, GovernorateRepository governorateRepository) {
         this.reportRepository = reportRepository;
@@ -49,8 +44,8 @@ public class ReportServiceImpl implements ReportService {
         City city = cityRepository.findById(dto.getCityId())
                 .orElseThrow(() -> new CityNotFoundException(dto.getCityId()));
 
-        Citizen citizen = citizenRepository.findById(dto.getCitizenId())
-                .orElseThrow(() -> new CitizenNotFoundException(dto.getCitizenId()));
+        Citizen citizen = citizenRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new CitizenNotFoundException("Citizen not found with email: " + SecurityContextHolder.getContext().getAuthentication().getName()));
 
         Optional<List<Employee>> employeesOpt = employeeRepository.findByCityAndDepartment(city, dto.getDepartment());
         if (employeesOpt.isEmpty() || employeesOpt.get().isEmpty()) {
@@ -86,33 +81,38 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public List<ReportDTO> getReportsForAuthenticatedUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return reportRepository.findAllByCitizen_Email(email)
+                .stream()
+                .map(ReportDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public EmployeeReportsCountDTO getReportsForEmployeeByStatus(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
 
-        List<Report> reports = reportRepository.findAllByAssignedEmployee_EmpId(employeeId);
         EmployeeReportsCountDTO employeeReportsCountDTO = new EmployeeReportsCountDTO();
-        employeeReportsCountDTO.setTotalCount(reports.size());
-        reports.forEach(
-                report -> {
-                    Integer currentCount = employeeReportsCountDTO.getReportsCount().getOrDefault(report.getCurrentStatus(), 0);
-                    employeeReportsCountDTO.getReportsCount()
-                            .put(report.getCurrentStatus(), currentCount + 1);
-                });
 
+        Arrays.stream(ReportStatus.values()).forEach(status -> {
+            int count = reportRepository
+                    .countByCurrentStatusAndAssignedEmployee_EmpId(status, employeeId);
+            employeeReportsCountDTO.getReportsCount().put(status, count);
+        });
+
+        employeeReportsCountDTO.setTotalCount(employeeReportsCountDTO.getReportsCount()
+                .values().stream().reduce(0, Integer::sum));
         return employeeReportsCountDTO;
     }
 
     @Override
     @Transactional(readOnly = true)
     public ReportDTO getReportsById(Long reportId) {
-
-        Optional<Report> report = reportRepository.findById(reportId);
-        if (report.isEmpty()) {
-            throw new ReportNotFoundException(reportId);
-        }
-
-        return new ReportDTO(report.get());
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new ReportNotFoundException(reportId));
+        return new ReportDTO(report);
     }
 
     @Override
@@ -120,11 +120,19 @@ public class ReportServiceImpl implements ReportService {
         Report report = reportRepository.findById(dto.getReportId())
                 .orElseThrow(() -> new ReportNotFoundException(dto.getReportId()));
 
-        StatusHistory lastStatus = statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report)
+        if (report.getCitizen().getEmail()
+                .equals(SecurityContextHolder.getContext()
+                        .getAuthentication().getName())) {
+            throw new UnAuthorizedActionException();
+        }
+
+        StatusHistory lastStatus = statusHistoryRepository
+                .findTopByReportOrderByStartTimeDesc(report)
                 .orElseThrow(StatusHistoryNotFoundException::new);
 
         if (!lastStatus.getStatus().equals(ReportStatus.Resolved)) {
-            throw new InvalidReportStatusException(lastStatus.getStatus(), ReportStatus.Resolved);
+            throw new InvalidReportStatusException(lastStatus.getStatus(),
+                    ReportStatus.Resolved);
         }
         lastStatus.setEndTime(LocalDateTime.now());
         statusHistoryRepository.save(lastStatus);
@@ -149,8 +157,18 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<ReportDTO> getReportsForEmployee(Long employeeId) {
-        employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
         return reportRepository.findAllByAssignedEmployee_EmpId(employeeId).stream()
+                .map(ReportDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReportDTO> getReportsForAuthenticatedEmployee() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with email: " + email));
+        return reportRepository.findAllByAssignedEmployee_Email(email).stream()
                 .map(ReportDTO::new).collect(Collectors.toList());
     }
 
@@ -159,11 +177,18 @@ public class ReportServiceImpl implements ReportService {
     public void updateReportStatus(UpdateReportStatusDTO dto) {
         Report report = reportRepository.findById(dto.getReportId())
                 .orElseThrow(() -> new ReportNotFoundException(dto.getReportId()));
+        String empEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Employee employee = employeeRepository.findById(dto.getEmployeeId())
-                .orElseThrow(() -> new EmployeeNotFoundException(dto.getEmployeeId()));
+        Employee employee = employeeRepository.findByEmail(empEmail)
+                .orElseThrow(() -> new EmployeeNotFoundException(
+                        "Employee not found with email: " + empEmail));
 
-        StatusHistory lastStatus = statusHistoryRepository.findTopByReportOrderByStartTimeDesc(report)
+        if (!employee.getEmpId().equals(report.getAssignedEmployee().getEmpId())) {
+            throw new UnAuthorizedActionException();
+        }
+
+        StatusHistory lastStatus = statusHistoryRepository
+                .findTopByReportOrderByStartTimeDesc(report)
                 .orElseThrow(StatusHistoryNotFoundException::new);
 
         lastStatus.setEndTime(LocalDateTime.now());
@@ -177,9 +202,15 @@ public class ReportServiceImpl implements ReportService {
                 .changedByEmployee(employee)
                 .notes(dto.getNotes() != null ? dto.getNotes() : "")
                 .build();
-        if (newStatus.getStatus().equals(ReportStatus.Cancelled) && SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains("ROLE_EMPLOYEE")) {
+        boolean isEmployee = SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().contains("ROLE_EMPLOYEE");
+        boolean isSpam = newStatus.getStatus().equals(ReportStatus.Cancelled) && isEmployee;
+        if (isSpam) {
             newStatus.setEndTime(LocalDateTime.now());
-            Citizen citizen = citizenRepository.findById(report.getCitizen().getCitizenId()).orElseThrow(() -> new CitizenNotFoundException(report.getCitizen().getCitizenId()));
+            Citizen citizen = citizenRepository.findById(report.getCitizen()
+                            .getCitizenId())
+                    .orElseThrow(() -> new CitizenNotFoundException(report
+                            .getCitizen().getCitizenId()));
             citizen.setSpamCount(citizen.getSpamCount() + 1);
             if (citizen.getSpamCount() >= 3) {
                 citizen.setIsActive(false);
@@ -191,39 +222,6 @@ public class ReportServiceImpl implements ReportService {
         report.setCurrentStatus(dto.getNewStatus());
         report.setUpdatedAt(LocalDateTime.now());
         reportRepository.save(report);
-    }
-
-    @Override
-    public Page<ReportDTO> getAllReports(int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return reportRepository.findAll(pageable)
-                .map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getAllReportsByCityId(Long cityId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
-        return reportRepository.findByCity(city, pageable).map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getAllReportsByGovernmentId(Long govId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Governorate governorate = governorateRepository.findById(govId).orElseThrow((() -> new GovernorateNotFoundException(govId)));
-        return reportRepository.findByCity_Governorate(governorate, pageable).map(ReportDTO::new);
     }
 
     @Override
@@ -240,109 +238,6 @@ public class ReportServiceImpl implements ReportService {
         return reports.stream().map(ReportDTO::new).collect(Collectors.toList());
     }
 
-    public Page<ReportDTO> getReportsByStatusAndDepartment(ReportStatus currentStatus, Department department, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return reportRepository.findByCurrentStatusAndDepartment(currentStatus, department, pageable)
-                .map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getReportsByStatusAndDepartmentAndGovernmentId(ReportStatus currentStatus, Department department, Long govId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
-                () -> new GovernorateNotFoundException(govId));
-        return reportRepository.findByCurrentStatusAndDepartmentAndCity_Governorate(currentStatus, department, governorate, pageable).map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getReportsByStatusAndDepartmentAndCityId(ReportStatus currentStatus, Department department, Long cityId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
-        return reportRepository.findByCurrentStatusAndDepartmentAndCity(currentStatus, department, city, pageable).map(ReportDTO::new);
-    }
-
-    public Page<ReportDTO> getReportsByDepartment(Department department, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return reportRepository.findByDepartment(department, pageable)
-                .map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getReportsByDepartmentAndGovernmentId(Department department, Long govId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
-                () -> new GovernorateNotFoundException(govId));
-        return reportRepository.findByDepartmentAndCity_Governorate(department, governorate, pageable).map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getReportsByDepartmentAndCityId(Department department, Long cityId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
-        return reportRepository.findByDepartmentAndCity(department, city, pageable).map(ReportDTO::new);
-    }
-
-    public Page<ReportDTO> getReportsByStatus(ReportStatus currentStatus, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        if (currentStatus == null) {
-            return reportRepository.findAll(pageable)
-                    .map(ReportDTO::new);
-        }
-
-        return reportRepository.findByCurrentStatus(currentStatus, pageable)
-                .map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getReportsByStatusAndGovernmentId(ReportStatus currentStatus, Long govId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Governorate governorate = governorateRepository.findById(govId).orElseThrow(
-                () -> new GovernorateNotFoundException(govId));
-        return reportRepository.findByCurrentStatusAndCity_Governorate(currentStatus, governorate, pageable).map(ReportDTO::new);
-    }
-
-    @Override
-    public Page<ReportDTO> getReportsByStatusAndCityId(ReportStatus currentStatus, Long cityId, int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        City city = cityRepository.findById(cityId).orElseThrow((() -> new CityNotFoundException(cityId)));
-        return reportRepository.findByCurrentStatusAndCity(currentStatus, city, pageable).map(ReportDTO::new);
-    }
-
     @Override
     public List<ReportCountDTO> getReportsCountByGovernorate() {
         return governorateRepository.findAll().
@@ -351,4 +246,85 @@ public class ReportServiceImpl implements ReportService {
                         countByCity_Governorate(governorate)))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<ReportDTO> getReportsWithFilters(ReportFilterCriteria criteria) {
+        Sort sort = criteria.getSortDir().equalsIgnoreCase("desc") ?
+                Sort.by(criteria.getSortBy()).descending() :
+                Sort.by(criteria.getSortBy()).ascending();
+
+        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
+
+        // Validate and get entities if needed
+        City city = null;
+        Governorate governorate = null;
+
+        if (criteria.getCityId() != null) {
+            city = cityRepository.findById(criteria.getCityId())
+                    .orElseThrow(() -> new CityNotFoundException(criteria.getCityId()));
+        }
+
+        if (criteria.getGovId() != null) {
+            governorate = governorateRepository.findById(criteria.getGovId())
+                    .orElseThrow(() -> new GovernorateNotFoundException(criteria.getGovId()));
+        }
+
+        // Use the appropriate repository method based on filter combination
+        return getReportsPage(criteria, city, governorate, pageable);
+    }
+
+    private Page<ReportDTO> getReportsPage(ReportFilterCriteria criteria, City city, Governorate governorate, Pageable pageable) {
+        ReportStatus status = criteria.getCurrentStatus();
+        Department department = criteria.getDepartment();
+
+        // City-based filtering
+        if (city != null) {
+            if (status != null && department != null) {
+                return reportRepository.findByCurrentStatusAndDepartmentAndCity(status, department, city, pageable)
+                        .map(ReportDTO::new);
+            } else if (status != null) {
+                return reportRepository.findByCurrentStatusAndCity(status, city, pageable)
+                        .map(ReportDTO::new);
+            } else if (department != null) {
+                return reportRepository.findByDepartmentAndCity(department, city, pageable)
+                        .map(ReportDTO::new);
+            } else {
+                return reportRepository.findByCity(city, pageable)
+                        .map(ReportDTO::new);
+            }
+        }
+
+        // Governorate-based filtering
+        if (governorate != null) {
+            if (status != null && department != null) {
+                return reportRepository.findByCurrentStatusAndDepartmentAndCity_Governorate(status, department, governorate, pageable)
+                        .map(ReportDTO::new);
+            } else if (status != null) {
+                return reportRepository.findByCurrentStatusAndCity_Governorate(status, governorate, pageable)
+                        .map(ReportDTO::new);
+            } else if (department != null) {
+                return reportRepository.findByDepartmentAndCity_Governorate(department, governorate, pageable)
+                        .map(ReportDTO::new);
+            } else {
+                return reportRepository.findByCity_Governorate(governorate, pageable)
+                        .map(ReportDTO::new);
+            }
+        }
+
+        // Global filtering (no city or governorate)
+        if (status != null && department != null) {
+            return reportRepository.findByCurrentStatusAndDepartment(status, department, pageable)
+                    .map(ReportDTO::new);
+        } else if (status != null) {
+            return reportRepository.findByCurrentStatus(status, pageable)
+                    .map(ReportDTO::new);
+        } else if (department != null) {
+            return reportRepository.findByDepartment(department, pageable)
+                    .map(ReportDTO::new);
+        } else {
+            return reportRepository.findAll(pageable)
+                    .map(ReportDTO::new);
+        }
+    }
+
 }

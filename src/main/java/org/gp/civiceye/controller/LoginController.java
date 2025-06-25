@@ -31,95 +31,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/V1")
+@RequestMapping("/api/v1")
 public class LoginController {
 
-    private final AuthenticationManager authenticationManager;
-    private final Environment env;
     private final LoginService loginService;
-    private final CitizenRepository citizenRepository;
 
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, Environment env, LoginService loginService,
-                           CitizenRepository citizenRepository) {
-        this.authenticationManager = authenticationManager;
-        this.env = env;
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
-        this.citizenRepository = citizenRepository;
     }
 
     @PostMapping("login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpServletResponse response) {
-        String jwt;
-        Authentication authentication = UsernamePasswordAuthenticationToken.unauthenticated(
-                loginRequest.username(), loginRequest.password());
-        Authentication authenticationResponse = authenticationManager.authenticate(authentication);
-
-        if (authenticationResponse != null && authenticationResponse.isAuthenticated()) {
-            if (env != null) {
-                String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
-                        ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
-                SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-
-                List<String> roles = authenticationResponse.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList());
-
-                if (roles.contains("ROLE_CITIZEN")) {
-                    Citizen citizen = citizenRepository.findByEmail(loginRequest.username()).get();
-                    if (!citizen.getIsActive()) {
-                        throw new BannedUserException("User with email " + loginRequest.username() + " is banned. Please contact the admin.");
-                    }
-                }
-
-                jwt = Jwts.builder()
-                        .issuer("Civiceye")
-                        .subject(authenticationResponse.getName())
-                        .claim("username", authenticationResponse.getName())
-                        .claim("roles", roles)
-                        .issuedAt(new Date())
-                        .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 14)) // 14 days
-                        .signWith(secretKey)
-                        .compact();
-
-                // ✅ Create HTTP-only cookie
-                ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
-                        .httpOnly(true)
-                        .secure(true) // set to true in production (requires HTTPS)
-                        .path("/")
-                        .maxAge(Duration.ofDays(14))
-                        .sameSite("None")// or Lax/None depending on your app's needs
-                        .build();
-
-                // ✅ Add cookie to response
-                response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-                String type = mapRoleToType(roles);
-
-
-                LoginResponseDTO responseBody = new LoginResponseDTO(
-                        "Login successful",
-                        authenticationResponse.getName(),
-                        type
-                );
-
-                return ResponseEntity.ok(responseBody);
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+        return ResponseEntity.ok(loginService.login(loginRequest, response));
     }
 
-    private String mapRoleToType(List<String> roles) {
-        if (roles.contains("ROLE_MASTERADMIN")) return "MasterAdmin";
-        if (roles.contains("ROLE_GOVERNORATEADMIN")) return "GovernorateAdmin";
-        if (roles.contains("ROLE_CITYADMIN")) return "CityAdmin";
-        if (roles.contains("ROLE_EMPLOYEE")) return "Employee";
-        if (roles.contains("ROLE_CITIZEN")) return "Citizen";
-        return "Unknown";
-    }
+
 
     @GetMapping("/check")
     public ResponseEntity<?> checkAuthentication(Authentication authentication) {

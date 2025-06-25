@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/V1")
+@RequestMapping("/api/v1/masteradmins")
 public class MasterAdminController {
     MasterAdminService masterAdminService;
 
@@ -21,12 +21,9 @@ public class MasterAdminController {
         this.masterAdminService = masterAdminService;
     }
 
-    @GetMapping("/masteradmins")
+    @GetMapping
     public ResponseEntity<List<MasterAdminDTO>> getAllMasterAdmins() {
         List<MasterAdminDTO> masterAdmins = masterAdminService.getAllMasterAdmins();
-        if (masterAdmins.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(masterAdmins, HttpStatus.OK);
     }
 

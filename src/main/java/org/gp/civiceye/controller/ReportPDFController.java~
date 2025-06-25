@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/download-report")
+@RequestMapping("/api/V1")
 public class ReportPDFController {
 
     private final ReportAnalysisService reportAnalysisService;
@@ -27,7 +27,7 @@ public class ReportPDFController {
         this.pdfReportService = pdfReportService;
     }
 
-    @GetMapping
+    @GetMapping("/download-report")
     public ResponseEntity<byte[]> downloadReport() {
         try {
             List<Map<String, Object>> data = reportAnalysisService.getReportsPerDepartment();

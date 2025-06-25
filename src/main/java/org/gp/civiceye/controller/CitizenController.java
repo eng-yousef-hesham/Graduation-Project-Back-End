@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/citizens/")
+@RequestMapping("api/v1/citizens")
 public class CitizenController {
     private final CitizenService citizenService;
 
@@ -25,7 +25,7 @@ public class CitizenController {
         return new ResponseEntity<>(citizens, HttpStatus.OK);
     }
 
-    @PostMapping("Register")
+    @PostMapping("/Register")
     public ResponseEntity<String> addCitizen(@RequestBody CreateCitizenDTO Citizen) {
         Long result = citizenService.addCitizen(Citizen);
         return new ResponseEntity<>("Citizen Created with ID: " + result, HttpStatus.OK);

@@ -19,7 +19,6 @@ public class CreateReportDTO {
     private Float latitude;
     private Float longitude;
     private Department department;
-    private Long citizenId;
 
 
     public Report toReportEntity(City city, Citizen citizen, Employee assignedEmployee) {
@@ -36,7 +35,6 @@ public class CreateReportDTO {
                 .title(title)
                 .expectedResolutionDate(null)
                 .assignedEmployee(assignedEmployee)
-                .citizen(citizen)
                 .build();
     }
 }

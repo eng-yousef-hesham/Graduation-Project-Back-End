@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/admins/")
+@RequestMapping("/api/v1/admins")
 public class AdminController {
     private final AdminService adminService;
 
@@ -41,7 +41,7 @@ public class AdminController {
         return new ResponseEntity<>("Admin Updated with ID: " + id, HttpStatus.OK);
     }
 
-    @PutMapping("{adminId}")
+    @PutMapping("/{adminId}")
     public ResponseEntity<String> updateAdminById(
             @PathVariable Long adminId,
             @RequestBody UpdateAdminDTO adminDTO) {
@@ -49,7 +49,7 @@ public class AdminController {
         return updateAdmin(adminDTO);
     }
 
-    @DeleteMapping("{adminId}")
+    @DeleteMapping("/{adminId}")
     @Operation(summary = "Delete an admin by ID and type",
             description = "Deletes an admin of the specified type\n" +
                     "city admin = 1998\n" +

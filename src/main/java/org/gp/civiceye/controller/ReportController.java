@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/V1")
+@RequestMapping("api/v1/reports")
 public class ReportController {
     ReportService reportService;
 
@@ -22,50 +22,55 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @PostMapping("/reports/submit")
+    @PostMapping("/submit")
     public ResponseEntity<Long> submitReport(@RequestBody CreateReportDTO dto) {
         Long reportId = reportService.submitReport(dto);
         return new ResponseEntity<>(reportId, HttpStatus.OK);
     }
 
-    @GetMapping("/reports/user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReportDTO>> getUserReports(@PathVariable Long userId) {
         return ResponseEntity.ok(reportService.getReportsForUser(userId));
     }
 
-    @GetMapping("/reports/{reportId}")
-    public ResponseEntity<ReportDTO> getReportById(@PathVariable Long reportId) {
-
-        try {
-            return ResponseEntity.ok(reportService.getReportsById(reportId));
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/user")
+    public ResponseEntity<List<ReportDTO>> getUserReports() {
+        return ResponseEntity.ok(reportService.getReportsForAuthenticatedUser());
     }
 
-    @GetMapping("/reports/employee/{employeeId}")
+    @GetMapping("/{reportId}")
+    public ResponseEntity<ReportDTO> getReportById(@PathVariable Long reportId) {
+            return ResponseEntity.ok(reportService.getReportsById(reportId));
+    }
+
+    @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<ReportDTO>> getEmployeeReports(@PathVariable Long employeeId) {
         return ResponseEntity.ok(reportService.getReportsForEmployee(employeeId));
     }
 
-    @GetMapping("/reports/status/employee/{employeeId}")
+    @GetMapping("/employee/")
+    public ResponseEntity<List<ReportDTO>> getEmployeeReports() {
+        return ResponseEntity.ok(reportService.getReportsForAuthenticatedEmployee());
+    }
+
+    @GetMapping("/status/employee/{employeeId}")
     public ResponseEntity<EmployeeReportsCountDTO> getEmployeeReportsByStatus(@PathVariable Long employeeId) {
         return ResponseEntity.ok(reportService.getReportsForEmployeeByStatus(employeeId));
     }
 
-    @PutMapping("/reports/status")
+    @PutMapping("/status")
     public ResponseEntity<Void> updateStatus(@RequestBody UpdateReportStatusDTO dto) {
         reportService.updateReportStatus(dto);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/reports/close")
+    @PutMapping("/close")
     public ResponseEntity<Void> closeReport(@RequestBody CloseReportDTO dto) {
         reportService.closeReport(dto);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/reports")
+    @GetMapping
     public ResponseEntity<Page<ReportDTO>> getReports(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -75,50 +80,28 @@ public class ReportController {
             @RequestParam(required = false) Department department,
             @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) Long govId
-
     ) {
-        Page<ReportDTO> reports;
-        if (cityId != null) {
-            if (currentStatus != null && department != null) {
-                reports = reportService.getReportsByStatusAndDepartmentAndCityId(currentStatus, department, cityId, page, size, sortBy, sortDir);
-            } else if (currentStatus != null) {
-                reports = reportService.getReportsByStatusAndCityId(currentStatus, cityId, page, size, sortBy, sortDir);
-            } else if (department != null) {
-                reports = reportService.getReportsByDepartmentAndCityId(department, cityId, page, size, sortBy, sortDir);
-            } else {
-                reports = reportService.getAllReportsByCityId(cityId, page, size, sortBy, sortDir);
-            }
-        } else if (govId != null) {
-            if (currentStatus != null && department != null) {
-                reports = reportService.getReportsByStatusAndDepartmentAndGovernmentId(currentStatus, department, govId, page, size, sortBy, sortDir);
-            } else if (currentStatus != null) {
-                reports = reportService.getReportsByStatusAndGovernmentId(currentStatus, govId, page, size, sortBy, sortDir);
-            } else if (department != null) {
-                reports = reportService.getReportsByDepartmentAndGovernmentId(department, govId, page, size, sortBy, sortDir);
-            } else {
-                reports = reportService.getAllReportsByGovernmentId(govId, page, size, sortBy, sortDir);
-            }
-        } else {
-            if (currentStatus != null && department != null) {
-                reports = reportService.getReportsByStatusAndDepartment(currentStatus, department, page, size, sortBy, sortDir);
-            } else if (currentStatus != null) {
-                reports = reportService.getReportsByStatus(currentStatus, page, size, sortBy, sortDir);
-            } else if (department != null) {
-                reports = reportService.getReportsByDepartment(department, page, size, sortBy, sortDir);
-            } else {
-                reports = reportService.getAllReports(page, size, sortBy, sortDir);
-            }
-        }
+        ReportFilterCriteria criteria = ReportFilterCriteria.builder()
+                .currentStatus(currentStatus)
+                .department(department)
+                .cityId(cityId)
+                .govId(govId)
+                .page(page)
+                .size(size)
+                .sortBy(sortBy)
+                .sortDir(sortDir)
+                .build();
 
+        Page<ReportDTO> reports = reportService.getReportsWithFilters(criteria);
         return ResponseEntity.ok(reports);
     }
 
-    @GetMapping("reports/allReportsWithOutClosedAndCancelled")
+    @GetMapping("/allReportsWithOutClosedAndCancelled")
     public ResponseEntity<List<ReportDTO>> getReportsWithOutClosedAndCancelled() {
         return ResponseEntity.ok(reportService.getAllReportsWithOutClosedAndCancelled());
     }
 
-    @GetMapping("/reports/countbygovernorate")
+    @GetMapping("/countbygovernorate")
     public ResponseEntity<List<ReportCountDTO>> getReportsCountByGovernorate() {
         return ResponseEntity.ok(reportService.getReportsCountByGovernorate());
     }

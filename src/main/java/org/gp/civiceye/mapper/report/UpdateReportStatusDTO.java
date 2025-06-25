@@ -14,5 +14,4 @@ public class UpdateReportStatusDTO {
     private Long reportId;
     private ReportStatus newStatus;
     private String notes;
-    private Long employeeId;
 }

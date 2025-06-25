@@ -51,9 +51,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Long updateEmployee(Long employeeId, EmployeeUpdateDTO employee) {
-        Employee employeeInfo = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+        Employee employeeInfo = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
 
-        City city = cityRepository.findById(employee.getCityId()).orElseThrow(() -> new CityNotFoundException(employee.getCityId()));
+        City city = cityRepository.findById(employee.getCityId())
+                .orElseThrow(() -> new CityNotFoundException(employee.getCityId()));
         employeeInfo.setCity(city);
 
         updateEmployeeBasicInfo(employeeInfo, employee);
@@ -75,12 +77,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         String encodedPassword = passwordEncoder.encode(password);
         employee.setPassword(encodedPassword);
 
-        employeeRepository.findByEmailOrNationalId(employee.getEmail(), employee.getNationalId()).ifPresent(emp -> {
-            throw new EmployeeAlreadyExistsException(employee.getEmail(), employee.getNationalId());
+        employeeRepository.findByEmailOrNationalId(employee.getEmail(),
+                employee.getNationalId()).ifPresent(emp -> {
+            throw new EmployeeAlreadyExistsException(employee.getEmail(),
+                    employee.getNationalId());
         });
 
         Long cityId = employee.getCityId();
-        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
+        City city = cityRepository.findById(cityId)
+                .orElseThrow(() -> new CityNotFoundException(cityId));
 
         Employee emp = Employee.builder()
                 .nationalId(employee.getNationalId())

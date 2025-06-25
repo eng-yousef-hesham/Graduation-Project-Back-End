@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/V1/reports/analysis")
+@RequestMapping("/api/v1/reports/analysis")
 public class ReportAnalysisController {
     private final ReportAnalysisService reportAnalysisService;
     private final ReportService reportService;
